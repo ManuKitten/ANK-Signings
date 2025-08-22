@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>ANK Singnings | Sign In</title>
-  </head>
-  <body>
-    <p>hola</p>
-  </body>
+<head>
+  <title>ANK Signings | Iniciar sesión</title>
+</head>
+<body>
+  <h2>Iniciar sesión</h2>
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Nombre de usuario" required><br>
+    <input type="password" id="password" placeholder="Contraseña" required><br>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="login.js"></script>
+</body>
 </html>
