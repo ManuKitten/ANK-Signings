@@ -1,9 +1,19 @@
 /* ==========================
    Reset & base
 ========================== */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: sans-serif; line-height: 1.5; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  font-family: sans-serif;
+  line-height: 1.5;
+}
+
+/* ==========================
+   Header
+========================== */
 header {
   position: sticky;
   top: 0;
@@ -16,7 +26,15 @@ header {
   justify-content: space-between;
 }
 
-.brand { font-weight: 800; font-size: 1.2rem; letter-spacing: .5px; }
+.brand {
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: .5px;
+}
+
+/* ==========================
+   Botones
+========================== */
 .btn {
   padding: .55rem 1rem;
   border: 1px solid #444;
@@ -26,33 +44,68 @@ header {
   cursor: pointer;
   font-weight: 600;
 }
-.btn:hover { background: #333; }
+.btn:hover {
+  background: #333;
+}
 
-main { padding: 2rem 1.5rem; max-width: 800px; margin: 0 auto; }
-h1, h2 { margin: .5rem 0; }
-p { margin: .75rem 0 1.5rem; color: #444; }
+/* ==========================
+   Layout principal
+========================== */
+main {
+  padding: 2rem 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
 
+h1, h2 {
+  margin: .5rem 0;
+}
+
+p {
+  margin: .75rem 0 1.5rem;
+  color: #444;
+}
+
+/* ==========================
+   Hero
+========================== */
 .hero {
   text-align: center;
   margin-top: 2rem;
 }
-.hero h2 { font-size: 2rem; }
-.hero p { font-size: 1.1rem; max-width: 55ch; margin-inline: auto; }
+.hero h2 {
+  font-size: 2rem;
+}
+.hero p {
+  font-size: 1.1rem;
+  max-width: 55ch;
+  margin-inline: auto;
+}
 
+/* ==========================
+   Features
+========================== */
 .features {
   display: grid;
   gap: 1.2rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   margin-top: 2.5rem;
 }
+
 .card {
   border: 1px solid #ddd;
   border-radius: 12px;
   padding: 1.2rem;
   background: #f9f9f9;
 }
-.card h3 { margin: 0 0 .5rem; font-size: 1.2rem; }
+.card h3 {
+  margin: 0 0 .5rem;
+  font-size: 1.2rem;
+}
 
+/* ==========================
+   Footer
+========================== */
 footer {
   border-top: 1px solid #ddd;
   padding: 1.2rem;
