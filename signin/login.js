@@ -13,7 +13,12 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     if (accounts[hashedUser] && accounts[hashedUser].password === hashedPass) {
       document.getElementById("message").textContent = "Inicio de sesión exitoso ✅";
-      // Aquí puedes redirigir o mostrar contenido privado
+
+      // Guardar sesión con cookie (expira en 1 día)
+      document.cookie = `sessionUser=${hashedUser}; path=/; max-age=${60 * 60 * 24}`;
+
+      // Redirigir al dashboard
+      window.location.href = "../dashboard/";
     } else {
       document.getElementById("message").textContent = "Usuario o contraseña incorrectos ❌";
     }
