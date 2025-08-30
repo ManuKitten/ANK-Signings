@@ -43,8 +43,9 @@
     
           Object.values(teamsObj).forEach(team => {
             const article = document.createElement('article');
+            article.classList.add('card');
             article.innerHTML = `
-              <h3>${team.name}</h2>
+              <h3>⚽ ${team.name}</h2>
               <p>${team.desc}</p>
             `;
             container.appendChild(article);
