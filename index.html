@@ -10,8 +10,9 @@
     <!-- Header -->
     <header>
       <span class="brand">ANK Signings</span>
-      <button type="button" class="btn" onclick="window.location.href='signin'">Sign In</button>
+      <div id="header-user"></div>
     </header>
+
 
     <!-- Main -->
     <main>
@@ -59,5 +60,22 @@
     <footer>
       © 2025 ANK Signings. All rights reserved.
     </footer>
+    <script>
+      const displayName = localStorage.getItem("displayName");
+      const headerUser = document.getElementById("header-user");
+    
+      if (displayName) {
+        headerUser.innerHTML = `
+          <div class="user-profile">
+            <img src="../media/profiles/${displayName}.png" alt="Foto de ${displayName}" class="avatar" />
+            <span class="username">${displayName}</span>
+          </div>
+        `;
+      } else {
+        headerUser.innerHTML = `
+          <button type="button" class="btn" onclick="window.location.href='signin'">Sign In</button>
+        `;
+      }
+    </script>
   </body>
 </html>
