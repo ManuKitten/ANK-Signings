@@ -8,6 +8,9 @@
 a:visited {
    color: inherit;
 }
+a.logo {
+   text-decoration: none;
+}
 
 body {
   margin: 0;
