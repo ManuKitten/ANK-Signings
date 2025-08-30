@@ -4,5 +4,17 @@
       "name": "SC Badalona",
       "desc": "Soccer Club de Badalona agna"
     }
+  },
+  "3f8395d5fc2971e2149a01a0c7f46c0fb68d48ac6b87d7da654cbe2947dbded5": {
+    "ede426": {
+      "name": "ANK Sports",
+      "desc": "Club de Deportes de ANK"
+    }
+  },
+  "cfa8b9410ac1848839023ef4083e240c11a4ed243407cac02c284605c1612dfc": {
+    "406967": {
+      "name": "CA Concepción",
+      "desc": "Club Atlético Concepción"
+    }
   }
 }
