@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ANK Signings | Dashboard</title>
     <link rel="stylesheet" href="../styles/style.css" />
+    <style>
+      body { display: none; }
+    </style>
   </head>
   <body>
     <!-- Header -->
@@ -58,9 +61,14 @@
         avatar.alt = `Foto de ${displayName}`;
       }
     </script>
-
-
-    
+    <script>
+      const displayName = localStorage.getItem("displayName");
+      if (!displayName) {
+        window.location.href = "../signin";
+      } else {
+        document.body.style.display = "block";
+      }
+    </script>
 
     <!-- Footer -->
     <footer>
