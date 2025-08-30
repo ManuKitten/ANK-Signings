@@ -14,10 +14,11 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     if (accounts[hashedUser] && accounts[hashedUser].password === hashedPass) {
       document.getElementById("message").textContent = "Inicio de sesión exitoso ✅";
 
-      // Guardar sesión con cookie (expira en 1 día)
-      document.cookie = `sessionUser=${hashedUser}; path=/; max-age=${60 * 60 * 24}`;
+      // ✅ Store session in localStorage
+      localStorage.setItem("sessionUser", hashedUser);
+      localStorage.setItem("sessionTime", Date.now());
 
-      // Redirigir al dashboard
+      // Redirect to dashboard
       window.location.href = "../dashboard/";
     } else {
       document.getElementById("message").textContent = "Usuario o contraseña incorrectos ❌";
