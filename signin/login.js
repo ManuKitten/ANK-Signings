@@ -13,11 +13,12 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     if (accounts[hashedUser] && accounts[hashedUser].password === hashedPass) {
       document.getElementById("message").textContent = "Inicio de sesión exitoso ✅";
-
+    
       // ✅ Store session in localStorage
       localStorage.setItem("sessionUser", hashedUser);
       localStorage.setItem("sessionTime", Date.now());
-
+      localStorage.setItem("displayName", username); // ← This stores your actual name
+    
       // Redirect to dashboard
       window.location.href = "../dashboard/";
     } else {
