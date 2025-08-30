@@ -49,9 +49,16 @@
     <script>
       const displayName = localStorage.getItem("displayName");
       if (displayName) {
+        // Update username text
         document.querySelector(".username").textContent = displayName;
+    
+        // Update profile picture path
+        const avatar = document.querySelector(".avatar");
+        avatar.src = `../media/profiles/${displayName}.png`;
+        avatar.alt = `Foto de ${displayName}`;
       }
     </script>
+
 
     
 
