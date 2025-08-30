@@ -11,8 +11,8 @@
     <header>
       <span class="brand"><a href="../">ANK Signings</a></span>
       <div class="user-profile">
-        <img src="../manu1618.png" alt="Manu1618" class="avatar" />
-        <span class="username">Manu1618</span>
+        <img src="../manu1618.png" alt="foto" class="avatar" />
+        <span class="username">username</span>
       </div>
     </header>
 
@@ -46,6 +46,13 @@
         })
         .catch(error => console.error('Error cargando teams.json:', error));
     </script>
+    <script>
+      const displayName = localStorage.getItem("displayName");
+      if (displayName) {
+        document.querySelector(".username").textContent = displayName;
+      }
+    </script>
+
     
 
     <!-- Footer -->
