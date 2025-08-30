@@ -14,7 +14,7 @@
     </header>
 
     <!-- Main -->
-    <main>
+    <main id="teams-container">
       <section class="hero">
         <h2>Dashboard</h2>
         <p>
@@ -33,6 +33,26 @@
         </article>
       </section>
     </main>
+
+    <script>
+      fetch('../teams/teams.json')
+        .then(response => response.json())
+        .then(data => {
+          const teamsObj = data["64b67cfcbd72ad336793309d5670409b10ad70fb361ef6905bd07671ea5919c0"];
+          const container = document.getElementById('teams-container');
+    
+          Object.values(teamsObj).forEach(team => {
+            const article = document.createElement('article');
+            article.innerHTML = `
+              <h3>${team.name}</h2>
+              <p>${team.desc}</p>
+            `;
+            container.appendChild(article);
+          });
+        })
+        .catch(error => console.error('Error cargando teams.json:', error));
+    </script>
+    
 
     <!-- Footer -->
     <footer>
