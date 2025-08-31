@@ -31,23 +31,49 @@
     </main>
 
     <script>
-      fetch('../teams/teams.json')
-        .then(response => response.json())
-        .then(data => {
-          const teamsObj = data["64b67cfcbd72ad336793309d5670409b10ad70fb361ef6905bd07671ea5919c0"];
-          const container = document.getElementById('teams-container');
+      async function sha256(text) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
     
-          Object.values(teamsObj).forEach(team => {
-            const article = document.createElement('article');
-            article.classList.add('card');
-            article.innerHTML = `
-              <h3>⚽ ${team.name}</h2>
-              <p>${team.desc}</p>
-            `;
-            container.appendChild(article);
-          });
-        })
-        .catch(error => console.error('Error cargando teams.json:', error));
+      async function loadDashboard() {
+        const displayName = localStorage.getItem("displayName");
+        if (!displayName) {
+          window.location.href = "../signin";
+          return;
+        }
+    
+        document.querySelector(".username").textContent = displayName;
+        const avatar = document.querySelector(".avatar");
+        avatar.src = `../media/profiles/${displayName}.png`;
+        avatar.alt = `Foto de ${displayName}`;
+    
+        const hash = await sha256(displayName);
+        const response = await fetch('../teams/teams.json');
+        const data = await response.json();
+        const teamsObj = data[hash];
+    
+        const container = document.getElementById('teams-container');
+        if (!teamsObj) {
+          container.innerHTML += `<p>No teams found for user <strong>${displayName}</strong>.</p>`;
+          return;
+        }
+    
+        Object.values(teamsObj).forEach(team => {
+          const article = document.createElement('article');
+          article.classList.add('card');
+          article.innerHTML = `
+            <h3>⚽ ${team.name}</h3>
+            <p>${team.desc}</p>
+          `;
+          container.appendChild(article);
+        });
+      }
+    
+      loadDashboard();
     </script>
     <script>
       const displayName = localStorage.getItem("displayName");
