@@ -62,13 +62,17 @@
           return;
         }
     
-        Object.values(teamsObj).forEach(team => {
+        Object.entries(teamsObj).forEach(([teamId, team]) => {
           const article = document.createElement('article');
           article.classList.add('card');
           article.innerHTML = `
             <h3>⚽ ${team.name}</h3>
             <p>${team.desc}</p>
           `;
+          article.style.cursor = "pointer";
+          article.onclick = () => {
+            window.location.href = `../teams/${teamId}`;
+          };
           container.appendChild(article);
         });
       }
