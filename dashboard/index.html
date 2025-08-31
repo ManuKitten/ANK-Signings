@@ -50,6 +50,7 @@
         .catch(error => console.error('Error cargando teams.json:', error));
     </script>
     <script>
+      const displayName = localStorage.getItem("displayName");
       if (displayName) {
         // Update username text
         document.querySelector(".username").textContent = displayName;
@@ -61,7 +62,6 @@
       }
     </script>
     <script>
-      const displayName = localStorage.getItem("displayName");
       if (!displayName) {
         window.location.href = "../signin";
       } else {
