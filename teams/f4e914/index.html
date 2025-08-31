@@ -3,22 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ANK Signings | SC Badalona</title>
+    <title>ANK Signings | Sport ANK</title>
     <link rel="stylesheet" href="../../styles/style.css" />
   </head>
   <body>
     <!-- Header -->
     <header>
-      <span class="brand">ANK Signings</span>
-      <button type="button" class="btn" onclick="window.location.href='signin'">Sign In</button>
+      <span class="brand"><a href="../../">ANK Signings</a></span>
+      <div class="user-profile">
+        <img src="../manu1618.png" alt="foto" class="avatar" />
+        <span class="username">username</span>
+      </div>
     </header>
 
     <!-- Main -->
     <main>
       <section class="hero">
-        <h2>SC Badalona</h2>
+        <h2>Sport ANK</h2>
         <p>
-          Badalona Soccer Club
+          Club de Deportes ANK
         </p>
       </section>
 
@@ -49,5 +52,59 @@
     <footer>
       © 2025 ANK Signings. All rights reserved.
     </footer>
+
+    <script>
+      const displayName = localStorage.getItem("displayName");
+      if (displayName) {
+        // Update username text
+        document.querySelector(".username").textContent = displayName;
+    
+        // Update profile picture path
+        const avatar = document.querySelector(".avatar");
+        avatar.src = `../../media/profiles/${displayName}.png`;
+        avatar.alt = `Foto de ${displayName}`;
+      }
+    </script>
+    <script>
+      async function sha256(text) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+    
+      async function personalizeTeamPage() {
+        const displayName = localStorage.getItem("displayName");
+        if (!displayName) {
+          window.location.href = "../../signin";
+          return;
+        }
+    
+        // Update profile info
+        document.querySelector(".username").textContent = displayName;
+        const avatar = document.querySelector(".avatar");
+        avatar.src = `../../media/profiles/${displayName}.png`;
+        avatar.alt = `Foto de ${displayName}`;
+    
+        // Fetch team data
+        const hash = await sha256(displayName);
+        const response = await fetch("../../teams/teams.json");
+        const data = await response.json();
+        const teamObj = data[hash];
+    
+        if (teamObj) {
+          const team = Object.values(teamObj)[0];
+          if (team?.name) {
+            document.querySelector("main .hero h2").textContent = team.name;
+          }
+          if (team?.desc) {
+            document.querySelector("main .hero p").textContent = team.desc;
+          }
+        }
+      }
+    
+      personalizeTeamPage();
+    </script>
   </body>
 </html>
