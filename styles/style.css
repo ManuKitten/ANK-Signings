@@ -5,12 +5,14 @@
   box-sizing: border-box;
 }
 
-a:visited {
-   color: inherit;
+a,
+a:visited,
+a:hover,
+a:active {
+  color: inherit;
+  text-decoration: none;
 }
-a.logo {
-   text-decoration: none;
-}
+
 
 body {
   margin: 0;
