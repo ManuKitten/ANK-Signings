@@ -9,7 +9,7 @@
   <body>
     <!-- Header -->
     <header>
-      <span class="brand"><a href="../">ANK Signings</a></span>
+      <span class="brand"><a href="../../">ANK Signings</a></span>
       <div class="user-profile">
         <img src="../manu1618.png" alt="foto" class="avatar" />
         <span class="username">username</span>
@@ -52,5 +52,18 @@
     <footer>
       © 2025 ANK Signings. All rights reserved.
     </footer>
+
+    <script>
+      const displayName = localStorage.getItem("displayName");
+      if (displayName) {
+        // Update username text
+        document.querySelector(".username").textContent = displayName;
+    
+        // Update profile picture path
+        const avatar = document.querySelector(".avatar");
+        avatar.src = `../../media/profiles/${displayName}.png`;
+        avatar.alt = `Foto de ${displayName}`;
+      }
+    </script>
   </body>
 </html>
