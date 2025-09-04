@@ -1,0 +1,14 @@
+{
+  "000001": {
+    "team1": "Club Atlético Concepción",
+    "team2": "Club de Soccer de Badalona",
+    "players1": [
+      "Mesías", "Chiesa", "Kimmich", "Ojeda", "Gómez"
+    ],
+    "players2": [
+      "Modric", "Suárez", "Peña", "Lewandoski", "García"
+    ],
+    "scoreline": [0, 0],
+    "events": []
+  }
+}
