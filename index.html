@@ -76,7 +76,12 @@
         headerUser.innerHTML = `
           <div class="user-profile">
             <img src="media/profiles/${displayName}.png" alt="Foto de ${displayName}" class="avatar" />
-            <span class="username">${displayName}</span>
+            <div class="username-menu">
+              <span class="username">${displayName}</span>
+              <div class="dropdown hidden">
+                <button onclick="logout()">Log Out</button>
+              </div>
+            </div>
           </div>
         `;
       } else {
