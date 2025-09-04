@@ -8,6 +8,7 @@
     <style>
       body { display: none; }
     </style>
+    <script src="../scripts/config.js"></script>
   </head>
   <body>
     <!-- Header -->
@@ -92,10 +93,13 @@
       }
     </script>
     <script>
-      if (!displayName) {
-        window.location.href = "../signin";
+      // Example: check if user is logged in via localStorage
+      const user = localStorage.getItem("username"); // or "sessionToken", etc.
+    
+      if (!user) {
+        window.location.href = REDIRECT_URL;
       } else {
-        document.body.style.display = "block";
+        document.body.style.display = "block"; // Reveal dashboard if session is valid
       }
     </script>
 
