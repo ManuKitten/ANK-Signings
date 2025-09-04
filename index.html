@@ -89,6 +89,20 @@
           <button type="button" class="btn" onclick="window.location.href='signin'">Sign In</button>
         `;
       }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const usernameMenu = document.querySelector(".username-menu");
+        const dropdown = document.querySelector(".dropdown");
+      
+        usernameMenu.addEventListener("click", () => {
+          dropdown.classList.toggle("hidden");
+        });
+      });
+      
+      function logout() {
+        localStorage.clear(); // or just remove specific keys
+        window.location.href = REDIRECT_URL;
+      }
     </script>
   </body>
 </html>
