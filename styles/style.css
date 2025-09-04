@@ -60,6 +60,37 @@ header {
 /* ==========================
    Layout principal
 ========================== */
+
+.username-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.hidden {
+  display: none;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+
 main {
   padding: 2rem 1.5rem;
   max-width: 800px;
