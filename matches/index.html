@@ -28,7 +28,6 @@
     </main>
 
     <script>
-      let match = null
       async function loadMatches() {
         const displayName = localStorage.getItem("displayName");
         if (!displayName) {
@@ -41,37 +40,47 @@
         avatar.src = `../media/profiles/${displayName}.png`;
         avatar.alt = `Foto de ${displayName}`;
     
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get("match");
+    
         const response = await fetch("../matches/matches.json");
         const matches = await response.json();
-    
         const container = document.getElementById("teams-container");
     
-        Object.entries(matches).forEach(([matchId, match]) => {
+        if (matchId && matches[matchId]) {
+          // Show full detail for specific match
+          const match = matches[matchId];
           const article = document.createElement("article");
           article.classList.add("card");
-    
-          const score = `${match.scoreline[0]} - ${match.scoreline[1]}`;
           article.innerHTML = `
             <h3>${match.team1} vs ${match.team2}</h3>
-            <p><strong>Score:</strong> ${score}</p>
-            <p><strong>Players:</strong></p>
-            <ul>
-              <li><em>${match.team1}:</em> ${match.players1.join(", ")}</li>
-              <li><em>${match.team2}:</em> ${match.players2.join(", ")}</li>
-            </ul>
+            <p><strong>Score:</strong> ${match.scoreline[0]} - ${match.scoreline[1]}</p>
+            <p><strong>Players for ${match.team1}:</strong> ${match.players1.join(", ")}</p>
+            <p><strong>Players for ${match.team2}:</strong> ${match.players2.join(", ")}</p>
+            <p><strong>Events:</strong> ${match.events.length > 0 ? match.events.join(", ") : "No events recorded."}</p>
           `;
-    
-          article.style.cursor = "pointer";
-          article.onclick = () => {
-            window.location.href = `../matches/${matchId}`;
-          };
-    
           container.appendChild(article);
-        });
+        } else {
+          // Show summary list of all matches
+          Object.entries(matches).forEach(([id, match]) => {
+            const article = document.createElement("article");
+            article.classList.add("card");
+            article.innerHTML = `
+              <h3>${match.team1} vs ${match.team2}</h3>
+              <p><strong>Score:</strong> ${match.scoreline[0]} - ${match.scoreline[1]}</p>
+            `;
+            article.style.cursor = "pointer";
+            article.onclick = () => {
+              window.location.href = `../matches/?match=${id}`;
+            };
+            container.appendChild(article);
+          });
+        }
       }
     
       loadMatches();
     </script>
+
     
     <!-- Footer -->
     <footer>
