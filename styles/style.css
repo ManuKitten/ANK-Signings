@@ -96,9 +96,9 @@ p {
 ========================== */
 .features {
   display: grid;
-  gap: 1.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  margin-top: 2.5rem;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 1.5rem; /* Adjust spacing between cards */
+  padding: 2rem; /* Optional: adds breathing room */
 }
 
 .card {
