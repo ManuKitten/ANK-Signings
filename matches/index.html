@@ -20,9 +20,9 @@
     <!-- Main -->
     <main id="teams-container">
       <section class="hero">
-        <h2>Match</h2>
+        <h2 id="match-title">Match</h2>
         <p>
-          Matach
+          Current matches from the league
         </p>
       </section>
     </main>
@@ -45,6 +45,9 @@
     
         const response = await fetch("../matches/matches.json");
         const matches = await response.json();
+        document.getElementById("match-title").textContent = matchId && matches[matchId]
+        ? `${matches[matchId].team1} vs ${matches[matchId].team2}`
+        : "All Matches";
         const container = document.getElementById("teams-container");
     
         if (matchId && matches[matchId]) {
