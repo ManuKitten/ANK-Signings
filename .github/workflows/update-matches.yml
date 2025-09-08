@@ -2,8 +2,8 @@ name: Update Matches JSON
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at 00:00 UTC
-  workflow_dispatch:     # Allows manual triggering too
+    - cron: '0 0 * * *'  # 9 PM Chile time (00:00 UTC)
+  workflow_dispatch:
 
 jobs:
   update-json:
@@ -12,23 +12,18 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Update matches.json
+      - name: Duplicate match and update scoreline
         run: |
-          echo '{
-            "match1": {
-              "team1": "Team A",
-              "team2": "Team B",
-              "scoreline": [2, 1],
-              "players1": ["Alice", "Bob"],
-              "players2": ["Charlie", "Dana"],
-              "events": ["Goal by Alice", "Penalty by Dana"]
-            }
-          }' > matches/matches.json
+          # Read existing JSON
+          content=$(cat matches/matches.json)
+
+          # Use jq to duplicate "000001" as "000002" and change scoreline
+          echo "$content" | jq '. + { "000002": (.["000001"] | .scoreline = [3, 0]) }' > matches/matches.json
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add matches/matches.json
-          git commit -m "Auto-update matches.json"
+          git commit -m "Auto-add match 000002 with scoreline [3, 0]"
           git push
