@@ -1,0 +1,34 @@
+name: Update Matches JSON
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at 00:00 UTC
+  workflow_dispatch:     # Allows manual triggering too
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Update matches.json
+        run: |
+          echo '{
+            "match1": {
+              "team1": "Team A",
+              "team2": "Team B",
+              "scoreline": [2, 1],
+              "players1": ["Alice", "Bob"],
+              "players2": ["Charlie", "Dana"],
+              "events": ["Goal by Alice", "Penalty by Dana"]
+            }
+          }' > matches/matches.json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add matches/matches.json
+          git commit -m "Auto-update matches.json"
+          git push
