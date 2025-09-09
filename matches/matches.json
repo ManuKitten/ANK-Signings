@@ -3,12 +3,46 @@
     "team1": "Club Atlético Concepción",
     "team2": "Club de Soccer de Badalona",
     "players1": [
-      "Mesías", "Chiesa", "Kimmich", "Ojeda", "Gómez"
+      "Mesías",
+      "Chiesa",
+      "Kimmich",
+      "Ojeda",
+      "Gómez"
     ],
     "players2": [
-      "Modric", "Suárez", "Peña", "Lewandoski", "García"
+      "Modric",
+      "Suárez",
+      "Peña",
+      "Lewandoski",
+      "García"
     ],
-    "scoreline": [0, 0],
+    "scoreline": [
+      0,
+      0
+    ],
+    "events": []
+  },
+  "000002": {
+    "team1": "Club Atlético Concepción",
+    "team2": "Club de Soccer de Badalona",
+    "players1": [
+      "Mesías",
+      "Chiesa",
+      "Kimmich",
+      "Ojeda",
+      "Gómez"
+    ],
+    "players2": [
+      "Modric",
+      "Suárez",
+      "Peña",
+      "Lewandoski",
+      "García"
+    ],
+    "scoreline": [
+      3,
+      0
+    ],
     "events": []
   }
 }
