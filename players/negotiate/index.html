@@ -1,0 +1,75 @@
+<html lang="en">
+
+<head>
+    <title id="title">Negotiate</title>
+</head>
+
+<body>
+    <button id="backbutton">Back to Players</button>
+    <div id="maindiv">
+        <h1 id="h1">Player</h1>
+        <p id="p1">Negotiate Player</p>
+
+        <form id="negotiationform">
+            <label for="payamount">Payment (in 1,000,000x&euro;) to owner team</label>
+            <input type="number" id="payamount" name="payamount" min="0" max="335" step="0.1" value="20">
+            <button id="submit">Submit</button>
+        </form>
+    </div>
+    <div id="sentdiv" style="display:none">
+        <p>Offer was sent succesfully! Awaiting answer</p>
+    </div>
+
+    <script>
+        let form = document.getElementById("negotiationform");
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+        });
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = ".."
+        })
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const playerValue = urlParams.get("player");
+
+        fetch("../../players.json").then(response => response.json()).then(data => {
+            let playersjson = data;
+            let player = playersjson[playerValue];
+            if (playerValue == null || !Object.keys(playersjson).includes(playerValue)) {
+                window.location.href = ".."
+            } else {
+                let title = document.getElementById("title");
+                title.textContent = "Negotiate " + playersjson[playerValue].name;
+                let h1 = document.getElementById("h1");
+                h1.textContent = playersjson[playerValue].name;
+                let p1 = document.getElementById("p1");
+                if (playersjson[playerValue].team != "") {
+                    fetch("../../teams.json").then(response => response.json()).then(data => {
+                        let teamsjson = data;
+                        p1.textContent = "Negotiate " + playersjson[playerValue].name + " with " + teamsjson[playersjson[playerValue].team].name;
+                    })
+
+                    document.getElementById("submit").addEventListener('click', function () {
+                        if (document.getElementById("payamount").value >= player.marketvalue * 1.1) {
+                            console.log("playerhappy");
+                        }
+                    })
+                } else {
+                    p1.textContent = "Negotiate " + playersjson[playerValue].name;
+                    document.getElementById("submit").addEventListener('click', function () {
+                        maindiv = document.getElementById("maindiv");
+                        maindiv.style.display = "none";
+                        sentdiv = document.getElementById("sentdiv");
+                        sentdiv.style.display = "block";
+                        if (document.getElementById("payamount").value >= player.marketvalue * 1.1) {
+                        
+                        }
+                    })
+                }
+            }
+        })
+
+    </script>
+</body>
+
+</html>

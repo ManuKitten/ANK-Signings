@@ -1,0 +1,144 @@
+<html lang="en">
+
+<head>
+    <title>Players</title>
+</head>
+
+<body>
+    <button id="backbutton">Back to Start</button>
+    <h1 id="h1">List of Players</h1>
+    <ul id="playerslist"></ul>
+    <div id="infodiv"></div>
+
+    <table id="playertable">
+        <tr>
+            <td>Name</td>
+            <td>Pos</td>
+            <td>Club</td>
+            <td>Born</td>
+            <td>Country</td>
+            <td>Rating</td>
+        </tr>
+    </table>
+
+    <script type="module">
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const playerValue = urlParams.get("player");
+
+        fetch("../players.json")
+            .then(response => response.json())
+            .then(data => {
+                let playersjson = data;
+                if (playerValue == null || !Object.keys(playersjson).includes(playerValue)) {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = ".."
+                    })
+
+                    let table = document.getElementById("playertable");
+                    for (let i = 0; i < Object.keys(playersjson).length; i++) {
+                        let row = document.createElement("tr");
+                        row.id = Object.keys(playersjson)[i];
+
+                        let cell3 = document.createElement("td");
+                        fetch("../teams.json").then(response => response.json()).then(data => {
+                            let teamsjson = data;
+                            cell3.textContent = teamsjson[playersjson[Object.keys(playersjson)[i]].team].name;
+                            console.log(teamsjson[playersjson[Object.keys(playersjson)[i]].team])
+                        })
+
+                        let cell1 = document.createElement("td");
+                        cell1.textContent = playersjson[Object.keys(playersjson)[i]].name;
+                        row.appendChild(cell1);
+
+                        let cell2 = document.createElement("td");
+                        cell2.textContent = playersjson[Object.keys(playersjson)[i]].position;
+                        row.appendChild(cell2);
+
+                        row.appendChild(cell3);
+
+                        let cell4 = document.createElement("td");
+                        cell4.textContent = playersjson[Object.keys(playersjson)[i]].birthdate;
+                        row.appendChild(cell4);
+
+                        let cell5 = document.createElement("td");
+                        cell5.textContent = playersjson[Object.keys(playersjson)[i]].country;
+                        row.appendChild(cell5);
+
+                        let cell6 = document.createElement("td");
+                        cell6.textContent = playersjson[Object.keys(playersjson)[i]].rating;
+                        row.appendChild(cell6);
+
+                        table.appendChild(row);
+                        row.addEventListener('click', function() {
+                            window.location.href = "?player=" + row.id;
+                        })
+                    }
+                } else {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../players"
+                    })
+                    let player = playersjson[playerValue];
+                    let h1 = document.getElementById("h1");
+                    h1.textContent = player.name;
+                    let ptable = document.getElementById("playertable");
+                    ptable.style.display = "none";
+                    let infodiv = document.getElementById("infodiv");
+
+                    let birthdate = document.createElement("p");
+                    birthdate.textContent = "Birthdate: " + player.birthdate[0] + "/" + player.birthdate[1] + "/" + player.birthdate[2];
+                    infodiv.appendChild(birthdate);
+
+                    let country = document.createElement("p");
+                    country.textContent = "Country: " + player.country;
+                    infodiv.appendChild(country);
+
+                    let position = document.createElement("p");
+                    position.textContent = "Position: " + player.position;
+                    infodiv.appendChild(position);
+
+                    let rating = document.createElement("p");
+                    rating.textContent = "Rating: " + player.rating;
+                    infodiv.appendChild(rating);
+
+                    if (!player.team == "") {
+                        let team = document.createElement("a");
+                        fetch("../teams.json").then(response => response.json()).then(data => {
+                            let teams = data;
+                            team.textContent = teams[player.team].name;
+                        }) 
+                        team.href = "../teams?team=" + player.team;
+                        infodiv.appendChild(team);
+                        infodiv.appendChild(document.createElement("br"))
+                        infodiv.appendChild(document.createElement("br"))
+                    } else {
+                        let team = document.createElement("p");
+                        team.textContent = "No Team";
+                        infodiv.appendChild(team);
+                    }
+
+                    if (localStorage.getItem("name") != null) {
+                        let permission = false;
+                        fetch("../teams.json").then(response => response.json()).then(data => {
+                            let teams = data;
+                            for (let i = 0; i < Object.keys(teams).length; i++) {
+                                if (teams[Object.keys(teams)[i]].owner == localStorage.getItem("name")) {
+                                    permission = true;
+                                    break;
+                                } 
+                            }
+                            if (permission) {
+                                let tradebutton = document.createElement("button");
+                                tradebutton.textContent = "Negotiate Player";
+                                infodiv.appendChild(tradebutton);
+                                tradebutton.addEventListener('click', function() {
+                                    window.location.href = "negotiate?player=" + playerValue;
+                            })}
+                        })
+                    }
+                }
+            })
+    </script>
+</body>
+
+</html>

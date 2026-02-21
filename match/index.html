@@ -1,0 +1,71 @@
+<html lang="en">
+
+<head>
+    <title id="title">Match</title>
+</head>
+
+<body>
+    <a id="backlink">League</a>
+    <h1 id="h1">Match</h1>
+    <ul id="eventslist"></ul>
+
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const matchValue = urlParams.get("match");
+
+        fetch("../matches.json").then(response => response.json()).then(data => {
+            let matchesjson = data;
+            let match = matchesjson[matchValue]
+
+            fetch("../tournaments.json").then(response => response.json()).then(data => {
+                let toursjson = data;
+                for (let i = 0; i < Object.keys(toursjson).length; i++) {
+                    if (toursjson[Object.keys(toursjson)[i]].name == match.tournament) {
+                        let a = document.getElementById("backlink");
+                        a.textContent = match.tournament;
+                        a.href = "../tournaments/?tour=" + Object.keys(toursjson)[i]
+                    }
+                }
+            }) 
+
+            if (matchValue == null || !Object.keys(matchesjson).includes(matchValue)) {
+                window.location.href = "..";
+            }
+
+            let title = document.getElementById("title");
+            title.textContent = match.homeTeam + " vs " + match.awayTeam;
+            let h1 = document.getElementById("h1");
+            if (match.score.length == 0) {
+                h1.textContent = match.homeTeam + " vs " + match.awayTeam;
+            } else {
+                function transform(type) {
+                    if (type == "goal") {
+                        return "Goal";
+                    } else if (type == "yell") {
+                        return "Yellow Card";
+                    } else if (type == "redc") {
+                        return "Red Card";
+                    } else if (type == "subs") {
+                        return "Substitution";
+                    } else {
+                        return type;
+                    }
+                }
+
+                h1.textContent = match.homeTeam + " " + match.score[0] + " - " + match.score[1] + " " + match.awayTeam;
+                let ul = document.getElementById("eventslist");
+                fetch("../players.json").then(response => response.json()).then(data => {
+                    let playersjson = data;
+                    for (let i = 0; i < match.events.length; i++) {
+                        let li = document.createElement("li");
+                        li.textContent = match.events[i][0] + " " + transform(match.events[i][1]) + " " + match.events[i][2] + " " + playersjson[match.events[i][3]].short;
+                        ul.appendChild(li);
+                    }
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>

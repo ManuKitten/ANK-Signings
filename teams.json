@@ -1,0 +1,38 @@
+{
+    "tx000000": {
+        "name": "ANK Team",
+        "owner": "5b437e726ab0f9a8eee0edf6950415a0545a2c0d1ea9e8b9421fbeb1fd3723a3",
+        "players": [
+            "px000000",
+            "px000001",
+            "px000002",
+            "px000003",
+            "px000004"
+        ],
+        "wealth": "u+%xtu{~#"
+    },
+    "tx000001": {
+        "name": "ANK Mod",
+        "owner": "895acd2c4274d8a29ec41296bcaff7601407ecc14f041f6ddc8dfca427619cef",
+        "players": [
+            "px000006",
+            "px000007",
+            "px000008",
+            "px000009",
+            "px00000a"
+        ],
+        "wealth": "s$z|~sp}z"
+    },
+    "tx000002": {
+        "name": "Club de Fútbol ANK",
+        "owner": "5b437e726ab0f9a8eee0edf6950415a0545a2c0d1ea9e8b9421fbeb1fd3723a3",
+        "players": [
+            "px00000b",
+            "px00000c",
+            "px00000d",
+            "px00000e",
+            "px00000f"
+        ],
+        "wealth": "u+%xtu{~#"
+    }
+}

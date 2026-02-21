@@ -1,0 +1,32 @@
+<html lang="en">
+    <head>
+        <title>ANK Signings</title>
+    </head>
+    <body>
+        <button id="signinbutton">Sign In</button>
+        <h1>ANK Signings</h1>
+        <p>Fantasy Football Manager to play with friends</p>
+        <button id="dashbutton">Dashboard</button>
+        <button id="playersbutton">Players</button>
+        <button id="teamsbutton">Teams</button>
+        <button id="tournamentsbutton">Tournaments</button>
+
+        <script>
+            document.getElementById("dashbutton").addEventListener('click', function () {
+                window.location.href = "dashboard";
+            });
+            document.getElementById("playersbutton").addEventListener('click', function () {
+                window.location.href = "players";
+            });
+            document.getElementById("signinbutton").addEventListener('click', function () {
+                window.location.href = "signin";
+            });
+            document.getElementById("teamsbutton").addEventListener('click', function () {
+                window.location.href = "teams";
+            });
+            document.getElementById("tournamentsbutton").addEventListener('click', function () {
+                window.location.href = "tournaments";
+            });
+        </script>
+    </body>
+</html>

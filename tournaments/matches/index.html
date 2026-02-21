@@ -1,0 +1,69 @@
+<html lang="en">
+    <head>
+        <title id="title">Matches</title>
+    </head>
+    <body>
+        <button id="backbutton">Back</button>
+        <h1 id="h1">Matches</h1>
+        <div id="matchesdiv"></div>
+
+        <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const tourValue = urlParams.get("tour");
+            document.getElementById("backbutton").addEventListener('click', function () {
+                window.location.href = "../?tour=" + tourValue;
+            })
+
+            fetch("../../tournaments.json").then(response => response.json()).then(data => {
+                let toursjson = data;
+
+                if (tourValue == null || !Object.keys(toursjson).includes(tourValue)) {
+                    window.location.href = "..";
+                }
+                let title = document.getElementById("title");
+                title.textContent = toursjson[tourValue].name + " Matches"
+                let h1 = document.getElementById("h1");
+                h1.textContent = toursjson[tourValue].name + " Matches";
+                matchesdiv = document.getElementById("matchesdiv");
+                fetch("../../matches.json").then(response => response.json()).then(data => {
+                    let matchesjson = data;
+                    for (let i = 0; i < toursjson[tourValue].matchdays.length; i++) {
+                        let day = toursjson[tourValue].matchdays[i];
+                        let mdiv = document.createElement("div");
+                        mdiv.id = "matchday" + i;
+                        pmatch = document.createElement("p");
+                        let md = i + 1;
+                        pmatch.textContent = "Matchday " + md;
+                        mdiv.appendChild(pmatch)
+                        day.forEach(mt => {
+                            let match = matchesjson[mt];
+                            let ddiv = document.createElement("div");
+                            ddiv.id = match.homeTeam + "-" + match.awayTeam;
+                            let p1 = document.createElement("p");
+                            if (match.score.length > 0) {
+                                p1.textContent = match.homeTeam + " " + match.score[0];
+                            } else {
+                                p1.textContent = match.homeTeam;
+                            }
+                            ddiv.appendChild(p1);
+                            let p2 = document.createElement("p");
+                            if (match.score.length > 0) {
+                                p2.textContent = match.awayTeam + " " + match.score[1];
+                            } else {
+                                p2.textContent = match.awayTeam;
+                            }
+                            ddiv.appendChild(p2);
+                            ddiv.appendChild(document.createElement("br"));
+                            let a = document.createElement("a");
+                            a.appendChild(ddiv);
+                            a.href = "../../match/?match=" + mt;
+                            mdiv.appendChild(a);
+                        })
+                        matchesdiv.appendChild(mdiv);
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>

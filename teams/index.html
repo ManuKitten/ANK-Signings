@@ -1,0 +1,70 @@
+<html lang="en">
+
+<head>
+    <title id="title">Team</title>
+</head>
+
+<body>
+    <button id="backbutton">Back</button>
+    <h1 id="header1">Teams</h1>
+    <div id="buttondiv"></div>
+    <ul id="teamslist"></ul>
+
+    <script>
+        
+        try {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const teamValue = urlParams.get("team");
+
+            fetch("../teams.json")
+                .then(response => response.json())
+                .then(data => {
+                    let teamsjson = data;
+                    let validTeams = Object.keys(teamsjson);
+                    
+                    if (teamValue == null || !validTeams.includes(teamValue)) {
+                        document.getElementById("backbutton").addEventListener('click', function () {
+                            window.location.href = "..";
+                        })
+
+                        let ul = document.getElementById("teamslist");
+                        for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                            li = document.createElement("li");
+                            a = document.createElement("a");
+                            a.href = "?team=" + Object.keys(teamsjson)[i];
+                            a.textContent = teamsjson[Object.keys(teamsjson)[i]].name;
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                    } else {
+                        document.getElementById("backbutton").addEventListener('click', function () {
+                            if (teamsjson[teamValue].owner == localStorage.getItem("name")) {
+                                window.location.href = "../dashboard";
+                            } else {
+                                window.location.href = "../teams";
+                            }
+                        })
+
+                        let title = document.getElementById("title");
+                        title.textContent = teamsjson[teamValue].name;
+                        let h1 = document.getElementById("header1");
+                        h1.textContent = teamsjson[teamValue].name;
+                        let buttondiv = document.getElementById("buttondiv");
+                        button = document.createElement("button");
+                        button.id = "playersbutton";
+                        button.textContent = "Players";
+                        buttondiv.appendChild(button);
+                        button.addEventListener('click', function () {
+                            window.location.href = "players/?team=" + teamValue
+                        })
+                    }
+                })
+        } catch (error) {
+            console.error("Error query")
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<html lang="en">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <button id="backbutton">Back</button>
+    <h1>Dashboard</h1>
+    <p>Manage Teams</p>
+    <div id="buttondiv"></div>
+    <p>Mail</p>
+    <button id="mailbutton">Mail</button>
+
+
+    <script>
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = "..";
+        })
+        document.getElementById("mailbutton").addEventListener('click', function () {
+            window.location.href = "../mail";
+        })
+
+        let div = document.getElementById("buttondiv");
+        fetch("../teams.json")
+            .then(response => response.json())
+            .then(data => {
+                let teamsjson = data;
+                console.log(teamsjson);
+                for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                    if (teamsjson[Object.keys(teamsjson)[i]].owner == localStorage.getItem("name")) { 
+                        let button = document.createElement("button");
+                        button.textContent = teamsjson[Object.keys(teamsjson)[i]].name;
+                        button.addEventListener('click', function () {
+                            window.location.href = "../teams/?team=" + Object.keys(teamsjson)[i]
+                        })
+                        div.appendChild(button);
+                    }
+                    
+                }
+            })
+    </script>
+</body>
+
+</html>

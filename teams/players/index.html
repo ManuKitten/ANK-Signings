@@ -1,0 +1,92 @@
+<html lang="en">
+
+<head>
+    <title id="title">Players</title>
+</head>
+
+<body>
+    <button id="backbutton">Back to Team</button>
+    <h1 id="header1">Players</h1>
+    <table id="playerstable">
+        <tr>
+            <td>Name</td>
+            <td>Pos</td>
+            <td>Born</td>
+            <td>Country</td>
+            <td>Rating</td>
+        </tr>
+    </table>
+
+    <script>
+
+        try {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const teamValue = urlParams.get("team");
+
+            fetch("../../teams.json")
+                .then(response => response.json())
+                .then(data => {
+                    let teamsjson = data;
+                    let validTeams = Object.keys(teamsjson);
+                    console.log(teamValue);
+                    if (teamValue == null || !validTeams.includes(teamValue)) {
+                        window.location.href = "../..";
+                    }
+
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../?team=" + teamValue
+                    })
+
+                    let h1 = document.getElementById("header1");
+                    h1.textContent = "Players of " + teamsjson[teamValue].name
+                    let title = document.getElementById("title");
+                    title.textContent = teamsjson[teamValue].name + " Players"
+
+                    fetch("../../players.json")
+                        .then(response => response.json())
+                        .then(data => {
+                            let playersjson = data;
+                            let table = document.getElementById("playerstable");
+                            for (let i = 0; i < Object.keys(playersjson).length; i++) {
+                                if (playersjson[Object.keys(playersjson)[i]].team == teamValue) {
+                                    let row = document.createElement("tr");
+                                    row.id = Object.keys(playersjson)[i];
+                                    
+                                    let cell1 = document.createElement("td");
+                                    cell1.textContent = playersjson[Object.keys(playersjson)[i]].name;
+                                    row.appendChild(cell1);
+
+                                    let cell2 = document.createElement("td");
+                                    cell2.textContent = playersjson[Object.keys(playersjson)[i]].position;
+                                    row.appendChild(cell2);
+
+                                    let cell3 = document.createElement("td");
+                                    cell3.textContent = playersjson[Object.keys(playersjson)[i]].birthdate;
+                                    row.appendChild(cell3);
+
+                                    let cell4 = document.createElement("td");
+                                    cell4.textContent = playersjson[Object.keys(playersjson)[i]].country;
+                                    row.appendChild(cell4);
+
+                                    let cell5 = document.createElement("td");
+                                    cell5.textContent = playersjson[Object.keys(playersjson)[i]].rating;
+                                    row.appendChild(cell5);
+
+                                    table.appendChild(row);
+                                    row.addEventListener('click', function() {
+                                        window.location.href = "../../players?player=" + row.id;
+                                    })
+                                }
+
+                            }
+                        })
+
+                })
+        } catch {
+            console.error("Error Query")
+        }
+    </script>
+</body>
+
+</html>

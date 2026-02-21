@@ -1,0 +1,29 @@
+{
+    "mx000000": {
+        "tournament": "Liga ANK",
+        "homeTeam": "ANK Team",
+        "awayTeam": "ANK Mod",
+        "score": [3,0],
+        "events": [
+            [15, "goal", "ANK Team", "px000001"],
+            [22, "yell", "ANK Team", "px000008"],
+            [39, "goal", "ANK Team", "px000002"],
+            [73, "goal", "ANK Team", "px000003"],
+            [89, "redc", "ANK Team", "px000000"]
+        ]
+    },
+    "mx000001": {
+        "tournament": "Liga ANK",
+        "homeTeam": "ANK Mod",
+        "awayTeam": "Club de Fútbol ANK",
+        "score": [],
+        "events": []
+    },
+    "mx000002": {
+        "tournament": "Liga ANK",
+        "homeTeam": "Club de Fútbol ANK",
+        "awayTeam": "ANK Team",
+        "score": [],
+        "events": []
+    }
+}

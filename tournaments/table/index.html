@@ -1,0 +1,71 @@
+<html lang="en">
+    <head>
+        <title id="title">Table</title>
+    </head>
+    <body>
+        <button id="backbutton">Back</button>
+        <h1>League Table</h1>
+        <table id="table">
+            <tr>
+                <td>Team</td>
+                <td>P</td>
+                <td>W</td>
+                <td>D</td>
+                <td>L</td>
+                <td>Sc</td>
+                <td>Ag</td>
+                <td><strong>Points</strong></td>
+            </tr>
+        </table>
+
+        <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const tourValue = urlParams.get("tour");
+
+            document.getElementById("backbutton").addEventListener('click', function () {
+                window.location.href = "../?tour=" + tourValue;
+            })
+
+            fetch("../../tournaments.json").then(response => response.json()).then(data => {
+                let toursjson = data;
+                let tour = toursjson[tourValue];
+                table = document.getElementById("table");
+                for (let i = 0; i < tour.table.length; i++) {
+                    let tr = document.createElement("tr");
+                    tr.id = tour.table[i][0];
+                    let c0 = document.createElement("td");
+                    fetch("../../teams.json").then(response => response.json()).then(data => {
+                        let teamsjson = data;
+                        c0.textContent = teamsjson[tour.table[i][0]].name;
+                    })
+                    tr.appendChild(c0);
+                    let c1 = document.createElement("td");
+                    c1.textContent = tour.table[i][1];
+                    tr.appendChild(c1);
+                    let c2 = document.createElement("td");
+                    c2.textContent = tour.table[i][2];
+                    tr.appendChild(c2);
+                    let c3 = document.createElement("td");
+                    c3.textContent = tour.table[i][3];
+                    tr.appendChild(c3);
+                    let c4 = document.createElement("td");
+                    c4.textContent = tour.table[i][4];
+                    tr.appendChild(c4);
+                    let c5 = document.createElement("td");
+                    c5.textContent = tour.table[i][5];
+                    tr.appendChild(c5);
+                    let c6 = document.createElement("td");
+                    c6.textContent = tour.table[i][6];
+                    tr.appendChild(c6);
+                    let c7 = document.createElement("td");
+                    c7.textContent = tour.table[i][7];
+                    let str = document.createElement("strong")
+                    str.appendChild(c7);
+                    tr.appendChild(str);
+                    table.appendChild(tr);
+                }
+            })
+        </script>
+    </body>
+</html>

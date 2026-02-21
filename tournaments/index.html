@@ -1,0 +1,62 @@
+<html lang="en">
+    <head>
+        <title id="title">Tounaments</title>
+    </head>
+    <body>
+        <button id="backbutton">Back</button>
+        <h1 id="h1">Tournaments</h1>
+        <ul id="tourslist"></ul>
+        <div id="buttondiv"></div>
+
+        <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const tourValue = urlParams.get("tour");
+
+            fetch("../tournaments.json").then(response => response.json()).then(data => {
+                let toursjson = data;
+                let validTours = Object.keys(toursjson);
+
+                if (tourValue == null || !validTours.includes(tourValue)) {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "..";
+                    })
+                    let ul = document.getElementById("tourslist");
+                    Object.keys(toursjson).forEach(key => {
+                        let li = document.createElement("li");
+                        let a = document.createElement("a");
+                        a.textContent = toursjson[key].name;
+                        a.href = "?tour=" + key;
+                        li.appendChild(a)
+                        ul.appendChild(li)
+                    })
+                } else {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../tournaments";
+                    })
+                    let title = document.getElementById("title");
+                    title.textContent = toursjson[tourValue].name;
+                    let h1 = document.getElementById("h1");
+                    h1.textContent = toursjson[tourValue].name;
+
+                    buttondiv = document.getElementById("buttondiv");
+
+                    matbutton = document.createElement("button");
+                    matbutton.textContent = "Matches";
+                    matbutton.id = "matbutton";
+                    buttondiv.appendChild(matbutton);
+                    matbutton.addEventListener('click', function () {
+                        window.location.href = "matches/?tour=" + tourValue;
+                    })
+                    tabbutton = document.createElement("button");
+                    tabbutton.textContent = "Table";
+                    tabbutton.id = "tabbutton";
+                    buttondiv.appendChild(tabbutton);
+                    tabbutton.addEventListener('click', function() {
+                        window.location.href = "table/?tour=" + tourValue
+                    })
+                }
+            })
+        </script>
+    </body>
+</html>
