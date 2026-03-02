@@ -1,4 +1,5 @@
 require('dotenv').config();
+const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_URI);
 const express = require('express');
 const multer = require('multer')
@@ -129,18 +130,18 @@ app.get('/api/players', async (req, res) => {
 app.post('/api/add-message', async (req, res) => {
     try {
         const { serverId, messageId, messageData } = req.body;
-        
+
         // We include userId (the old serverId) so we know who the mail belongs to
         await Correspondence.findOneAndUpdate(
             { mailId: messageId },
-            { 
-                ...messageData, 
-                userId: serverId, 
-                mailId: messageId 
+            {
+                ...messageData,
+                userId: serverId,
+                mailId: messageId
             },
             { upsert: true, new: true }
         );
-        
+
         res.json({ success: true, messageId: messageId });
     } catch (err) {
         console.error("Database Error:", err);
@@ -246,7 +247,7 @@ app.post('/api/add-debt', async (req, res) => {
 app.post('/api/pay-debt-money', async (req, res) => {
     try {
         const { teamId, amount, password } = req.body;
-        
+
         // Find the specific team
         const team = await Team.findOne({ teamId: teamId });
         if (!team) return res.status(404).json({ error: "Team not found" });
@@ -255,7 +256,7 @@ app.post('/api/pay-debt-money', async (req, res) => {
         let decryptedWealth = vigenere(team.wealth, password, false);
         let newWealthNum = Number(decryptedWealth) + (1000000 * amount);
         team.wealth = vigenere(newWealthNum.toString(), password);
-        
+
         // Save the updated document back to MongoDB
         await team.save();
         res.json({ success: true });
@@ -275,7 +276,7 @@ app.post('/api/add-match-event', async (req, res) => {
 
         if (eventExists) {
             match.events.push(eventArray);
-            
+
             // Goal logic
             if (eventArray[1] === "goal" || eventArray[1] === "pens") {
                 const teamIdx = (eventArray[2] === match.homeTeam) ? 0 : 1;
@@ -373,7 +374,7 @@ app.post('/api/update-tour-after-match', async (req, res) => {
 app.post('/api/update-players-value', async (req, res) => {
     try {
         const { events } = req.body;
-        
+
         for (const ev of events) {
             const type = ev[1];
             const pId = ev[3];
@@ -399,10 +400,10 @@ app.post('/api/add-lineup', async (req, res) => {
     try {
         const { matchId, teamNum, lineUp } = req.body;
         const match = await Match.findOne({ matchId });
-        
+
         match.lineups[teamNum] = lineUp;
         match.markModified('lineups');
-        
+
         await match.save();
         res.json({ success: true });
     } catch (err) {
@@ -430,7 +431,7 @@ app.post('/api/add-account', async (req, res) => {
         // If it doesn't exist, create a new document."
         await Account.findOneAndUpdate(
             { accountId: name }, // Your model uses 'accountId'
-            { passwordId: password }, 
+            { passwordId: password },
             { upsert: true }
         );
 
@@ -476,17 +477,17 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Configure Cloudinary with your credentials (put these in your .env file!)
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET
 });
 
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'team_photos',
-    public_id: (req, file) => req.body.teamName || 'default_team',
-  },
+    cloudinary: cloudinary,
+    params: {
+        folder: 'team_photos',
+        public_id: (req, file) => req.body.teamName || 'default_team',
+    },
 });
 
 const upload = multer({ storage: storage });
@@ -495,7 +496,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).send('No file uploaded.');
 
     // req.file.path is the URL provided by Cloudinary!
-    const imageUrl = req.file.path; 
+    const imageUrl = req.file.path;
 
     await Team.findOneAndUpdate(
         { teamId: req.body.teamId },
@@ -506,23 +507,23 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 app.post('/duplicate-default-team-photo', async (req, res) => {
-  const { teamId } = req.body;
-  
-  // Instead of copying a file, we update the team in MongoDB 
-  // to use the default image URL from Cloudinary.
-  const defaultUrl = "https://res.cloudinary.com/your-cloud/image/upload/defaultTeamPhoto.png";
+    const { teamId } = req.body;
 
-  try {
-    await Team.findOneAndUpdate({ teamId }, { logoUrl: defaultUrl });
-    res.send("Default photo assigned successfully");
-  } catch (err) {
-    res.status(500).send("Error updating team photo");
-  }
+    // Instead of copying a file, we update the team in MongoDB 
+    // to use the default image URL from Cloudinary.
+    const defaultUrl = "https://res.cloudinary.com/your-cloud/image/upload/defaultTeamPhoto.png";
+
+    try {
+        await Team.findOneAndUpdate({ teamId }, { logoUrl: defaultUrl });
+        res.send("Default photo assigned successfully");
+    } catch (err) {
+        res.status(500).send("Error updating team photo");
+    }
 });
 
 // 3. Serve Static Files THIRD
 // This allows your index.html files to be found
 app.use(express.static(__dirname));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
