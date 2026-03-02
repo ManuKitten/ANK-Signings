@@ -1,0 +1,253 @@
+@font-face {
+    font-family: "Sansation";
+    src: url("../Sansation-Regular.ttf");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Sansation";
+    src: url("../Sansation-Bold.ttf");
+    font-weight: 700;
+    font-style: normal;
+}
+
+p, h1, button, h2, td, li, label, a, td, h3 {
+    color: rgb(3, 9, 59);
+    font-family: "Sansation";
+}
+
+body {
+    background-color: rgb(255, 255, 255);
+}
+
+h1 {
+    text-align: center;
+}
+
+.h1-title {
+    font-size: 60px;
+    margin-bottom: 100px;
+}
+
+header {
+    border-bottom: 2px solid #dedede;
+    background-color: #ffffff;
+    display:flex;
+    padding: 4px;
+    position: sticky;
+    top:0;
+    z-index: 1000;
+}
+
+button {
+    border-style: solid;
+    cursor: pointer;
+}
+
+a, a:visited, a:hover, a:active {
+    color: inherit;
+    text-decoration: none;
+    
+}
+
+table {
+    border: 2px solid rgb(222, 222, 222);
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+td {
+    padding: 8px;
+    font-size: larger;
+    border: 1px solid rgb(236, 236, 236);
+}
+
+li {
+    list-style-type: none;
+    border-radius: 12px;
+    margin:3px;
+    padding: 9px;
+    transition: background-color 0.5s 0.1s;
+    border: 1px solid #e0e0e0;
+}
+
+select {
+    border-radius: 15px;
+    height: 30px;
+    width: 150px;
+    border: 1px solid rgb(234, 234, 234);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.listelem:hover {
+    background-color:rgb(236, 236, 236);
+    cursor: pointer;
+}
+
+#newsDiv {
+    margin-left: 70px;
+    margin-right: 70px;
+}
+
+#infodiv {
+    margin-left: 200px;
+    background-color: rgb(244, 244, 244);
+    padding: 10px;
+    padding-left: 30px;
+    border-radius: 3px;
+    border: 2px solid rgb(233, 233, 233);
+    margin: 20px;
+    grid-template: "a b";
+    grid-template-columns: auto 250px;
+}
+#market {
+    background-color: rgb(254, 254, 254);
+    border-radius: 3px;
+    border: 2px solid rgb(233, 233, 233);
+    width: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+}
+#marketValueDisplay {
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+#tradediv {
+    margin-left: 200px;
+    background-color: rgb(244, 244, 244);
+    padding: 18px;
+    border-radius: 3px;
+    border: 2px solid rgb(233, 233, 233);
+    margin: 20px;
+}
+.fancyDiv {
+    margin-left: 200px;
+    background-color: rgb(255, 255, 255);
+    padding: 14px;
+    border-radius: 3px;
+    border: 2px solid rgb(233, 233, 233);
+    margin: 20px;
+}
+.reportDiv {
+    margin-top: 10px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    padding: 30px;
+}
+tr {
+    transition: 400ms;
+}
+.selectableTr:hover {
+    background-color: #eaeaea;
+    cursor: pointer;
+}
+
+#optionslist {
+    border-bottom: 2px solid#dadada;
+}
+
+.event {
+    border-color:white;
+}
+
+.headtr {
+    background-color: rgb(228, 228, 228);
+}
+
+.strong {
+    font-weight: 1000;
+    font-size: 30px;
+    margin-bottom: -20px;
+    margin-top: -28px;
+    margin-left: 8px;
+}
+
+.signindiv {
+    margin-left: auto;
+}
+
+.bodydiv {
+    margin-left: 120px;
+    margin-right: 120px;
+    margin-bottom: 120px;
+    font-size: larger;
+}
+
+.descp {
+    margin-bottom: 50px;
+}
+
+.inputText {
+    margin:4px;
+    padding: 3px;
+    padding-left: 10px;
+    border-radius: 15px;
+    height: 30px;
+    border: 1px solid rgb(185, 185, 185);
+    font-family: "Sansation";
+}
+
+.buttonsdiv {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.fancyLink {
+    background-color: #0f0f0f;
+    border-radius: 30px;
+}
+
+.winningDiv {
+    background-color: #fdfdfd;
+    border: 1px solid #e1e1e1;
+    width: 670px;
+    padding: 15px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.matchdiv {
+    background-color: #f8f8f8;
+    border: 2px solid #e1e1e1;
+    width: 330px;
+    padding: 15px;
+    border-radius: 10px;
+}
+.matchdiv:hover {
+    cursor: pointer;
+}
+
+.linkbutton {
+    background-color: rgb(249, 249, 249);
+    padding: 22px;
+    border-radius: 7px;
+    border-color: rgb(232, 232, 232);
+    font-size: 20px;
+    outline: none;
+    margin:10px;
+    transition: background-color 0.3s;
+}
+.linkbutton:hover {
+    background-color: rgb(237, 237, 237);
+}
+
+.sendbutton {
+    color:#f1f1f1;
+    background-color: rgb(0, 0, 0);
+    padding: 7px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 18px;
+    transition: background-color 0.3s;
+}
+.sendbutton:hover {
+    background-color: rgb(35, 35, 35);
+}

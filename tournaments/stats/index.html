@@ -1,0 +1,285 @@
+<html lang="en">
+
+<head>
+    <title id="title">Matches</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" style="margin:5px;display:none;" class="sendbutton">Back</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">Tournaments</h1>
+        </div>
+    </div>
+
+    <div id="optionsdiv">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;" id="newstab">News</li>
+            <li class="listelem" style="padding: 15px;" id="matctab">Matches</li>
+            <li class="listelem" style="padding: 15px;" id="tabltab">Table</li>
+            <li class="listelem" style="padding: 15px;" id="stattab">Statistics</li>
+        </ul>
+    </div>
+    <div class="bodydiv" style="display: grid;grid-template: 'a b c' 600px;">
+        <div id="goalsDiv" style="grid-area: a;">
+            <table id="goalsTable" style="border: 1px solid #d4d4d4">
+                <tr>
+                    <td>
+                        <p style="margin-left:11px;">Goals</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="yellowCardsDiv" style="grid-area: b;">
+            <table id="yellowCardsTable" style="border: 1px solid #d4d4d4">
+                <tr>
+                    <td>
+                        <p style="margin-left:11px;">Yellow Cards</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="redCardsDiv" style="grid-area: c;">
+            <table id="redCardsTable" style="border: 1px solid #d4d4d4">
+                <tr>
+                    <td>
+                        <p style="margin-left:11px;">Red Cards</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const tourValue = urlParams.get("tour");
+
+        let teamsjson;
+        fetch("api/teams").then(response => response.json()).then(data => {
+            teamsjson = data;
+            fetch("api/tournaments").then(response => response.json()).then(data => {
+                let toursjson = data;
+
+                if (tourValue == null || !Object.keys(toursjson).includes(tourValue)) {
+                    window.location.href = "..";
+                }
+                let tournament = toursjson[tourValue];
+
+                let title = document.getElementById("title");
+                title.textContent = toursjson[tourValue].name + " Statistics"
+                let imgdiv = document.getElementById("imgDiv");
+                imgdiv.style.backgroundImage = "url('../../images/teamBackground.png')";
+                imgdiv.style.height = 372;
+                let clubLogo = document.getElementById("clubLogo");
+                clubLogo.src = "../../images/" + tourValue + ".png"
+                let size = 120;
+                clubLogo.width = size;
+                clubLogo.height = size;
+                clubLogo.style.marginRight = "30px"
+                clubLogo.style.marginTop = "15px"
+                let header1 = document.getElementById("header1");
+                header1.style.color = "#ffffff";
+                header1.style.textAlign = "left";
+                header1.textContent = toursjson[tourValue].name;
+                let headerDiv = document.getElementById("headerDiv");
+                headerDiv.style.display = "flex";
+                headerDiv.style.marginTop = "0px"
+                headerDiv.style.padding = "110px";
+                headerDiv.style.fontFamily = "Sansation";
+                headerDiv.style.fontWeight = 700;
+
+                let ul = document.getElementById("optionslist")
+
+                let news = document.getElementById("newstab");
+                news.addEventListener('click', function () {
+                    window.location.href = "../?tour=" + tourValue;
+                });
+
+                let mat = document.getElementById("matctab");
+                mat.addEventListener('click', function () {
+                    window.location.href = "../matches/?tour=" + tourValue;
+                });
+
+                let tab = document.getElementById("tabltab");
+                tab.addEventListener('click', function () {
+                    window.location.href = "../table/?tour=" + tourValue;
+                });
+
+                let goalsTable = document.getElementById("goalsTable");
+                let yellowCardsTable = document.getElementById("yellowCardsTable");
+                let redCardsTable = document.getElementById("redCardsTable");
+                fetch("api/players").then(response => response.json()).then(data => {
+                    let playersjson = data;
+
+                    let orderArray1 = Object.keys(tournament.stats.goals);
+                    for (let i = 0; i < orderArray1.length; i++) {
+                        for (let j = 0; j < orderArray1.length - 1; j++) {
+                            let item = orderArray1[j]
+                            if (tournament.stats.goals[orderArray1[j + 1]] > tournament.stats.goals[orderArray1[j]]) {
+                                orderArray1[j] = orderArray1[j + 1];
+                                orderArray1[j + 1] = item;
+                            }
+                        }
+                    }
+                    for (let i = 0; i < Math.min(orderArray1.length, 8); i++) {
+                        let tr = document.createElement("tr");
+                        let td = document.createElement("td");
+                        td.style.display = "grid";
+                        td.style.gridTemplate = '"a b" 40px'
+                        td.style.gridTemplateColumns = "290px 40px"
+                        td.style.padding = "8px"
+                        let pName = document.createElement("p");
+                        pName.textContent = playersjson[orderArray1[i]].name;
+                        pName.style.gridArea = "a";
+                        pName.style.marginTop = "5px";
+                        pName.style.marginLeft = "9px";
+                        td.appendChild(pName);
+                        let pClub = document.createElement("p");
+                        pClub.textContent = teamsjson[playersjson[orderArray1[i]].team].name;
+                        pClub.style.gridArea = "a";
+                        pClub.style.marginTop = "25px";
+                        pClub.style.marginLeft = "9px";
+                        pClub.style.fontSize = "12px"
+                        pClub.style.color = "#383868"
+                        td.appendChild(pClub);
+                        let pScore = document.createElement("p");
+                        let pScoreStrong = document.createElement("strong");
+                        pScoreStrong.textContent = tournament.stats.goals[orderArray1[i]];
+                        pScore.appendChild(pScoreStrong);
+                        pScore.style.placeSelf = "center";
+                        pScore.style.gridArea = "b";
+                        td.appendChild(pScore);
+                        tr.appendChild(td);
+                        tr.style.border = "1px solid #eaeaea";
+                        tr.className = "selectableTr";
+                        tr.addEventListener('click', function () {
+                            window.location.href = "../../players?player=" + orderArray1[i];
+                        })
+                        goalsTable.appendChild(tr);
+                    }
+
+                    let orderArray2 = Object.keys(tournament.stats.yellowCards);
+                    for (let i = 0; i < orderArray2.length; i++) {
+                        for (let j = 0; j < orderArray2.length - 1; j++) {
+                            let item = orderArray2[j]
+                            if (tournament.stats.yellowCards[orderArray2[j + 1]] > tournament.stats.yellowCards[orderArray2[j]]) {
+                                orderArray2[j] = orderArray2[j + 1];
+                                orderArray2[j + 1] = item;
+                            }
+                        }
+                    }
+                    for (let i = 0; i < Math.min(orderArray2.length, 8); i++) {
+                        let tr = document.createElement("tr");
+                        let td = document.createElement("td");
+                        td.style.display = "grid";
+                        td.style.gridTemplate = '"a b" 40px'
+                        td.style.gridTemplateColumns = "290px 40px"
+                        td.style.padding = "8px"
+                        let pName = document.createElement("p");
+                        pName.textContent = playersjson[orderArray2[i]].name;
+                        pName.style.gridArea = "a";
+                        pName.style.marginTop = "5px";
+                        pName.style.marginLeft = "9px";
+                        td.appendChild(pName);
+                        let pClub = document.createElement("p");
+                        pClub.textContent = teamsjson[playersjson[orderArray2[i]].team].name;
+                        pClub.style.gridArea = "a";
+                        pClub.style.marginTop = "25px";
+                        pClub.style.marginLeft = "9px";
+                        pClub.style.fontSize = "12px"
+                        pClub.style.color = "#383868"
+                        td.appendChild(pClub);
+                        let pScore = document.createElement("p");
+                        let pScoreStrong = document.createElement("strong");
+                        pScoreStrong.textContent = tournament.stats.yellowCards[orderArray2[i]];
+                        pScore.appendChild(pScoreStrong);
+                        pScore.style.placeSelf = "center";
+                        pScore.style.gridArea = "b";
+                        td.appendChild(pScore);
+                        tr.appendChild(td);
+                        tr.style.border = "1px solid #eaeaea";
+                        tr.className = "selectableTr";
+                        tr.addEventListener('click', function () {
+                            window.location.href = "../../players?player=" + orderArray2[i];
+                        })
+                        yellowCardsTable.appendChild(tr);
+                    }
+
+                    let orderArray = Object.keys(tournament.stats.redCards);
+                    for (let i = 0; i < orderArray.length; i++) {
+                        for (let j = 0; j < orderArray.length - 1; j++) {
+                            let item = orderArray[j]
+                            if (tournament.stats.redCards[orderArray[j + 1]] > tournament.stats.redCards[orderArray[j]]) {
+                                orderArray[j] = orderArray[j + 1];
+                                orderArray[j + 1] = item;
+                            }
+                        }
+                    }
+                    for (let i = 0; i < Math.min(orderArray.length, 8); i++) {
+                        let tr = document.createElement("tr");
+                        let td = document.createElement("td");
+                        td.style.display = "grid";
+                        td.style.gridTemplate = '"a b" 40px'
+                        td.style.gridTemplateColumns = "290px 40px"
+                        td.style.padding = "8px"
+                        let pName = document.createElement("p");
+                        pName.textContent = playersjson[orderArray[i]].name;
+                        pName.style.gridArea = "a";
+                        pName.style.marginTop = "5px";
+                        pName.style.marginLeft = "9px";
+                        td.appendChild(pName);
+                        let pClub = document.createElement("p");
+                        pClub.textContent = teamsjson[playersjson[orderArray[i]].team].name;
+                        pClub.style.gridArea = "a";
+                        pClub.style.marginTop = "25px";
+                        pClub.style.marginLeft = "9px";
+                        pClub.style.fontSize = "12px"
+                        pClub.style.color = "#383868"
+                        td.appendChild(pClub);
+                        let pScore = document.createElement("p");
+                        let pScoreStrong = document.createElement("strong");
+                        pScoreStrong.textContent = tournament.stats.redCards[orderArray[i]];
+                        pScore.appendChild(pScoreStrong);
+                        pScore.style.placeSelf = "center";
+                        pScore.style.gridArea = "b";
+                        td.appendChild(pScore);
+                        tr.appendChild(td);
+                        tr.style.border = "1px solid #eaeaea";
+                        tr.className = "selectableTr";
+                        tr.addEventListener('click', function () {
+                            window.location.href = "../../players?player=" + orderArray[i];
+                        })
+                        redCardsTable.appendChild(tr);
+                    }
+                })
+
+                /*let td = document.createElement("td");
+                td.textContent = "embape";
+                td.style.borderRadius = "0px"
+                goalsTable.appendChild(td)
+                td = document.createElement("td");
+                td.textContent = "mesi";
+                td.style.borderRadius = "0px"
+                goalsTable.appendChild(td)*/
+            })
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+<html lang="en">
+
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" style="display:none;">Back</button>
+    <h1 class="h1-title">Dashboard</h1>
+    <div class="bodydiv">
+        <p>Manage Teams</p>
+        <div id="buttondiv"></div>
+        <p>Mail</p>
+        <button id="mailbutton" class="linkbutton">Mail</button>
+        <p>Log Out</p>
+        <button id="logoutbutton" class="sendbutton">Log Out</button>
+    </div>
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        } else {
+            window.location.href = "../signin"
+        }
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = "..";
+        })
+        document.getElementById("mailbutton").addEventListener('click', function () {
+            window.location.href = "../mail";
+        })
+        document.getElementById("logoutbutton").addEventListener('click', function () {
+            localStorage.clear()
+            window.location.href = "..";
+        })
+
+
+        let div = document.getElementById("buttondiv");
+        fetch("api/teams")
+            .then(response => response.json())
+            .then(data => {
+                let teamsjson = data;
+                console.log(teamsjson);
+                for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                    if (teamsjson[Object.keys(teamsjson)[i]].owner == localStorage.getItem("name")) {
+                        let button = document.createElement("button"); button.textContent = teamsjson[Object.keys(teamsjson)[i]].name;
+                        button.className = "linkbutton"; button.addEventListener('click', function () {
+                            window.location.href = "../teams/?team=" + Object.keys(teamsjson)[i]
+                        });
+                        div.appendChild(button);
+                    }
+                }
+            }) </script>
+</body>
+
+</html>

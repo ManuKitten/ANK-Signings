@@ -1,0 +1,178 @@
+<html lang="en">
+
+<head>
+    <title id="title">Table</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" class="sendbutton" style="display:none">Back</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">League Table</h1>
+        </div>
+    </div>
+    <div id="optionsdiv">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;" id="newstab">News</li>
+            <li class="listelem" style="padding: 15px;" id="matctab">Matches</li>
+            <li class="listelem" style="padding: 15px;" id="tabltab">Table</li>
+            <li class="listelem" style="padding: 15px;" id="stattab">Statistics</li>
+        </ul>
+    </div>
+    <div class="bodydiv">
+        <table id="table" style="margin-bottom: 50px;">
+            <tr class="headtr">
+                <td>Team</td>
+                <td>P</td>
+                <td>W</td>
+                <td>D</td>
+                <td>L</td>
+                <td>Sc</td>
+                <td>Ag</td>
+                <td><strong>Points</strong></td>
+            </tr>
+        </table>
+    </div>
+
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const tourValue = urlParams.get("tour");
+
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = "../?tour=" + tourValue;
+        })
+
+
+        fetch("api/tournaments").then(response => response.json()).then(data => {
+            let toursjson = data;
+            let tour = toursjson[tourValue];
+            table = document.getElementById("table");
+            if (tourValue == null || !Object.keys(toursjson).includes(tourValue)) {
+                window.location.href = "../../tournaments"
+            }
+            title = document.getElementById("title");
+            title.textContent = tour.name + " Table"
+            imgdiv = document.getElementById("imgDiv");
+            imgdiv.style.backgroundImage = "url('../../images/teamBackground.png')";
+            imgdiv.style.height = 372;
+            let clubLogo = document.getElementById("clubLogo");
+            clubLogo.src = "../../images/" + tourValue + ".png"
+            let size = 120;
+            clubLogo.width = size;
+            clubLogo.height = size;
+            clubLogo.style.marginRight = "30px"
+            clubLogo.style.marginTop = "15px"
+            let header1 = document.getElementById("header1");
+            header1.style.color = "#ffffff";
+            header1.style.textAlign = "left";
+            header1.textContent = toursjson[tourValue].name;
+            let headerDiv = document.getElementById("headerDiv");
+            headerDiv.style.display = "flex";
+            headerDiv.style.marginTop = "0px"
+            headerDiv.style.padding = "110px";
+            headerDiv.style.fontFamily = "Sansation";
+            headerDiv.style.fontWeight = 700;
+
+            let orderedTable = tour.table;
+            for (let i = 0; i < tour.table.length; i++) {
+                for (let j = 0; j < tour.table.length - 1; j++) {
+                    let item = orderedTable[j];
+                    if (orderedTable[j + 1][7] > item[7]) {
+                        orderedTable[j] = orderedTable[j + 1];
+                        orderedTable[j + 1] = item;
+                    } else if (orderedTable[j + 1][7] == item[7] && (orderedTable[j + 1][5] - orderedTable[j + 1][6] > item[5] - item[6])) {
+                        orderedTable[j] = orderedTable[j + 1];
+                        orderedTable[j + 1] = item;
+                    }
+                }
+            }
+            for (let i = 0; i < tour.table.length; i++) {
+                let tr = document.createElement("tr");
+                tr.id = orderedTable[i][0];
+                tr.className = "selectableTr"
+                tr.addEventListener('click', function () {
+                    window.location.href = "../../teams?team=" + orderedTable[i][0]
+                })
+                let c0 = document.createElement("td");
+                let c0div = document.createElement("div");
+                c0div.style.display = "flex";
+                let c0img = document.createElement("img");
+                c0img.src = "../../images/" + orderedTable[i][0] + ".png";
+                c0img.style.padding = "3px";
+                c0img.width = 24;
+                c0img.height = 24;
+                c0div.appendChild(c0img);
+                let c0p = document.createElement("p");
+                c0p.style.margin = "5px";
+                fetch("api/teams").then(response => response.json()).then(data => {
+                    let teamsjson = data;
+                    c0p.textContent = teamsjson[orderedTable[i][0]].name;
+                })
+                c0div.appendChild(c0p);
+                c0.appendChild(c0div);
+                tr.appendChild(c0);
+                let c1 = document.createElement("td");
+                c1.textContent = orderedTable[i][1];
+                tr.appendChild(c1);
+                let c2 = document.createElement("td");
+                c2.textContent = orderedTable[i][2];
+                tr.appendChild(c2);
+                let c3 = document.createElement("td");
+                c3.textContent = orderedTable[i][3];
+                tr.appendChild(c3);
+                let c4 = document.createElement("td");
+                c4.textContent = orderedTable[i][4];
+                tr.appendChild(c4);
+                let c5 = document.createElement("td");
+                c5.textContent = orderedTable[i][5];
+                tr.appendChild(c5);
+                let c6 = document.createElement("td");
+                c6.textContent = orderedTable[i][6];
+                tr.appendChild(c6);
+                let c7 = document.createElement("td");
+                let str = document.createElement("strong");
+                str.textContent = orderedTable[i][7];
+                c7.appendChild(str);
+                tr.appendChild(c7);
+                table.appendChild(tr);
+            }
+
+            let ul = document.getElementById("optionslist");
+
+            let mat = document.getElementById("newstab");
+            mat.addEventListener('click', function () {
+                window.location.href = "../?tour=" + tourValue;
+            });
+
+            let tab = document.getElementById("matctab");
+            tab.addEventListener('click', function () {
+                window.location.href = "../matches/?tour=" + tourValue;
+            });
+
+            let sta = document.getElementById("stattab");
+            sta.addEventListener('click', function () {
+                window.location.href = "../stats/?tour=" + tourValue;
+            });
+        })
+    </script>
+</body>
+
+</html>

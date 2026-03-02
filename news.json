@@ -1,0 +1,52 @@
+{
+    "nx000000": {
+        "name": "Gran Liga ANK starts!",
+        "desc": "The tournament Gran Liga ANK starts, featuring some teams as ANK Team and ANK Mod.",
+        "concern": {
+            "teams": [
+                "tx000000",
+                "tx000001",
+                "tx000002",
+                "tx000003"
+            ],
+            "tournaments": [
+                "cx000001"
+            ]
+        }
+    },
+    "nx000001": {
+        "name": "ANK Team wins the league!",
+        "desc": "ANK Team wins the tournament Gran Liga ANK, after beating Club Avere 4 - 1.",
+        "concern": {
+            "teams": [
+                "tx000000",
+                "tx000003"
+            ],
+            "tournaments": [
+                "cx000001"
+            ]
+        }
+    },
+    "nxaf0ba8": {
+        "name": "Club de Fútbol ANK signs Lamine Yamal for 200 million euros!",
+        "desc": "Lamine Yamal has today happily signed for the team Club de Fútbol ANK, leaving former team ANK Mod, with a transaction of 200 million euros. Player says he sees a bright future here.",
+        "concern": {
+            "teams": [
+                "Club de Fútbol ANK",
+                "tx000001"
+            ],
+            "tournaments": []
+        }
+    },
+    "nx82a432": {
+        "name": "Club Avere signs Mohamed Salah for 25 million euros!",
+        "desc": "Mohamed Salah has today happily signed for the team Club Avere, leaving former team Club Avere, with a transaction of 25 million euros. Player says he sees a bright future here.",
+        "concern": {
+            "teams": [
+                "tx000003",
+                "tx000003"
+            ],
+            "tournaments": []
+        }
+    }
+}

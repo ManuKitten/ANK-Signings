@@ -1,0 +1,139 @@
+<html lang="en">
+
+<head>
+    <title id="title">Tournaments</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" class="sendbutton" style="margin:5px;display: none;">Back to Team</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">Teams</h1>
+        </div>
+    </div>
+    <div id="optionsdiv">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;" id="newstab">News</li>
+            <li class="listelem" style="padding: 15px;" id="playtab">Players</li>
+            <li class="listelem" style="padding: 15px;">Tournaments</li>
+        </ul>
+    </div>
+    <div class="bodydiv" style="margin-bottom: 50px; margin-left: 250px; margin-right: 250px;">
+        <ul id="toursList"></ul>
+    </div>
+
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+
+        try {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const teamValue = urlParams.get("team");
+
+            document.getElementById("newstab").addEventListener('click', function () {
+                window.location.href = "../?team=" + teamValue
+            })
+            document.getElementById("playtab").addEventListener('click', function () {
+                window.location.href = "../players/?team=" + teamValue
+            })
+
+            fetch("api/teams")
+                .then(response => response.json())
+                .then(data => {
+                    let imgdiv = document.getElementById("imgDiv");
+                    imgdiv.style.backgroundImage = "url('../../images/teamBackground.png')";
+                    imgdiv.style.height = 372;
+                    let clubLogo = document.getElementById("clubLogo");
+                    clubLogo.src = "../../images/" + teamValue + ".png"
+                    let size = 120;
+                    clubLogo.width = size;
+                    clubLogo.height = size;
+                    clubLogo.style.marginRight = "30px"
+                    clubLogo.style.marginTop = "15px"
+                    let header1 = document.getElementById("header1");
+                    header1.style.color = "#ffffff";
+                    header1.style.textAlign = "left";
+                    let headerDiv = document.getElementById("headerDiv");
+                    headerDiv.style.display = "flex";
+                    headerDiv.style.marginTop = "0px"
+                    headerDiv.style.padding = "110px";
+                    headerDiv.style.fontFamily = "Sansation";
+                    headerDiv.style.fontWeight = 700;
+
+                    let teamsjson = data;
+                    let validTeams = Object.keys(teamsjson);
+                    console.log(teamValue);
+                    if (teamValue == null || !validTeams.includes(teamValue)) {
+                        window.location.href = "../..";
+                    }
+
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../?team=" + teamValue
+                    })
+
+                    let h1 = document.getElementById("header1");
+                    h1.textContent = teamsjson[teamValue].name
+                    let title = document.getElementById("title");
+                    title.textContent = teamsjson[teamValue].name + " Tournaments"
+
+                    fetch("api/tournaments")
+                        .then(response => response.json())
+                        .then(data => {
+                            let toursjson = data;
+                            let ul = document.getElementById("toursList");
+                            for (let i = 0; i < Object.keys(toursjson).length; i++) {
+                                if (toursjson[Object.keys(toursjson)[i]].teams.includes(teamValue)) {
+                                    let li = document.createElement("li");
+                                    li.class = "listelem";
+                                    li.id = Object.keys(toursjson)[i]
+                                    let lidiv = document.createElement("div");
+                                    lidiv.style.display = "flex";
+
+                                    let liimg = document.createElement("img");
+                                    liimg.src = "../../images/" + Object.keys(toursjson)[i] + ".png";
+                                    liimg.width = 24;
+                                    liimg.height = 24;
+                                    liimg.style.padding = "3px";
+                                    lidiv.appendChild(liimg);
+
+                                    let lip = document.createElement("p");
+                                    lip.style.margin = "5px"
+                                    lip.textContent = toursjson[Object.keys(toursjson)[i]].name;
+                                    lidiv.appendChild(lip);
+
+                                    li.appendChild(lidiv);
+                                    li.addEventListener('click', function () {
+                                        window.location.href = "../../tournaments/?tour=" + Object.keys(toursjson)[i];
+                                    })
+                                    li.addEventListener('mouseover', function () {
+                                        li.style.cursor = "pointer";
+                                        li.style.backgroundColor = "#efefef"
+                                    })
+                                    li.addEventListener('mouseleave', function () {
+                                        li.style.backgroundColor = "#ffffff"
+                                    })
+
+                                    ul.appendChild(li);
+                                }
+                            }
+                        })
+                })
+        } catch { console.error("Error Query") } </script>
+</body>
+
+</html>

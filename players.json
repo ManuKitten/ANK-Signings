@@ -1,0 +1,324 @@
+{
+    "px000000": {
+        "name": "Robert Lewandowski",
+        "short": "Lewandoski",
+        "birthdate": [
+            21,
+            8,
+            1988
+        ],
+        "country": "Poland",
+        "position": "ST",
+        "team": "tx000000",
+        "rating": 9,
+        "marketvalue": 21.119999999999997
+    },
+    "px000001": {
+        "name": "Lionel Messi",
+        "short": "Messi",
+        "birthdate": [
+            24,
+            6,
+            1987
+        ],
+        "country": "Argentina",
+        "position": "ST",
+        "team": "tx000000",
+        "rating": 10,
+        "marketvalue": 58.564000000000014
+    },
+    "px000002": {
+        "name": "Cristiano Ronaldo",
+        "short": "Ronaldo",
+        "birthdate": [
+            5,
+            2,
+            1985
+        ],
+        "country": "Portugal",
+        "position": "ST",
+        "team": "tx000001",
+        "rating": 10,
+        "marketvalue": 38.4
+    },
+    "px000003": {
+        "name": "Kylian Mbappé",
+        "short": "Mbappé",
+        "birthdate": [
+            20,
+            12,
+            1998
+        ],
+        "country": "France",
+        "position": "ST",
+        "team": "tx000001",
+        "rating": 10,
+        "marketvalue": 44
+    },
+    "px000004": {
+        "name": "Neymar Jr.",
+        "short": "Neymar",
+        "birthdate": [
+            5,
+            2,
+            1992
+        ],
+        "country": "Brazil",
+        "position": "ST",
+        "team": "tx000000",
+        "rating": 10,
+        "marketvalue": 38.4
+    },
+    "px000005": {
+        "name": "Lautaro Martínez",
+        "short": "Lautaro",
+        "birthdate": [
+            22,
+            8,
+            1997
+        ],
+        "country": "Argentina",
+        "position": "ST",
+        "team": "tx000002",
+        "rating": 9,
+        "marketvalue": 29.684920320000007
+    },
+    "px000006": {
+        "name": "Erling Haaland",
+        "short": "Haaland",
+        "birthdate": [
+            21,
+            7,
+            2000
+        ],
+        "country": "Norway",
+        "position": "ST",
+        "team": "tx000000",
+        "rating": 10,
+        "marketvalue": 44.605439999999994
+    },
+    "px000007": {
+        "name": "Karim Benzema",
+        "short": "Benzema",
+        "birthdate": [
+            19,
+            12,
+            1987
+        ],
+        "country": "France",
+        "position": "ST",
+        "team": "tx000001",
+        "rating": 8,
+        "marketvalue": 18.432
+    },
+    "px000008": {
+        "name": "Sadio Mané",
+        "short": "Mané",
+        "birthdate": [
+            10,
+            4,
+            1992
+        ],
+        "country": "Senegal",
+        "position": "ST",
+        "team": "tx000001",
+        "rating": 8,
+        "marketvalue": 14.5999872
+    },
+    "px000009": {
+        "name": "Mohamed Salah",
+        "short": "Salah",
+        "birthdate": [
+            15,
+            6,
+            1992
+        ],
+        "country": "Egypt",
+        "position": "ST",
+        "team": "tx000003",
+        "rating": 9,
+        "marketvalue": 21.12
+    },
+    "px00000a": {
+        "name": "Harry Kane",
+        "short": "Kane",
+        "birthdate": [
+            28,
+            7,
+            1993
+        ],
+        "country": "England",
+        "position": "ST",
+        "team": "tx000001",
+        "rating": 10,
+        "marketvalue": 44
+    },
+    "px00000b": {
+        "name": "Kevin De Bruyne",
+        "short": "De Bruyne",
+        "birthdate": [
+            28,
+            6,
+            1991
+        ],
+        "country": "Belgium",
+        "position": "CM",
+        "team": "tx000002",
+        "rating": 9,
+        "marketvalue": 23.232000000000003
+    },
+    "px00000c": {
+        "name": "N'Golo Kanté",
+        "short": "Kanté",
+        "birthdate": [
+            29,
+            3,
+            1991
+        ],
+        "country": "France",
+        "position": "CM",
+        "team": "tx000002",
+        "rating": 8,
+        "marketvalue": 19.2
+    },
+    "px00000d": {
+        "name": "Bruno Fernandes",
+        "short": "Fernandes",
+        "birthdate": [
+            8,
+            9,
+            1994
+        ],
+        "country": "Portugal",
+        "position": "CM",
+        "team": "tx000002",
+        "rating": 8,
+        "marketvalue": 28.110720000000004
+    },
+    "px00000e": {
+        "name": "Luka Modrić",
+        "short": "Modrić",
+        "birthdate": [
+            9,
+            9,
+            1985
+        ],
+        "country": "Croatia",
+        "position": "CM",
+        "team": "tx000003",
+        "rating": 8,
+        "marketvalue": 20
+    },
+    "px00000f": {
+        "name": "Toni Kroos",
+        "short": "Kroos",
+        "birthdate": [
+            4,
+            1,
+            1990
+        ],
+        "country": "Germany",
+        "position": "CM",
+        "team": "tx000002",
+        "rating": 7,
+        "marketvalue": 29.282000000000007
+    },
+    "px000010": {
+        "name": "Alisson Becker",
+        "short": "Alisson",
+        "birthdate": [
+            2,
+            10,
+            1992
+        ],
+        "country": "Brazil",
+        "position": "GK",
+        "team": "tx000000",
+        "rating": 9,
+        "marketvalue": 29.282000000000007
+    },
+    "px000011": {
+        "name": "Jan Oblak",
+        "short": "Oblak",
+        "birthdate": [
+            7,
+            1,
+            1993
+        ],
+        "country": "Slovenia",
+        "position": "GK",
+        "team": "tx000003",
+        "rating": 9,
+        "marketvalue": 20
+    },
+    "px000012": {
+        "name": "Manuel Neuer",
+        "short": "Neuer",
+        "birthdate": [
+            27,
+            3,
+            1986
+        ],
+        "country": "Germany",
+        "position": "GK",
+        "team": "tx000003",
+        "rating": 9,
+        "marketvalue": 18.7968
+    },
+    "px000013": {
+        "name": "Thibaut Courtois",
+        "short": "Courtois",
+        "birthdate": [
+            11,
+            5,
+            1992
+        ],
+        "country": "Belgium",
+        "position": "GK",
+        "team": "tx000003",
+        "rating": 9,
+        "marketvalue": 18.432
+    },
+    "px000014": {
+        "name": "Marc-André ter Stegen",
+        "short": "ter Stegen",
+        "birthdate": [
+            30,
+            4,
+            1992
+        ],
+        "country": "Germany",
+        "position": "GK",
+        "team": "tx000003",
+        "rating": 9,
+        "marketvalue": 17.694719999999997
+    },
+    "px000015": {
+        "name": "Gianluigi Donnarumma",
+        "short": "Donnarumma",
+        "birthdate": [
+            25,
+            2,
+            1999
+        ],
+        "country": "Italy",
+        "position": "GK",
+        "team": "tx000003",
+        "rating": 9,
+        "marketvalue": 18.293226209279997
+    },
+    "px000016": {
+        "name": "Lamine Yamal",
+        "short": "Lamine",
+        "birthdate": [
+            13,
+            7,
+            2007
+        ],
+        "country": "Spain",
+        "position": "ST",
+        "team": "tx000002",
+        "rating": 10,
+        "marketvalue": 40
+    }
+}

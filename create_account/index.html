@@ -1,0 +1,173 @@
+<html lang="en">
+
+<head>
+    <title>Create an Account</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+    </header>
+    <h1>Create an account</h1>
+    <div class="bodydiv" style="margin-left: 200px;">
+        <form id="signinform">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" class="inputText"><br>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="inputText" required><br>
+            <label for="confpassword">Confirm Password</label>
+            <input type="password" id="confpassword" name="confpassword" class="inputText" required><br>
+            <p id="error"></p>
+            <button type="submit" id="createButton" class="sendbutton">Sign In</button>
+        </form>
+    </div>
+
+    <script>
+        if (localStorage.getItem("name")) {
+            window.location.href = "..";
+        }
+        async function createAccount(payload) {
+            const response = await fetch('/api/add-account', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function createTeam(payload) {
+            const response = await fetch('/api/add-team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+
+        async function sha256(message) {
+            // Encode the message as UTF-8
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+
+            // Hash the data
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+            // Convert ArrayBuffer to hex string
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+
+            return hashHex;
+        }
+
+        async function addTeamDebt(payload) {
+            const response = await fetch('/api/add-debt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+
+        function vigenere(text, key, encrypt = true) {
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let result = '';
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                let textChar = text[i]; let keyChar = key[keyIndex]; let index; if (encrypt) { index = (alphabet.indexOf(textChar) + alphabet.indexOf(keyChar)) % alphabet.length; } else {
+                    index = (alphabet.indexOf(textChar) - alphabet.indexOf(keyChar) + alphabet.length) % alphabet.length;
+                } let
+                    char = alphabet[index]; result += char; keyIndex = (keyIndex + 1) % key.length;
+            } return result;
+        }
+
+        document.getElementById("signinform").addEventListener("submit", function () {
+            event.preventDefault();
+        })
+
+        document.getElementById("createButton").addEventListener('click', function () {
+            fetch("api/accounts").then(response => response.json()).then(data => {
+                sha256(document.getElementById("name").value).then(hash => {
+                    let hashname = hash;
+                    let error = document.getElementById("error");
+                    if (!Object.keys(data).includes(hashname)) {
+                        if (document.getElementById("password").value == document.getElementById("confpassword").value) {
+                            sha256(document.getElementById("password").value).then(hashpassword => {
+                                const sendData = {
+                                    name: hashname,
+                                    password: hashpassword
+                                };
+                                createAccount(sendData);
+                                document.getElementById("createButton").style.display = "none";
+                                localStorage.setItem("username", document.getElementById("name").value);
+                                localStorage.setItem("name", hashname);
+                                localStorage.setItem("password", document.getElementById("password").value);
+                                localStorage.setItem("pass", hashpassword);
+                                const random = "0123456789abcdef";
+                                let teamValue = "tx";
+                                for (let i = 0; i < 6; i++) { teamValue += random[Math.floor(Math.random() * (16))]; }
+                                const teamSendData = {
+                                    teamId: teamValue,
+                                    teamData: {
+                                        name: document.getElementById("name").value + "'s Team",
+                                        owner: hashname,
+                                        players: [],
+                                        wealth: vigenere("0", document.getElementById("password").value)
+                                    }
+                                }
+                                createTeam(teamSendData);
+                                fetch('/duplicate-default-team-photo', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ filename: teamValue + ".png" })
+                                })
+                                    .then(response => response.text())
+                                    .then(data => alert(data))
+                                    .catch(err => alert('Error ' + err))
+                                const teamBankData = {
+                                    teamId: teamValue,
+                                    amount: 0
+                                }
+                                addTeamDebt(teamBankData);
+                                error.innerHTML = "Success! We've created a team for you. <a href='../teams?team=" + teamValue + "'>Click here to see it</a>"
+                            })
+                        } else {
+                            error.textContent = "Error: Passwords differ";
+                        }
+                    } else {
+                        error.textContent = "Error: Username already taken";
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>

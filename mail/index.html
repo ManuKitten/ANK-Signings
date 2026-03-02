@@ -1,0 +1,295 @@
+<html lang="en">
+
+<head>
+    <title>ANK Mail</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" class="sendbutton" style="margin-top:5px;">Back</button>
+    <h1 id="h1">ANK Mails</h1>
+    <div class="bodydiv" id="bodydiv">
+        <button id="write" class="sendbutton" style="margin-left: 45px;">Write</button>
+        <ul id="maillist"></ul>
+    </div>
+
+    <script>
+        async function payDebtMoney(payload) {
+            const response = await fetch('/api/pay-debt-money', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function addTeamDebt(payload) {
+            const response = await fetch('/api/add-debt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+
+        async function updateTeam(payload) {
+            const response = await fetch('/api/update-team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function playerTeam(payload) {
+            const response = await fetch('/api/change-player-team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function changeMailClick(payload) {
+            const response = await fetch('/api/change-mail-click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function addNew(payload) {
+            const response = await fetch('/api/add-new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+
+
+        function transferPlayer(player, team, caller, pay) {
+            if (caller != undefined) {
+                fetch("api/teams").then(response => response.json()).then(data => {
+                    let teamsjson = data;
+                    for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                        if (teamsjson[Object.keys(teamsjson)[i]].players.includes(player)) {
+                            let oldTeamId = Object.keys(teamsjson)[i]
+                            async function reDo(player, team, pay) {
+                                if (pay != undefined) {
+                                    let clickPayload = {
+                                        userId: localStorage.getItem("name"),
+                                        mailId: caller,
+                                    }
+                                    await changeMailClick(clickPayload);
+
+                                    let payload = {
+                                        teamId: oldTeamId,
+                                        amount: pay,
+                                        password: localStorage.getItem("password")
+                                    }
+                                    await payDebtMoney(payload);
+
+                                    let config = {
+                                        teamId: team,
+                                        amount: pay
+                                    }
+                                    await addTeamDebt(config);
+
+                                    let teamsjsonplayers = teamsjson[Object.keys(teamsjson)[i]].players;
+                                    removalPlayers = teamsjsonplayers.filter(item => item !== player);
+                                    let teamRemove = {
+                                        teamId: Object.keys(teamsjson)[i],
+                                        teamPlayers: removalPlayers
+                                    };
+                                    await updateTeam(teamRemove);
+
+                                    teamsjsonplayers = teamsjson[team].players;
+                                    teamsjsonplayers.push(player);
+                                    let teamUpdate = {
+                                        teamId: team,
+                                        teamPlayers: teamsjsonplayers
+                                    };
+                                    await updateTeam(teamUpdate);
+
+                                    let newPlayer = {
+                                        playerId: player,
+                                        newTeam: team
+                                    };
+                                    await playerTeam(newPlayer);
+
+                                    fetch("api/players").then(response => response.json()).then(playersjson => {
+                                        async function main() {
+                                            const random = "0123456789abcdef";
+                                            let newValue = "nx";
+                                            for (let j = 0; j < 6; j++) { newValue += random[Math.floor(Math.random() * 16)] }
+                                            let addingNew = {
+                                                newId: newValue,
+                                                newData: {
+                                                    name: teamsjson[team].name + " signs " + playersjson[player].name + " for " + pay + " million euros!",
+                                                    desc: playersjson[player].name + " has today happily signed for the team " + teamsjson[team].name + ", leaving former team " + teamsjson[Object.keys(teamsjson)[i]].name + ", with a transaction of " + pay + " million euros. Player says he sees a bright future here.",
+                                                    concern: {
+                                                        teams: [team, Object.keys(teamsjson)[i]],
+                                                        tournaments: []
+                                                    }
+                                                }
+                                            };
+                                            document.getElementsByTagName("button")[1].style.display = "none";
+                                            await addNew(addingNew);
+
+                                            window.location.href = "../mail"
+                                        }
+                                        main();
+                                    })
+                                }
+                            }
+                            reDo(player, team, pay)
+                            break;
+                        }
+                    }
+                })
+            } else {
+                window.location.href = "../mail"
+            }
+        }
+
+
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        document.getElementById("write").addEventListener('click', function () {
+            window.location.href = "write"
+        })
+
+        function vigenere(text, key, encrypt = true) {
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let result = '';
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                let textChar = text[i]; let keyChar = key[keyIndex]; let index; if (encrypt) { index = (alphabet.indexOf(textChar) + alphabet.indexOf(keyChar)) % alphabet.length; } else {
+                    index = (alphabet.indexOf(textChar) - alphabet.indexOf(keyChar) + alphabet.length) % alphabet.length;
+                } let
+                    char = alphabet[index]; result += char; keyIndex = (keyIndex + 1) % key.length;
+            } return result;
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const mailValue = urlParams.get("mail");
+
+        fetch("api/correspondence").then(response => response.json()).then(data => {
+            let mails = data;
+            let personalmail = mails[localStorage.getItem("name")];
+            if (mailValue == null || !Object.keys(mails[localStorage.getItem("name")]).includes(mailValue)) {
+                document.getElementById("backbutton").addEventListener('click', function () {
+                    window.location.href = "../dashboard";
+                })
+
+                let ul = document.getElementById("maillist");
+                let revmails = Object.keys(personalmail).reverse()
+                for (let i = 0; i < revmails.length; i++) {
+                    let li = document.createElement("li");
+                    li.className = "listelem";
+                    li.id = revmails[i];
+                    li.textContent = vigenere(personalmail[revmails[i]].about, localStorage.getItem("password"), false);
+                    li.style.border = "1px solid #dedede";
+                    li.addEventListener('click', function () {
+                        window.location.href = "?mail=" + revmails[i];
+                    })
+                    if (personalmail[revmails[i]].step == undefined) {
+                        ul.appendChild(li);
+                    }
+                }
+            } else {
+                document.getElementById("backbutton").addEventListener('click', function () {
+                    window.location.href = "../mail";
+                })
+                document.getElementById("write").style.display = "none";
+                document.getElementById("h1").textContent = vigenere(personalmail[mailValue].about, localStorage.getItem("password"), false);
+                let bodydiv = document.getElementById("bodydiv");
+                bodydiv.style.marginLeft = "240px";
+                bodydiv.style.marginRight = "240px";
+                let author = document.createElement("p");
+                let str = document.createElement("strong");
+                str.textContent = vigenere(personalmail[mailValue].sender, localStorage.getItem("password"), false);
+                author.appendChild(str);
+                bodydiv.appendChild(author)
+                let pcontent = document.createElement("p");
+                pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
+                for (let i = 0; i < 20; i++) {
+                    pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
+                    pcontent.textContent = pcontent.textContent.replace("(quote)", '"');
+                    pcontent.textContent = pcontent.textContent.replace("(euro)", '&euro;');
+                }
+                pcontent.innerHTML = pcontent.textContent;
+                if (pcontent.getElementsByTagName("button").length != 0) {
+                    if (pcontent.getElementsByTagName("button")[0].outerHTML.includes("transferPlayer")) {
+                        let stringFunc = pcontent.getElementsByTagName("button")[0].onclick.toString().slice(26, 74);
+                        let mailId = stringFunc.slice(39, 47);
+                        if (personalmail[mailId].clicked) {
+                            let button = pcontent.getElementsByTagName("button")[0];
+                            button.remove();
+                        }
+                    }
+                }
+                bodydiv.appendChild(pcontent);
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<html lang="en">
+
+<head>
+    <title id="title">Teams</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton" onclick><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" style="display: none;">Back</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">Teams</h1>
+        </div>
+    </div>
+
+    <div id="optionsdiv" style="display: none;">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;">News</li>
+        </ul>
+    </div>
+    <div class="bodydiv">
+        <ul id="teamslist"></ul>
+        <div id="buttondiv"></div>
+        <div id="newsDiv"></div>
+    </div>
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const teamValue = urlParams.get("team");
+        try {
+            fetch("api/teams")
+                .then(response => response.json())
+                .then(data => {
+                    let teamsjson = data;
+                    let validTeams = Object.keys(teamsjson);
+
+                    if (teamValue == null || !validTeams.includes(teamValue)) {
+                        document.getElementById("backbutton").addEventListener('click', function () {
+                            window.location.href = "..";
+                        })
+
+                        let ul = document.getElementById("teamslist");
+                        for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                            li = document.createElement("li");
+                            a = document.createElement("a");
+                            a.href = "?team=" + Object.keys(teamsjson)[i];
+                            a.style.display = "flex";
+                            let img = document.createElement("img");
+                            img.src = "../images/" + Object.keys(teamsjson)[i] + ".png";
+                            img.width = 30;
+                            img.height = 30;
+                            img.style.padding = "6px";
+                            img.style.marginTop = "0px";
+                            a.appendChild(img);
+                            let p = document.createElement("p");
+                            p.textContent = teamsjson[Object.keys(teamsjson)[i]].name;
+                            p.style.padding = "0px";
+                            p.style.margin = "7px"
+                            p.style.marginTop = "11px";
+                            p.style.marginBottom = "9px";
+                            a.appendChild(p)
+                            li.appendChild(a);
+                            li.className = "listelem";
+                            ul.appendChild(li);
+                        }
+                    } else {
+                        if (teamsjson[teamValue].owner == localStorage.getItem("name")) {
+                            let h1 = document.getElementById("header1")
+
+                            h1.addEventListener("mouseover", function () {
+                                h1.style.textDecoration = "underline";
+                            })
+                            h1.addEventListener("mouseleave", function () {
+                                h1.style.textDecoration = "none";
+                            })
+                            h1.addEventListener('click', function () {
+                                window.location.href = "modify/?team=" + teamValue
+                            })
+                        }
+
+                        let imgdiv = document.getElementById("imgDiv");
+                        imgdiv.style.backgroundImage = "url('../images/teamBackground.png')";
+                        imgdiv.style.height = 372;
+                        let clubLogo = document.getElementById("clubLogo");
+                        clubLogo.src = "../images/" + teamValue + ".png"
+                        let size = 120;
+                        clubLogo.width = size;
+                        clubLogo.height = size;
+                        clubLogo.style.marginRight = "30px"
+                        clubLogo.style.marginTop = "15px"
+                        let header1 = document.getElementById("header1");
+                        header1.style.color = "#ffffff";
+                        header1.style.textAlign = "left";
+                        let headerDiv = document.getElementById("headerDiv");
+                        headerDiv.style.display = "flex";
+                        headerDiv.style.marginTop = "0px"
+                        headerDiv.style.padding = "110px";
+                        headerDiv.style.fontFamily = "Sansation";
+                        headerDiv.style.fontWeight = 700;
+                        document.getElementById("backbutton").addEventListener('click', function () {
+                            if (teamsjson[teamValue].owner == localStorage.getItem("name")) { window.location.href = "../dashboard"; }
+                            else {
+                                window.location.href = "../teams";
+                            }
+                        });
+
+                        let title = document.getElementById("title");
+                        title.textContent = teamsjson[teamValue].name;
+                        let h1 = document.getElementById("header1");
+                        h1.textContent = teamsjson[teamValue].name;
+                        /*let buttondiv = document.getElementById("buttondiv");
+                        button = document.createElement("button");
+                        button.id = "playersbutton";
+                        button.textContent = "Players";
+                        button.className = "linkbutton";
+                        buttondiv.appendChild(button);
+                        button.addEventListener('click', function () {
+                            window.location.href = "players/?team=" + teamValue
+                        })*/
+                        document.getElementById("optionsdiv").style.display = "block";
+                        let ul = document.getElementById("optionslist");
+                        let pla = document.createElement("li");
+                        pla.textContent = "Players";
+                        pla.addEventListener('click', function () {
+                            window.location.href = "players/?team=" + teamValue;
+                        });
+                        pla.className = "listelem";
+                        pla.style.padding = "15px";
+                        ul.appendChild(pla);
+                        let tou = document.createElement("li");
+                        tou.textContent = "Tournaments";
+                        tou.addEventListener('click', function () {
+                            window.location.href = "tournaments/?team=" + teamValue;
+                        });
+                        tou.className = "listelem";
+                        tou.style.padding = "15px";
+                        ul.appendChild(tou);
+                    }
+                })
+        } catch (error) { console.error("Error query") }
+
+        let newsDiv = document.getElementById("newsDiv");
+        fetch("api/news").then(response => response.json()).then(newsjson => {
+            let concerningNews = [];
+            let flippedNews = Object.keys(newsjson);
+            flippedNews.reverse();
+            for (let i = 0; i < Object.keys(newsjson).length; i++) {
+                let newInfo = newsjson[flippedNews[i]];
+                let newConcern = newInfo.concern
+                let adding = false;
+                for (let t = 0; t < newConcern.teams.length; t++) {
+                    if (newConcern.teams[t] == teamValue) {
+                        adding = true;
+                    }
+                }
+                if (adding) {
+                    concerningNews.push(flippedNews[i])
+                }
+            }
+            concerningNews.forEach(newInfo => {
+                let reportDiv = document.createElement("div");
+                reportDiv.className = "reportDiv"
+                let title = document.createElement("h3");
+                title.textContent = newsjson[newInfo].name;
+                title.style.marginTop = "0px"
+                reportDiv.appendChild(title);
+                let p = document.createElement("p");
+                p.innerHTML = newsjson[newInfo].desc;
+                p.style.marginBottom = "0px"
+                reportDiv.appendChild(p);
+                newsDiv.appendChild(reportDiv);
+            })
+        })
+    </script>
+</body>
+
+</html>

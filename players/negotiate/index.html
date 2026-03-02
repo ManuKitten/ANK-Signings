@@ -1,0 +1,305 @@
+<html lang="en">
+
+<head>
+    <title id="title">Negotiate</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" class="sendbutton" style="margin:5px;">Back to Players</button>
+    <div id="maindiv">
+        <h1 id="h1">Player</h1>
+        <div class="bodydiv">
+            <p id="p1">Negotiate Player</p>
+
+            <form id="negotiationform">
+                <label for="team">Team signing the player</label>
+                <select name="team" id="teamSelector"></select>
+                <br>
+                <label for="payamount">Payment (in 1,000,000x&euro;) to owner team or player agency</label>
+                <input type="number" id="payamount" name="payamount" min="0" step="0.1" value="20">
+                <br>
+                <div id="permitDiv">
+                    <button id="submit" class="sendbutton">Submit</button>
+                    <p id="permit" style="color:red; display: none;">You don't have such money</p>
+                </div>
+            </form>
+            <p id="money">Your balance with team: &euro;0</p>
+        </div>
+    </div>
+    <div id="sentdiv" style="display:none" class="bodydiv">
+        <p>Offer was sent succesfully! Awaiting answer</p>
+    </div>
+
+    <script>
+        async function sendMessage(payload) {
+            const response = await fetch('/api/add-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function updateTeam(payload) {
+            const response = await fetch('/api/update-whole-team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function playerTeam(payload) {
+            const response = await fetch('/api/change-player-team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        function vigenere(text, key, encrypt = true) {
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let result = '';
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                let textChar = text[i];
+                let keyChar = key[keyIndex];
+                let index;
+                if (encrypt) {
+                    index = (alphabet.indexOf(textChar) + alphabet.indexOf(keyChar)) % alphabet.length;
+                } else {
+                    index = (alphabet.indexOf(textChar) - alphabet.indexOf(keyChar) + alphabet.length) % alphabet.length;
+                }
+                let char = alphabet[index]; result += char;
+                keyIndex = (keyIndex + 1) % key.length;
+            } return result;
+        }
+
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        let form = document.getElementById("negotiationform");
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+        });
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = ".."
+        })
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const playerValue = urlParams.get("player");
+
+        let teamsjson;
+        let teamSelector;
+
+        fetch("api/teams").then(response => response.json()).then(data => {
+            teamsjson = data;
+            teamSelector = document.getElementById("teamSelector");
+            for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                let team = teamsjson[Object.keys(teamsjson)[i]];
+                if (team.owner == localStorage.getItem("name")) {
+                    let opt = document.createElement("option");
+                    opt.textContent = team.name;
+                    opt.value = Object.keys(teamsjson)[i]
+                    teamSelector.appendChild(opt);
+                }
+            }
+
+            function updateBalance() {
+                let money = document.getElementById("money")
+                money.innerHTML = "Your balance with " + teamsjson[teamSelector.value].name + ": &euro;" + vigenere(teamsjson[teamSelector.value].wealth, localStorage.getItem("password"), false)
+            }
+            updateBalance()
+
+            teamSelector.addEventListener('change', function () {
+                updateBalance()
+            })
+        })
+
+        fetch("api/players").then(response => response.json()).then(data => {
+            let playersjson = data;
+            let player = playersjson[playerValue];
+
+            let payamountInput = document.getElementById("payamount");
+            payamountInput.value = player.marketvalue;
+
+            if (playerValue == null || !Object.keys(playersjson).includes(playerValue)) {
+                window.location.href = ".."
+            } else {
+                let title = document.getElementById("title");
+                title.textContent = "Negotiate " + playersjson[playerValue].name;
+                let h1 = document.getElementById("h1");
+                h1.textContent = playersjson[playerValue].name;
+                let p1 = document.getElementById("p1");
+
+                if (vigenere(teamsjson[teamSelector.value].wealth, localStorage.getItem("password"), false) >= 1000000 * payamount.value) {
+                    document.getElementById("submit").style.display = "block";
+                    document.getElementById("permit").style.display = "none";
+                } else {
+                    document.getElementById("submit").style.display = "none";
+                    document.getElementById("permit").style.display = "block";
+                }
+                // CHECK IF PLAYER ALREADY HAS TEAM  
+                if (playersjson[playerValue].team != "") {
+                    //DOES
+                    let teamsjson;
+                    fetch("api/teams").then(response => response.json()).then(data => {
+                        teamsjson = data;
+                        p1.textContent = "Negotiate " + playersjson[playerValue].name + " with " +
+                            teamsjson[playersjson[playerValue].team].name;
+                    })
+                    let payamount = document.getElementById("payamount")
+
+                    payamount.addEventListener('change', function () {
+                        if (vigenere(teamsjson[teamSelector.value].wealth, localStorage.getItem("password"), false) >= 1000000 * payamount.value) {
+                            document.getElementById("submit").style.display = "block";
+                            document.getElementById("permit").style.display = "none";
+                        } else {
+                            document.getElementById("submit").style.display = "none";
+                            document.getElementById("permit").style.display = "block";
+                        }
+                    })
+
+                    document.getElementById("submit").addEventListener('click', function () {
+                        maindiv = document.getElementById("maindiv");
+                        maindiv.style.display = "none";
+                        sentdiv = document.getElementById("sentdiv");
+                        sentdiv.style.display = "block";
+
+                        let mailValue = "ex";
+                        const bits = "0123456789abcdef"
+                        for (let i = 0; i < 6; i++) { mailValue += bits[Math.floor(Math.random() * (16))]; }
+
+                        let servId;
+                        for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                            if (teamsjson[Object.keys(teamsjson)[i]].players.includes(playerValue)) {
+                                servId = teamsjson[Object.keys(teamsjson)[i]].owner;
+                            }
+                        }
+                        let pay = document.getElementById("payamount").value * 1000000
+
+                        let payload = {
+                            serverId: servId,
+                            messageId: mailValue,
+                            messageData: {
+                                step: 0,
+                                about: vigenere(playersjson[playerValue].name + " Contract", localStorage.getItem("password")),
+                                from: localStorage.getItem("name"),
+                                sender: vigenere(playersjson[playerValue].name + " Agent", localStorage.getItem("password")),
+                                content: vigenere("To whom it may concern,(enter) the user " + localStorage.getItem("username") + " is interested in signing the player " + playersjson[playerValue].name + " for their team of name " + teamsjson[teamSelector.value].name + " for the sum of (euro)" + pay.toString() + ".<br> If you are willing to accept this deal click the button below.<br><br><button class='sendbutton' onclick='transferPlayer((quote)" + playerValue + "(quote), (quote)" + teamSelector.value + "(quote),(quote)" + mailValue + "(quote)," + document.getElementById("payamount").value + ")'>Accept Offer</button><br><p style=(quote)font-size:13px(quote);>Never click buttons in emails you can't trust. Avoiding scams is your responsibility.</p>", localStorage.getItem("password")),
+                                clicked: false
+                            }
+                        };
+                        sendMessage(payload);
+                    })
+                } else {
+                    //DOESN'T
+                    p1.textContent = "Negotiate " + playersjson[playerValue].name;
+                    let payamount = document.getElementById("payamount")
+                    payamount.addEventListener('change', function () {
+                        if (vigenere(teamsjson[teamSelector.value].wealth, localStorage.getItem("password"), false) >= 1000000 * payamount.value) {
+                            document.getElementById("submit").style.display = "block";
+                            document.getElementById("permit").style.display = "none";
+                        } else {
+                            document.getElementById("submit").style.display = "none";
+                            document.getElementById("permit").style.display = "block";
+                        }
+                    })
+                    let v1 = vigenere(teamsjson[document.getElementById("teamSelector").value].wealth, localStorage.getItem("password"), false)
+                    document.getElementById("submit").addEventListener('click', function () {
+                        maindiv = document.getElementById("maindiv");
+                        maindiv.style.display = "none";
+                        sentdiv = document.getElementById("sentdiv");
+                        sentdiv.style.display = "block";
+
+                        let mailValue = "ex";
+                        const bits = "0123456789abcdef"
+                        for (let i = 0; i < 6; i++) { mailValue += bits[Math.floor(Math.random() * (16))]; }
+
+                        let payload;
+                        if (document.getElementById("payamount").value >= player.marketvalue * 1.1) {
+                            payload = {
+                                serverId: localStorage.getItem("name"),
+                                messageId: mailValue,
+                                messageData: {
+                                    about: vigenere(playersjson[playerValue].name + " Contract", localStorage.getItem("password")),
+                                    from: vigenere("ULSS0000", localStorage.getItem("password")),
+                                    sender: vigenere(playersjson[playerValue].name + " Agent", localStorage.getItem("password")),
+                                    content: vigenere("To whom it may concern,(enter) mister/mistress " + localStorage.getItem("username") + " we're happy to report that " + playersjson[playerValue].name + " has agreed to the contract proposed and will be therefore playing for your team.", localStorage.getItem("password"))
+                                }
+                            };
+                            let v1 = vigenere(teamsjson[document.getElementById("teamSelector").value].wealth, localStorage.getItem("password"), false) - payamount.value * 1000000;
+                            let teamsjsonplayers = teamsjson[document.getElementById("teamSelector").value]["players"];
+                            teamsjsonplayers.push(playerValue);
+                            let teamUpdate = {
+                                teamId: document.getElementById("teamSelector").value,
+                                teamData: {
+                                    name: teamsjson[document.getElementById("teamSelector").value].name,
+                                    owner: teamsjson[document.getElementById("teamSelector").value].owner,
+                                    players: teamsjsonplayers,
+                                    wealth: vigenere(v1.toString(), localStorage.getItem("password"))
+                                }
+                            };
+                            updateTeam(teamUpdate);
+                            let newPlayer = {
+                                playerId: playerValue,
+                                newTeam: document.getElementById("teamSelector").value
+                            }
+                            playerTeam(newPlayer);
+                        } else {
+                            payload = {
+                                serverId: localStorage.getItem("name"),
+                                messageId: mailValue,
+                                messageData: {
+                                    about: vigenere(playersjson[playerValue].name + " Contract", localStorage.getItem("password")),
+                                    from: vigenere("ULSS0000", localStorage.getItem("password")),
+                                    sender: vigenere(playersjson[playerValue].name + " Agent", localStorage.getItem("password")),
+                                    content: vigenere("To whom it may concern,(enter) mister/mistress " + localStorage.getItem("username") + " we report that " + playersjson[playerValue].name + " has not agreed to the contract proposed, expressing his thought for it being not as a high pay as expected.", localStorage.getItem("password")),
+                                    clicked: false
+                                }
+                            };
+                        }
+                        sendMessage(payload);
+                    })
+                }
+            }
+        })
+
+    </script>
+</body>
+
+</html>

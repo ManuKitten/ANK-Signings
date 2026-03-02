@@ -1,0 +1,138 @@
+<html lang="en">
+
+<head>
+    <title id="title">Players</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" class="sendbutton" style="margin:5px;display: none;">Back to Team</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">Teams</h1>
+        </div>
+    </div>
+    <div id="optionsdiv">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;" id="newstab">News</li>
+            <li class="listelem" style="padding: 15px;">Players</li>
+            <li class="listelem" style="padding: 15px;" id="tourtab">Tournaments</li>
+        </ul>
+    </div>
+    <div class="bodydiv" style="margin-bottom: 50px;">
+        <table id="playerstable">
+            <tr class="headtr">
+                <td style="width: 400px;">Name</td>
+                <td>Pos</td>
+                <td>Born</td>
+                <td>Country</td>
+                <td>Market Value</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+
+        try {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const teamValue = urlParams.get("team");
+
+            document.getElementById("newstab").addEventListener('click', function () {
+                window.location.href = "../?team=" + teamValue;
+            })
+            document.getElementById("tourtab").addEventListener('click', function () {
+                window.location.href = "../tournaments/?team=" + teamValue;
+            })
+
+            fetch("api/teams")
+                .then(response => response.json())
+                .then(data => {
+                    let imgdiv = document.getElementById("imgDiv");
+                    imgdiv.style.backgroundImage = "url('../../images/teamBackground.png')";
+                    imgdiv.style.height = 372;
+                    let clubLogo = document.getElementById("clubLogo");
+                    clubLogo.src = "../../images/" + teamValue + ".png"
+                    let size = 120;
+                    clubLogo.width = size;
+                    clubLogo.height = size;
+                    clubLogo.style.marginRight = "30px"
+                    clubLogo.style.marginTop = "15px"
+                    let header1 = document.getElementById("header1");
+                    header1.style.color = "#ffffff";
+                    header1.style.textAlign = "left";
+                    let headerDiv = document.getElementById("headerDiv");
+                    headerDiv.style.display = "flex";
+                    headerDiv.style.marginTop = "0px"
+                    headerDiv.style.padding = "110px";
+                    headerDiv.style.fontFamily = "Sansation";
+                    headerDiv.style.fontWeight = 700;
+
+                    let teamsjson = data;
+                    let validTeams = Object.keys(teamsjson);
+                    if (teamValue == null || !validTeams.includes(teamValue)) {
+                        window.location.href = "../..";
+                    }
+
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../?team=" + teamValue
+                    })
+
+                    let h1 = document.getElementById("header1");
+                    h1.textContent = teamsjson[teamValue].name
+                    let title = document.getElementById("title");
+                    title.textContent = teamsjson[teamValue].name + " Players"
+
+                    fetch("api/players")
+                        .then(response => response.json())
+                        .then(data => {
+                            let playersjson = data;
+                            let table = document.getElementById("playerstable");
+                            for (let i = 0; i < Object.keys(playersjson).length; i++) {
+                                if (playersjson[Object.keys(playersjson)[i]].team == teamValue) {
+                                    let row = document.createElement("tr");
+                                    row.id = Object.keys(playersjson)[i];
+                                    row.className = "selectableTr";
+                                    let cell1 = document.createElement("td");
+                                    cell1.textContent = playersjson[Object.keys(playersjson)[i]].name;
+                                    row.appendChild(cell1);
+                                    let cell2 = document.createElement("td");
+                                    cell2.textContent = playersjson[Object.keys(playersjson)[i]].position;
+                                    row.appendChild(cell2);
+                                    let cell3 = document.createElement("td");
+                                    cell3.textContent = playersjson[Object.keys(playersjson)[i]].birthdate;
+                                    row.appendChild(cell3);
+                                    let cell4 = document.createElement("td");
+                                    cell4.textContent = playersjson[Object.keys(playersjson)[i]].country;
+                                    row.appendChild(cell4);
+                                    let cell5 = document.createElement("td");
+                                    cell5.innerHTML = "&euro;" + String(Math.trunc(playersjson[Object.keys(playersjson)[i]].marketvalue * 100) / 100) + " mill.";
+                                    row.appendChild(cell5);
+
+                                    table.appendChild(row);
+                                    row.addEventListener('click', function () {
+                                        window.location.href = "../../players?player=" + row.id;
+                                    })
+                                }
+                            }
+                        })
+                })
+        } catch { console.error("Error Query") } </script>
+</body>
+
+</html>

@@ -1,0 +1,313 @@
+<html lang="en">
+
+<head>
+    <title>Players</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" style="display:none">Back to Start</button>
+    <h1 id="h1">List of Players</h1>
+    <ul id="playerslist"></ul>
+
+
+    <div class="bodydiv">
+        <div id="infodiv" style="display: none;">
+            <div id="playerInfos" style="grid-area: a;"></div>
+            <div id="market" style="grid-area: b;">
+                <div id="marketValueDisplay" style="background-color: black;">
+                    <p id="valueNumber" style="color:white;font-size: 40px;margin-top: 0px;margin-bottom: 0px;">65.00
+                    </p>
+                    <p id="valueText" style="color:white;margin-left: 5px;margin-bottom: 0px;">mill. &euro;</p>
+                </div>
+            </div>
+        </div>
+        <div id="tradediv" style="display: none;"></div>
+        <table id="playertable" style="margin-left:63px">
+            <tr class="headtr">
+                <td style="width: 400px;">Name</td>
+                <td>Pos</td>
+                <td style="width: 270px;">Club</td>
+                <td>Born</td>
+                <td>Country</td>
+                <td>Market Value</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const playerValue = urlParams.get("player");
+
+        fetch("api/players")
+            .then(response => response.json())
+            .then(data => {
+                let playersjson = data;
+                if (playerValue == null || !Object.keys(playersjson).includes(playerValue)) {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = ".."
+                    })
+
+                    let orderedPlayers = [Object.keys(playersjson)[0]]
+                    for (let i = 1; i < Object.keys(playersjson).length; i++) {
+                        let j = 0;
+                        while (j < i && playersjson[Object.keys(playersjson)[i]].marketvalue < playersjson[orderedPlayers[j]].marketvalue) { j++ }
+                        orderedPlayers.splice(j, 0, Object.keys(playersjson)[i])
+                    }
+
+                    let table = document.getElementById("playertable");
+                    for (let i = 0; i < orderedPlayers.length; i++) {
+                        let row = document.createElement("tr");
+                        row.id = orderedPlayers[i];
+                        row.className = "selectableTr";
+
+                        let cell3 = document.createElement("td");
+                        fetch("api/teams").then(response => response.json()).then(data => {
+                            let teamsjson = data;
+                            let cell3div = document.createElement("div");
+                            cell3div.style.display = "flex";
+                            let cell3img = document.createElement("img");
+                            cell3img.src = "../images/" + playersjson[orderedPlayers[i]].team + ".png";
+                            cell3img.width = 22;
+                            cell3img.height = 22;
+                            cell3div.appendChild(cell3img);
+
+                            let cell3p = document.createElement("p");
+                            cell3p.style.margin = "2px";
+                            cell3p.style.marginLeft = "10px";
+                            cell3p.textContent = teamsjson[playersjson[orderedPlayers[i]].team].name;
+                            cell3div.appendChild(cell3p);
+                            cell3.appendChild(cell3div);
+                        })
+
+                        let cell1 = document.createElement("td");
+                        cell1.textContent = playersjson[orderedPlayers[i]].name;
+                        row.appendChild(cell1);
+
+                        let cell2 = document.createElement("td");
+                        cell2.textContent = playersjson[orderedPlayers[i]].position;
+                        row.appendChild(cell2);
+
+                        row.appendChild(cell3);
+
+                        let cell4 = document.createElement("td");
+                        cell4.textContent = playersjson[orderedPlayers[i]].birthdate;
+                        row.appendChild(cell4);
+
+                        let cell5 = document.createElement("td");
+                        cell5.textContent = playersjson[orderedPlayers[i]].country;
+                        row.appendChild(cell5);
+
+                        let cell6 = document.createElement("td");
+                        cell6.innerHTML = "&euro;" + Math.trunc(playersjson[orderedPlayers[i]].marketvalue * 100) / 100 + "M";
+                        row.appendChild(cell6);
+
+                        table.appendChild(row);
+                        row.addEventListener('click', function () {
+                            window.location.href = "?player=" + row.id;
+                        })
+                    }
+                } else {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../players"
+                    })
+                    let player = playersjson[playerValue];
+                    let h1 = document.getElementById("h1");
+                    h1.textContent = player.name;
+                    let ptable = document.getElementById("playertable");
+                    ptable.style.display = "none";
+                    let olinfodiv = document.getElementById("infodiv");
+                    olinfodiv.style.display = "grid"
+                    let infodiv = document.getElementById("playerInfos");
+                    let marketdiv = document.getElementById("market");
+                    let tradediv = document.getElementById("tradediv");
+                    tradediv.style.display = "block"
+
+                    let bodydiv = document.getElementsByClassName("bodydiv")[0];
+                    bodydiv.style.marginLeft = "350px"
+                    bodydiv.style.marginRight = "350px"
+
+                    let birthdate = document.createElement("p");
+                    birthdate.innerHTML = "<strong>Birthdate:</strong> " + player.birthdate[0] + "/" + player.birthdate[1] + "/" + player.birthdate[2];
+                    infodiv.appendChild(birthdate);
+
+                    let country = document.createElement("p");
+                    country.innerHTML = "<strong>Country:</strong> " + player.country;
+                    infodiv.appendChild(country);
+
+                    let position = document.createElement("p");
+                    position.innerHTML = "<strong>Position:</strong> " + player.position;
+                    infodiv.appendChild(position);
+
+                    let estimatedRating = document.createElement("p");
+                    estimatedRating.innerHTML = "<strong>Estimated Rating:</strong> " + Math.trunc(100 * (player.rating - 2000 + (player.birthdate[2] + 18000) / 10)) / 100;
+                    infodiv.appendChild(estimatedRating);
+
+                    let marketvalue = document.getElementById("valueNumber");
+                    marketvalue.textContent = Math.trunc(player.marketvalue * 100) / 100;
+
+                    if (!player.team == "") {
+                        let teamDiv = document.createElement("div")
+                        teamDiv.style.display = "flex";
+
+                        let img = document.createElement("img");
+                        img.src = "../images/" + player.team + ".png";
+                        img.width = 24;
+                        img.style.marginRight = "10px";
+                        teamDiv.appendChild(img)
+
+                        let team = document.createElement("a");
+                        fetch("api/teams").then(response => response.json()).then(data => {
+                            let teams = data;
+                            team.textContent = teams[player.team].name;
+                        })
+                        team.href = "../teams?team=" + player.team;
+                        teamDiv.appendChild(team);
+
+                        tradediv.appendChild(teamDiv);
+
+                        let tourDiv = document.createElement("div");
+                        tourDiv.className = "fancyDiv"
+
+                        let select = document.createElement("select");
+                        select.id = "selectTournament";
+                        fetch("api/tournaments").then(response => response.json()).then(toursjson => {
+                            for (let i = 0; i < Object.keys(toursjson).length; i++) {
+                                if (toursjson[Object.keys(toursjson)[i]].teams.includes(player.team) && !toursjson[Object.keys(toursjson)[i]].obsolete) {
+                                    let option = document.createElement("option");
+                                    option.textContent = toursjson[Object.keys(toursjson)[i]].name
+                                    option.value = Object.keys(toursjson)[i]
+                                    select.appendChild(option)
+                                }
+                            }
+                            tourDiv.appendChild(select);
+
+                            let statsdiv = document.createElement("div");
+
+                            function updateStatsDiv() {
+                                statsdiv.innerHTML = ""
+
+                                let goalDiv = document.createElement("div");
+                                goalDiv.style.display = "flex";
+                                goalDiv.style.height = "40px";
+                                goalDiv.style.padding = "1px";
+
+                                let tinyImg = document.createElement("img");
+                                tinyImg.src = "../images/goal.png";
+                                tinyImg.style.padding = "3px"
+                                tinyImg.width = 20;
+                                tinyImg.height = 20;
+                                tinyImg.style.marginTop = "16px";
+                                goalDiv.appendChild(tinyImg);
+
+                                let infoText = document.createElement("p");
+                                infoText.style.marginLeft = "10px";
+                                if (toursjson[select.value].stats.goals[playerValue] == undefined) {
+                                    infoText.textContent = "Goals: 0";
+                                } else {
+                                    infoText.textContent = "Goals: " + toursjson[select.value].stats.goals[playerValue];
+                                }
+                                goalDiv.appendChild(infoText)
+
+                                statsdiv.appendChild(goalDiv)
+
+                                let yellDiv = document.createElement("div");
+                                yellDiv.style.display = "flex";
+                                yellDiv.style.height = "40px";
+                                yellDiv.style.padding = "1px";
+
+                                tinyImg = document.createElement("img");
+                                tinyImg.src = "../images/yell.png";
+                                tinyImg.style.padding = "3px"
+                                tinyImg.width = 20;
+                                tinyImg.height = 20;
+                                tinyImg.style.marginTop = "16px";
+                                yellDiv.appendChild(tinyImg);
+
+                                infoText = document.createElement("p");
+                                infoText.style.marginLeft = "10px";
+                                if (toursjson[select.value].stats.yellowCards[playerValue] == undefined) {
+                                    infoText.textContent = "Yellow Cards: 0";
+                                } else {
+                                    infoText.textContent = "Yellow Cards: " + toursjson[select.value].stats.yellowCards[playerValue];
+                                }
+                                yellDiv.appendChild(infoText)
+
+                                statsdiv.appendChild(yellDiv)
+
+                                let redcDiv = document.createElement("div");
+                                redcDiv.style.display = "flex";
+                                redcDiv.style.height = "40px";
+                                redcDiv.style.padding = "1px";
+
+                                tinyImg = document.createElement("img");
+                                tinyImg.src = "../images/redc.png";
+                                tinyImg.style.padding = "3px"
+                                tinyImg.width = 20;
+                                tinyImg.height = 20;
+                                tinyImg.style.marginTop = "16px";
+                                redcDiv.appendChild(tinyImg);
+
+                                infoText = document.createElement("p");
+                                infoText.style.marginLeft = "10px";
+                                if (toursjson[select.value].stats.redCards[playerValue] == undefined) {
+                                    infoText.textContent = "Red Cards: 0";
+                                } else {
+                                    infoText.textContent = "Red Cards: " + toursjson[select.value].stats.redCards[playerValue];
+                                }
+                                redcDiv.appendChild(infoText)
+
+                                statsdiv.appendChild(redcDiv)
+                            }
+                            updateStatsDiv();
+                            select.addEventListener('change', function () { updateStatsDiv() })
+
+                            tourDiv.appendChild(statsdiv)
+                            tradediv.appendChild(tourDiv);
+                        })
+
+                    } else {
+                        tradediv.style.display = "none";
+                    }
+
+                    if (localStorage.getItem("name") != null) {
+                        let permission = false;
+                        fetch("api/teams").then(response => response.json()).then(data => {
+                            let teams = data;
+                            for (let i = 0; i < Object.keys(teams).length; i++) {
+                                if (teams[Object.keys(teams)[i]].owner == localStorage.getItem("name")) {
+                                    permission = true;
+                                    break;
+                                }
+                            }
+                            if (permission) {
+                                let tradebutton = document.createElement("button");
+                                tradebutton.textContent = "Negotiate Player";
+                                tradebutton.className = "sendbutton"
+                                tradebutton.addEventListener('click', function () {
+                                    window.location.href = "negotiate?player=" + playerValue;
+                                })
+                                marketdiv.appendChild(tradebutton);
+                            }
+                        })
+                    }
+                }
+            })
+    </script>
+</body>
+
+</html>

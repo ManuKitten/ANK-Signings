@@ -1,0 +1,87 @@
+<html lang="en">
+
+<head>
+    <title>Sign In</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+    </header>
+    <button id="backbutton" style="display: none;">Back</button>
+    <h1>Sign in to ANK Signings</h1>
+    <div class="bodydiv" style="margin-left: 200px;">
+        <form id="signinform">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" class="inputText"><br>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="inputText"><br>
+            <p id="error"></p>
+            <button id="signin" class="sendbutton">Sign In</button>
+        </form>
+        <p style="font-size: 15px;">Don't have an account? <a href="../create_account"
+                style="text-decoration: underline;">Create an account</a></p>
+    </div>
+
+
+    <script>
+        if (localStorage.getItem("name")) {
+            window.location.href = "..";
+        }
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        let form = document.getElementById("signinform");
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+        });
+
+        async function sha256(message) {
+            // Encode the message as UTF-8
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+
+            // Hash the data
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+            // Convert ArrayBuffer to hex string
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+
+            return hashHex;
+        }
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = ".."
+        })
+        document.getElementById("signin").addEventListener('click', function () {
+            console.log(document.getElementById("name").value)
+            sha256(document.getElementById("name").value).then(hash => {
+                let hashname = hash;
+                sha256(document.getElementById("password").value).then(hash => {
+                    let hashpass = hash;
+                    fetch("api/accounts").then(response => response.json()).then(data => {
+                        let accounts = data;
+                        if (accounts[hashname] == hashpass) {
+                            localStorage.setItem("username", document.getElementById("name").value);
+                            localStorage.setItem("name", hashname);
+                            localStorage.setItem("password", document.getElementById("password").value);
+                            localStorage.setItem("pass", hashpass);
+                            window.location.href = "../dashboard";
+                        } else {
+                            let errorp = document.getElementById("error");
+                            errorp.textContent = "Error: Username or Password Incorrect";
+                        }
+                    })
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>

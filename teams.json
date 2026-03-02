@@ -1,0 +1,60 @@
+{
+    "tx000000": {
+        "name": "ANK Team",
+        "owner": "5b437e726ab0f9a8eee0edf6950415a0545a2c0d1ea9e8b9421fbeb1fd3723a3",
+        "players": [
+            "px000001",
+            "px000000",
+            "px000006",
+            "px000010",
+            "px000004"
+        ],
+        "wealth": "töëvrsy|ñ"
+    },
+    "tx000001": {
+        "name": "ANK Mod",
+        "owner": "895acd2c4274d8a29ec41296bcaff7601407ecc14f041f6ddc8dfca427619cef",
+        "players": [
+            "px000008",
+            "px000002",
+            "px00000a",
+            "px000007",
+            "px000003"
+        ],
+        "wealth": "'K8"
+    },
+    "tx000002": {
+        "name": "Club de Fútbol ANK",
+        "owner": "5b437e726ab0f9a8eee0edf6950415a0545a2c0d1ea9e8b9421fbeb1fd3723a3",
+        "players": [
+            "px00000b",
+            "px00000c",
+            "px00000f",
+            "px000005",
+            "px00000d",
+            "px000016"
+        ],
+        "wealth": "räïzrsy|ñ"
+    },
+    "tx000003": {
+        "name": "Club Avere",
+        "owner": "d1a29fc41baf88715c12fb88775c8d801d87a4ba2eb0017fa2f4b9ff281eac7a",
+        "players": [
+            "px000011",
+            "px000012",
+            "px000013",
+            "px000014",
+            "px000015",
+            "px00000e",
+            "px000009",
+            "px000009"
+        ],
+        "wealth": "'K8"
+    },
+    "tx9fa335": {
+        "name": "Gad",
+        "owner": "d0cefffeaaeec442e0a74e818cfcf10b530309567ba0d7c8e515c639a95596f8",
+        "players": [],
+        "wealth": "é"
+    }
+}

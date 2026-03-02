@@ -1,0 +1,1035 @@
+<html lang="en">
+
+<head>
+    <title id="title">Match</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <div id="imgDiv">
+        <div id="headerDiv" style="display: grid;gap: 30px;">
+            <a id="backlink" class="fancyLink" style="grid-area: a;display: flex;width: 200px;place-self: center;">
+                <img id="tourLogo"
+                    style="background-color: #ffffff;border-radius: 15px; padding: 7px; margin-top: 9px; margin-right: 12px; margin-left: 10px;">
+                <p id="backlinktext">League</p>
+            </a>
+            <div id="clubLogo1" style="grid-area: b;display: grid;gap: 40px;width: 250px;">
+                <img id="clubLogo1img" style="grid-area: a;place-self: center;">
+                <p id="clubLogo1p" style="text-align: center;font-size: 23px;color:#ffffff;grid-area: b;">team</p>
+            </div>
+            <h1 id="h1" style="font-size: 60px; place-self: center;">Match</h1>
+            <div id="clubLogo2" style="grid-area: d;display: grid;gap: 40px; width: 250px;">
+                <img id="clubLogo2img" style="grid-area: a;place-self: center;">
+                <p id="clubLogo2p" style="text-align: center;font-size: 23px;color:#ffffff;grid-area: b;">team</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bodydiv">
+        <ul id="eventslist" style="display: flex; flex-direction: column;"></ul>
+        <br><br>
+        <div id="winninfDiv" class="winningDiv">
+            <p style="margin: 0px; text-align: center; margin-bottom: 10px;">Initial winning probability</p>
+            <div id="texts"
+                style="display: grid; grid-template: 'a b c' 21px 'd e f' 21px;margin-bottom: 9px;grid-template-columns: 223px 224px 223px;">
+                <p id="team1probP" style="grid-area: a;margin:0px;text-align: left;">Team 1</p>
+                <p style="grid-area: b;margin:0px;text-align: center;display: none;">Draw</p>
+                <p id="team2probP" style="grid-area: c;margin:0px;text-align: right;">Team 2</p>
+                <p id="team1probN" style="grid-area: d;margin:0px;text-align: left;color: rgb(19, 19, 203);">37%</p>
+                <p id="drawprobN" style="grid-area: e;margin:0px;text-align: center;color:gray;display: none;">12%</p>
+                <p id="team2probN" style="grid-area: f;margin:0px;text-align: right;color: rgb(199, 22, 22);">51%</p>
+            </div>
+            <div id="probabilities"
+                style="display:grid;grid-template: 'a b c' 8px;gap:1.5px;grid-template-columns: 335px 0px 335px;">
+                <div style="grid-area: a;background-color: rgb(19, 19, 203);"></div>
+                <div style="grid-area: b;background-color: gray;"></div>
+                <div style="grid-area: c;background-color: rgb(199, 22, 22);"></div>
+            </div>
+        </div>
+        <br><br>
+        <table id="playersTable">
+            <tr class="headtr">
+                <td id="team1td" style="width: 400px;text-align: center;">Team1</td>
+                <td id="team2td" style="width: 400px;text-align: center;">Team2</td>
+            </tr>
+        </table>
+        <div id="submitLineups"
+            style="display: grid; grid-template: '. a . b .' 40px; margin-left: auto;padding: 30px;">
+            <button id="sendhomelineup" class="sendbutton"
+                style="grid-area: a;background-color: #464646; border-color: #464646;">Send</button>
+            <button id="sendawaylineup" class="sendbutton"
+                style="grid-area: b;background-color: #464646; border-color: #464646;">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function addMatchEvent(payload) {
+            const response = await fetch('/api/add-match-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function startMatch(payload) {
+            const response = await fetch('/api/start-match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function endMatch(payload) {
+            const response = await fetch('/api/end-match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function updateTourAfterMatch(payload) {
+            const response = await fetch('/api/update-tour-after-match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function addLineup(payload) {
+            const response = await fetch('/api/add-lineup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        async function updatePlayersValue(payload) {
+            const response = await fetch('/api/update-players-value', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+
+        function factorial(n) {
+            let value = 1;
+            for (let i = n; i > 1; i = i - 1) {
+                value *= i;
+            }
+            return value;
+        }
+
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const matchValue = urlParams.get("match");
+
+        fetch("api/matches").then(response => response.json()).then(data => {
+            let matchesjson = data;
+            let match = matchesjson[matchValue]
+
+            fetch("api/tournaments").then(response => response.json()).then(data => {
+                let toursjson = data;
+                for (let i = 0; i < Object.keys(toursjson).length; i++) {
+                    if (Object.keys(toursjson)[i] == match.tournament) {
+                        let al = document.getElementById("backlink");
+                        al.href = "../tournaments/?tour=" + Object.keys(toursjson)[i];
+                        let a = document.getElementById("backlinktext");
+                        a.textContent = toursjson[Object.keys(toursjson)[i]].name;
+                        a.style.color = "#ffffff";
+
+                        let img = document.getElementById("tourLogo")
+                        img.src = "../images/" + match.tournament + ".png"
+                        img.width = 18
+                        img.height = 18
+                    }
+                }
+            });
+            let teamsjson;
+            fetch("api/teams").then(response => response.json()).then(data => {
+                teamsjson = data;
+
+                async function getRandomEvent(min) {
+                    function playerExpelled(playerQ) {
+                        for (let i = 0; i < match.events.length; i++) {
+                            if ((match.events[i][1] == "redc" || match.events[i][1] == "yere") && match.events[i][3] == playerQ) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    function playerSubbed(playerQ) {
+                        for (let j = 0; j < match.events.length; j++) {
+                            if (match.events[j][1] == "subs" && match.events[j][3] == playerQ) {
+                                return [true, match.events[j][4]];
+                            }
+                        }
+                        return [false];
+                    }
+                    let event = Math.random();
+                    if (event < 0.165) {
+                        let eventTrue = true;
+                        let returnList = [min];
+                        try {
+                            const resp = await fetch("api/players");
+                            const playersjson = await resp.json();
+                            let player = Math.floor(Math.random() * 5);
+                            if (event < 0.05) {
+                                let coef1 = 0;
+                                for (let i = 0; i < 5; i++) {
+                                    let playerRating = playersjson[match.lineups[0][i]].rating
+                                    let subbed = playerSubbed(match.lineups[0][i]);
+                                    if (subbed[0]) {
+                                        playerRating = playersjson[subbed[1]].rating
+                                    } else if (playerExpelled(match.lineups[0][i])) {
+                                        playerRating = 0;
+                                    }
+                                    console.log(playerRating);
+                                    coef1 += playerRating;
+                                    console.log(coef1)
+                                }
+                                let coef2 = 0;
+                                for (let i = 0; i < 5; i++) {
+                                    let playerRating = playersjson[match.lineups[1][i]].rating;
+                                    let subbed = playerSubbed(match.lineups[1][i]);
+                                    if (subbed[0]) {
+                                        playerRating = playersjson[subbed[1]].rating
+                                    } else if (playerExpelled(match.lineups[1][i])) {
+                                        playerRating = 0;
+                                    }
+                                    console.log(playerRating);
+                                    coef2 += playerRating;
+                                    console.log(coef2)
+                                }
+                                returnList.push("goal");
+                                if (Math.random() < coef1 ** 4 / (coef1 ** 4 + coef2 ** 4)) {
+                                    let canScore = true;
+                                    if (playerExpelled(match.lineups[0][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canScore) {
+                                        returnList.push(match.homeTeam);
+                                        let subbed = playerSubbed(match.lineups[0][player]);
+                                        if (subbed[0]) {
+                                            returnList.push(subbed[1])
+                                        } else {
+                                            returnList.push(match.lineups[0][player]);
+                                        }
+
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = [];
+                                    }
+                                } else {
+                                    let canScore = true;
+                                    if (playerExpelled(match.lineups[1][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canScore) {
+                                        returnList.push(match.awayTeam);
+                                        let subbed = playerSubbed(match.lineups[1][player]);
+                                        if (subbed[0]) {
+                                            returnList.push(subbed[1])
+                                        } else {
+                                            returnList.push(match.lineups[1][player]);
+                                        }
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = [];
+                                    }
+                                }
+                            } else if (event < 0.09) {
+                                if (Math.random() < 0.5) {
+                                    if (!playerExpelled(match.lineups[0][player])) {
+                                        let yell = true;
+                                        for (let i = 0; i < match.events.length; i++) {
+                                            if (match.events[i][1] == "yell" && match.events[i][3] == match.lineups[0][player]) {
+                                                yell = false;
+                                            }
+                                        }
+                                        if (yell) {
+                                            returnList.push("yell");
+                                        } else {
+                                            returnList.push("yere")
+                                        }
+                                        returnList.push(match.homeTeam);
+                                        returnList.push(match.lineups[0][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = [];
+                                    }
+                                } else {
+                                    if (!playerExpelled(match.lineups[1][player])) {
+                                        let yell = true;
+                                        for (let i = 0; i < match.events.length; i++) {
+                                            if (match.events[i][1] == "yell" && match.events[i][3] == match.lineups[1][player]) {
+                                                yell = false;
+                                            }
+                                        }
+                                        if (yell) {
+                                            returnList.push("yell");
+                                        } else {
+                                            returnList.push("yere")
+                                        }
+
+                                        returnList.push(match.awayTeam);
+                                        returnList.push(match.lineups[1][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                }
+                            } else if (event < 0.095) {
+                                returnList.push("redc");
+                                if (Math.random() < 0.5) {
+                                    returnList.push(match.homeTeam);
+                                    let canscore = true;
+                                    if (playerExpelled(match.lineups[0][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canscore) {
+                                        returnList.push(match.lineups[0][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                } else {
+                                    returnList.push(match.awayTeam);
+                                    let canscore = true;
+                                    if (playerExpelled(match.lineups[1][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canscore) {
+                                        returnList.push(match.lineups[1][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                }
+                            } else if (event < 0.1025) {
+                                returnList.push("pens");
+                                if (Math.random() < 0.5) {
+                                    returnList.push(match.homeTeam);
+                                    let canscore = true;
+                                    if (playerExpelled(match.lineups[0][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canscore) {
+                                        returnList.push(match.lineups[0][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                } else {
+                                    returnList.push(match.awayTeam);
+                                    let canscore = true;
+                                    if (playerExpelled(match.lineups[1][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canscore) {
+                                        returnList.push(match.lineups[1][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                }
+                            } else if (event < 0.105) {
+                                returnList.push("penf");
+                                if (Math.random() < 0.5) {
+                                    returnList.push(match.homeTeam);
+                                    let canscore = true;
+                                    if (playerExpelled(match.lineups[0][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canscore) {
+                                        returnList.push(match.lineups[0][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                } else {
+                                    returnList.push(match.awayTeam);
+                                    let canscore = true;
+                                    if (playerExpelled(match.lineups[1][player])) {
+                                        canscore = false;
+                                    }
+                                    if (canscore) {
+                                        returnList.push(match.lineups[1][player]);
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                }
+                            } else if (event < 0.165) {
+                                returnList.push("subs");
+                                if (Math.random() < 0.5) {
+                                    returnList.push(match.homeTeam);
+                                    let canscore = true;
+                                    let subbedPlayers = [];
+                                    for (let i = 0; i < match.events.length; i++) {
+                                        if ((match.events[i][1] == "redc" || match.events[i][1] == "yere") && match.events[i][3] == match.lineups[0][player]) {
+                                            canscore = false;
+                                        }
+                                        if (match.events[i][1] == "subs" && match.events[i][2] == match.homeTeam) {
+                                            subbedPlayers.push(match.events[i][4])
+                                        }
+                                    }
+                                    if (canscore && match.lineups[0].length > 5 + subbedPlayers.length && min > 45) {
+                                        returnList.push(match.lineups[0][player]);
+                                        let subPlayer = match.lineups[0][5 + Math.floor(Math.random() * (match.lineups[0].length - 5))]
+                                        while (subbedPlayers.includes(subPlayer)) {
+                                            subPlayer = match.lineups[0][5 + Math.floor(Math.random() * (match.lineups[0].length - 5))]
+                                        }
+                                        returnList.push(subPlayer)
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                } else {
+                                    returnList.push(match.awayTeam);
+                                    let canscore = true;
+                                    let subbedPlayers = [];
+                                    for (let i = 0; i < match.events.length; i++) {
+                                        if ((match.events[i][1] == "redc" || match.events[i][1] == "yere") && match.events[i][3] == match.lineups[1][player]) {
+                                            canscore = false;
+                                        }
+                                        if (match.events[i][1] == "subs" && match.events[i][2] == match.awayTeam) {
+                                            subbedPlayers.push(match.events[i][4])
+                                        }
+                                    }
+                                    if (canscore && match.lineups[1].length > 5 + subbedPlayers.length && min > 45) {
+                                        returnList.push(match.lineups[1][player]);
+                                        let subPlayer = match.lineups[1][5 + Math.floor(Math.random() * (match.lineups[1].length - 5))]
+                                        while (subbedPlayers.includes(subPlayer)) {
+                                            subPlayer = match.lineups[1][5 + Math.floor(Math.random() * (match.lineups[1].length - 5))]
+                                        }
+                                        returnList.push(subPlayer)
+                                    } else {
+                                        eventTrue = false;
+                                        returnList = []
+                                    }
+                                }
+                            }
+                            /*else if ((event < 0.21 && min > 45) || (event < 0.12)) {
+                                returnList.push("redc");
+                                if (Math.random() < 0.5) {
+                                    returnList.push(match.homeTeam);
+                                    returnList.push(match.lineups[0][Math.floor(Math.random()*5)]);
+                                } else {
+                                    returnList.push(match.awayTeam);
+                                    returnList.push(match.lineups[1][Math.floor(Math.random()*5)]);
+                                }
+                            }*/
+                            return [eventTrue, returnList];
+                        } catch (e) {
+                            console.error('getRandomEvent fetch failed', e);
+                            return [false, []];
+                        }
+                    } else {
+                        return [false, []];
+                    }
+                }
+
+                if (matchValue == null || !Object.keys(matchesjson).includes(matchValue)) {
+                    window.location.href = "..";
+                }
+                let title = document.getElementById("title");
+                title.textContent = teamsjson[match.homeTeam].name + " vs " + teamsjson[match.awayTeam].name;
+                let h1 = document.getElementById("h1");
+
+                let imgdiv = document.getElementById("imgDiv");
+                imgdiv.style.backgroundImage = "url('../images/teamBackground.png')";
+                imgdiv.style.height = 372;
+
+                let size = 120;
+
+                let clubLogo1img = document.getElementById("clubLogo1img");
+                clubLogo1img.src = "../images/" + match.homeTeam + ".png"
+                clubLogo1img.width = size;
+                clubLogo1img.height = size;
+                let clubLogo1p = document.getElementById("clubLogo1p");
+                clubLogo1p.textContent = teamsjson[match.homeTeam].name;
+                let clubLogo1 = document.getElementById("clubLogo1");
+                clubLogo1.style.marginLeft = "auto";
+                clubLogo1.style.gridTemplate = '"a" 50px "b" 50px'
+                clubLogo1.addEventListener('click', function () {
+                    window.location.href = "../teams/?team=" + match.homeTeam;
+                });
+                clubLogo1.addEventListener('mouseover', function () {
+                    clubLogo1.style.cursor = "pointer";
+                });
+
+                let clubLogo2img = document.getElementById("clubLogo2img");
+                clubLogo2img.src = "../images/" + match.awayTeam + ".png"
+                clubLogo2img.width = size;
+                clubLogo2img.height = size;
+                let clubLogo2p = document.getElementById("clubLogo2p");
+                clubLogo2p.textContent = teamsjson[match.awayTeam].name;
+                let clubLogo2 = document.getElementById("clubLogo2");
+                clubLogo2.style.marginRight = "auto";
+                clubLogo2.style.gridTemplate = '"a" 50px "b" 50px'
+                clubLogo2.addEventListener('click', function () {
+                    window.location.href = "../teams/?team=" + match.awayTeam;
+                })
+                clubLogo2.addEventListener('mouseover', function () {
+                    clubLogo2.style.cursor = "pointer";
+                });
+
+                let header1 = document.getElementById("h1");
+                header1.style.color = "#ffffff";
+                header1.style.gridArea = "c";
+
+                let headerDiv = document.getElementById("headerDiv");
+                headerDiv.style.gridTemplate = '". a ." 50px "b c d" 100px'
+                headerDiv.style.marginTop = "0px"
+                headerDiv.style.padding = "70px";
+                headerDiv.style.fontFamily = "Sansation";
+                headerDiv.style.fontWeight = 700;
+
+                let minuteText = document.createElement("p");
+                minuteText.style.color = "#FF009C";
+                minuteText.style.gridArea = "c";
+                minuteText.style.margin = "0 auto";
+                minuteText.style.marginTop = "110px";
+                minuteText.style.fontSize = "24px";
+                let Now = new Date()
+
+                /*function probabilityScGoals(m, p, n) {
+                    let probability = 0;
+                    for (let k = n; k <= m; k++) {
+                        probability += factorial(m)/(factorial(k)*factorial(m - k)) * p**k * (1-p)**(m-k);
+                    }
+                    return probability;
+                }
+
+                let drawprobN = document.getElementById("drawprobN");
+                drawprobN.textContent = String(Math.trunc((1 - probabilityScGoals(100, 0.05, 1)) * 1000) / 1000) + "%";*/
+
+                if (match.lineups[0] && match.lineups[1]) {
+                    let team1 = document.getElementById("team1probP")
+                    team1.textContent = teamsjson[match.homeTeam].name
+                    let team2 = document.getElementById("team2probP")
+                    team2.textContent = teamsjson[match.awayTeam].name
+                    fetch("api/players").then(response => response.json()).then(data => {
+                        let playersjson = data;
+                        let coef1p = 0
+                        for (let i = 0; i < 5; i++) {
+                            coef1p += playersjson[match.lineups[0][i]].rating;
+                        }
+                        let coef2p = 0
+                        for (let i = 0; i < 5; i++) {
+                            coef2p += playersjson[match.lineups[1][i]].rating;
+                        }
+                        let team1probN = document.getElementById("team1probN");
+                        team1probN.textContent = String(Math.trunc(1000 * coef1p ** 4 / (coef1p ** 4 + coef2p ** 4)) / 10) + "%"
+                        let team2probN = document.getElementById("team2probN");
+                        team2probN.textContent = String(Math.trunc(1000 * coef2p ** 4 / (coef1p ** 4 + coef2p ** 4)) / 10) + "%"
+                        let probabilities = document.getElementById("probabilities");
+                        probabilities.style.gridTemplateColumns = String(670 * coef1p ** 4 / (coef1p ** 4 + coef2p ** 4)) + "px 0px " + String(670 * coef2p ** 4 / (coef1p ** 4 + coef2p ** 4)) + "px";
+                    })
+                }
+
+                if (!match.end) {
+                    if (match.start.year == Now.getFullYear() && match.start.month - 1 == Now.getMonth()) {
+                        if (match.min == -1) {
+                            let minute = String(match.start.minute);
+                            if (minute.length == 1) {
+                                minute = "0" + minute;
+                            }
+                            minuteText.textContent = match.start.hour + ":" + minute;
+                            minuteText.style.color = "#888888"
+                            if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > -1 && match.min == -1) {
+                                const matchStarter = {
+                                    matchId: matchValue
+                                }
+                                startMatch(matchStarter);
+                                location.reload();
+                            };
+                        } else {
+                            minuteText.style.color = "#FF009C";
+                            if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 45) {
+                                if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute < 60) {
+                                    minuteText.textContent = "Half Time"
+                                } else {
+                                    minuteText.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute - 15 + "'";
+                                    if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > match.min + 15) {
+                                        (async () => {
+                                            let currentRealMinute = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute;
+                                            let eventMinute = match.min + 15;
+
+                                            let matchEnded = false;
+                                            while (eventMinute < currentRealMinute) {
+                                                eventMinute += 1;
+                                                fetch("api/matches").then(response => response.json()).then(data => {
+                                                    match = data[matchValue]
+                                                })
+                                                let evArray = await getRandomEvent(eventMinute - 15);
+                                                const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
+                                                const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
+                                                const matchEvents = {
+                                                    matchId: matchValue,
+                                                    eventExists: eventExists,
+                                                    eventArray: eventArray
+                                                }
+                                                if (match.min <= 100) {
+                                                    await addMatchEvent(matchEvents);
+                                                }
+
+                                                if (!matchEnded && 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 105) {
+                                                    if (Math.random() < 0.25 || 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 115) {
+                                                        matchEnded = true;
+                                                        // update server and local state before reloading so the block won't run again
+                                                        try {
+                                                            const resp = await fetch("api/matches");
+                                                            const data = await resp.json();
+                                                            let lastMatch = data[matchValue];
+                                                            if (!lastMatch.end) {
+                                                                const matchEnd = { matchId: matchValue };
+                                                                await endMatch(matchEnd);
+
+                                                                const tourUpdateData = {
+                                                                    tourId: match.tournament,
+                                                                    homeTeam: match.homeTeam,
+                                                                    awayTeam: match.awayTeam,
+                                                                    score: lastMatch.score,
+                                                                    events: lastMatch.events
+                                                                };
+                                                                await updateTourAfterMatch(tourUpdateData);
+
+                                                                const eventsFull = { events: lastMatch.events };
+                                                                await updatePlayersValue(eventsFull);
+
+                                                                // mark it locally so outer `!match.end` guard skips on reload
+                                                                match.end = true;
+                                                            }
+                                                        } catch (e) {
+                                                            console.error("ending match failed", e);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            location.reload();
+                                        })();
+                                    }
+                                }
+                            } else {
+                                minuteText.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute + "'"
+                                if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > match.min) {
+                                    (async () => {
+                                        let currentRealMinute = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute;
+                                        let eventMinute = match.min;
+
+                                        while (eventMinute < currentRealMinute) {
+                                            eventMinute += 1;
+                                            fetch("api/matches").then(response => response.json()).then(data => {
+                                                match = data[matchValue]
+                                            })
+                                            let evArray = await getRandomEvent(eventMinute);
+                                            const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
+                                            const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
+                                            const matchEvents = {
+                                                matchId: matchValue,
+                                                eventExists: eventExists,
+                                                eventArray: eventArray
+                                            };
+                                            await addMatchEvent(matchEvents);
+                                        }
+                                        location.reload();
+                                    })();
+                                }
+                            }
+                        }
+                    }
+                }
+                headerDiv.appendChild(minuteText);
+
+                let playersTable = document.getElementById("playersTable");
+                playersTable.style.margin = "0 auto";
+
+                let team1td = document.getElementById("team1td");
+                team1td.textContent = teamsjson[match.homeTeam].name;
+
+                let team2td = document.getElementById("team2td");
+                team2td.textContent = teamsjson[match.awayTeam].name;
+
+                document.getElementById("sendhomelineup").addEventListener('click', function () {
+                    if (checkHomeTeamAlPlayers()[0]) {
+                        const upload = {
+                            matchId: matchValue,
+                            teamNum: 0,
+                            lineUp: checkHomeTeamAlPlayers()[1]
+                        }
+                        addLineup(upload);
+                    }
+                })
+                document.getElementById("sendawaylineup").addEventListener('click', function () {
+                    if (checkAwayTeamAlPlayers()[0]) {
+                        const upload = {
+                            matchId: matchValue,
+                            teamNum: 1,
+                            lineUp: checkAwayTeamAlPlayers()[1]
+                        }
+                        addLineup(upload);
+                    }
+                })
+
+                let homeTeamAllowedPlayers = teamsjson[match.homeTeam].players;
+                function checkHomeTeamAlPlayers() {
+                    let checkedArray = [];
+                    let clickable = true;
+                    for (let s = 0; s < Math.min(homeTeamAllowedPlayers.length, 8); s++) {
+                        let selecter = document.getElementById("selectHomePlayer" + s);
+                        if (selecter.value != "-") {
+                            if (checkedArray.includes(selecter.value)) {
+                                clickable = false;
+                            } else {
+                                checkedArray.push(selecter.value)
+                            }
+                        }
+
+                    }
+                    if (checkedArray.length < 5) {
+                        clickable = false;
+                    }
+                    let button = document.getElementById("sendhomelineup");
+                    if (clickable) {
+                        button.style.backgroundColor = "#000000";
+                        button.style.borderColor = "#000000";
+                    } else {
+                        button.style.backgroundColor = "#464646";
+                        button.style.borderColor = "#464646"
+                    };
+                    return [clickable, checkedArray];
+                }
+                let awayTeamAllowedPlayers = teamsjson[match.awayTeam].players;
+                function checkAwayTeamAlPlayers() {
+                    let checkedArray = [];
+                    let clickable = true;
+                    for (let s = 0; s < Math.min(awayTeamAllowedPlayers.length, 8); s++) {
+                        let selecter = document.getElementById("selectAwayPlayer" + s);
+                        if (selecter.value != "-") {
+                            if (checkedArray.includes(selecter.value)) {
+                                clickable = false;
+                            } else {
+                                checkedArray.push(selecter.value)
+                            }
+                        }
+
+                    }
+                    if (checkedArray.length < 5) {
+                        clickable = false;
+                    }
+                    let button = document.getElementById("sendawaylineup");
+                    if (clickable) {
+                        button.style.backgroundColor = "#000000";
+                        button.style.borderColor = "#000000";
+                    } else {
+                        button.style.backgroundColor = "#464646";
+                        button.style.borderColor = "#464646"
+                    };
+                    return [clickable, checkedArray];
+                }
+
+                let search = true;
+                match.lineups[0].forEach(element => {
+                    if (search && !teamsjson[match.homeTeam].players.includes(element)) {
+                        const upload = {
+                            matchId: matchValue,
+                            teamNum: 0,
+                            lineUp: []
+                        }
+                        addLineup(upload);
+                        location.reload()
+                    }
+                })
+                search = true;
+                match.lineups[1].forEach(element => {
+                    if (search && !teamsjson[match.awayTeam].players.includes(element)) {
+                        const upload = {
+                            matchId: matchValue,
+                            teamNum: 1,
+                            lineUp: []
+                        }
+                        addLineup(upload);
+                        location.reload()
+                    }
+                })
+
+                if (match.min == -1) {
+                    h1.textContent = "vs";
+
+                    if (teamsjson[match.homeTeam].owner != localStorage.getItem("name")) {
+                        document.getElementById("sendhomelineup").style.display = "none";
+                    }
+                    if (teamsjson[match.awayTeam].owner != localStorage.getItem("name")) {
+                        document.getElementById("sendawaylineup").style.display = "none";
+                    }
+                    if (teamsjson[match.homeTeam].owner == localStorage.getItem("name") || teamsjson[match.awayTeam].owner == localStorage.getItem("name")) {
+                        fetch("api/players").then(response => response.json()).then(data => {
+                            let playersjson = data;
+
+                            for (let i = 0; i < Math.min(Math.max(teamsjson[match.homeTeam].players.length, teamsjson[match.awayTeam].players.length), 8); i++) {
+                                let row = document.createElement("tr");
+
+                                let t1 = document.createElement("td");
+                                if (teamsjson[match.homeTeam].owner == localStorage.getItem("name") && i < teamsjson[match.homeTeam].players.length) {
+                                    let selectplayer1 = document.createElement("select")
+                                    selectplayer1.id = "selectHomePlayer" + i;
+                                    let defOption = document.createElement("option");
+                                    defOption.textContent = "-"
+                                    selectplayer1.appendChild(defOption)
+                                    for (let j = 0; j < homeTeamAllowedPlayers.length; j++) {
+                                        let option = document.createElement("option");
+                                        option.value = homeTeamAllowedPlayers[j];
+                                        option.textContent = playersjson[homeTeamAllowedPlayers[j]].name;
+                                        selectplayer1.appendChild(option);
+                                    }
+                                    if (i < match.lineups[0].length) {
+                                        selectplayer1.value = match.lineups[0][i];
+                                    }
+                                    selectplayer1.addEventListener('change', function () {
+                                        checkHomeTeamAlPlayers()
+                                    })
+                                    t1.appendChild(selectplayer1)
+                                } else {
+                                    t1.textContent = ""
+                                }
+                                if (i > 4) {
+                                    t1.style.backgroundColor = "#efefef";
+                                }
+                                row.appendChild(t1);
+
+                                let t2 = document.createElement("td");
+                                if (teamsjson[match.awayTeam].owner == localStorage.getItem("name") && i < teamsjson[match.awayTeam].players.length) {
+                                    let selectplayer2 = document.createElement("select")
+                                    selectplayer2.id = "selectAwayPlayer" + i;
+                                    let defOption = document.createElement("option");
+                                    defOption.textContent = "-"
+                                    selectplayer2.appendChild(defOption)
+                                    for (let j = 0; j < awayTeamAllowedPlayers.length; j++) {
+                                        let option = document.createElement("option");
+                                        option.value = awayTeamAllowedPlayers[j];
+                                        option.textContent = playersjson[awayTeamAllowedPlayers[j]].name;
+                                        selectplayer2.appendChild(option);
+                                    }
+                                    if (i < match.lineups[1].length) {
+                                        selectplayer2.value = match.lineups[1][i];
+                                    }
+                                    selectplayer2.addEventListener('change', function () {
+                                        checkAwayTeamAlPlayers()
+                                    })
+                                    t2.appendChild(selectplayer2)
+                                } else {
+                                    t2.textContent = ""
+                                }
+                                if (i > 4) {
+                                    t2.style.backgroundColor = "#efefef";
+                                }
+                                row.appendChild(t2);
+
+                                playersTable.appendChild(row);
+                            }
+                        })
+                    }
+                } else {
+                    let submitDiv = document.getElementById("submitLineups")
+                    submitDiv.style.display = "none"
+                    function transform(type) {
+                        if (type == "goal") {
+                            return "Goal";
+                        } else if (type == "yell") {
+                            return "Yellow Card";
+                        } else if (type == "redc") {
+                            return "Red Card";
+                        } else if (type == "subs") {
+                            return "Substitution";
+                        } else {
+                            return type;
+                        }
+                    }
+
+                    h1.textContent = match.score[0] + " : " + match.score[1];
+                    let ul = document.getElementById("eventslist");
+                    fetch("api/players").then(response => response.json()).then(data => {
+                        let playersjson = data;
+                        for (let i = 0; i < match.events.length; i++) {
+                            let li = document.createElement("li");
+                            li.style.display = "grid";
+                            if (match.events[i][2] == match.homeTeam) {
+                                li.style.gridTemplate = '"a b ." 60px';
+                            } else {
+                                li.style.gridTemplate = '". b a" 60px';
+                            }
+                            li.style.gridTemplateColumns = '300px 50px 300px'
+                            li.style.gap = "13px"
+                            li.style.margin = "0 auto"
+                            li.className = "event";
+
+                            let indiv = document.createElement("div")
+                            indiv.style.gridArea = "a"
+                            indiv.style.display = "grid"
+                            indiv.style.columnGap = "20px"
+                            if (match.events[i][2] == match.homeTeam) {
+                                indiv.style.gridTemplate = '"b a" auto';
+                                indiv.style.gridTemplateColumns = "auto 20px";
+                            } else {
+                                indiv.style.gridTemplate = '"a b" auto';
+                                indiv.style.gridTemplateColumns = "20px auto";
+                            }
+
+                            let img = document.createElement("img");
+                            img.src = "../images/" + match.events[i][1] + ".png";
+                            img.width = "23"
+                            img.gridArea = "a";
+
+                            let inp = document.createElement("p")
+                            if (match.events[i][1] != "subs") {
+                                inp.textContent = playersjson[match.events[i][3]].name;
+                            } else {
+                                inp.textContent = playersjson[match.events[i][4]].name;
+                            }
+
+                            inp.style.gridArea = "b";
+                            inp.style.margin = "0px";
+                            if (match.events[i][2] == match.homeTeam) {
+                                inp.style.textAlign = 'right';
+                            } else {
+                                inp.style.textAlign = 'left';
+                            }
+                            indiv.style.border = "1px solid #dfdfdf";
+                            indiv.style.borderRadius = "15px";
+                            indiv.style.margin = "0px";
+                            indiv.style.padding = "17px";
+                            let lop = document.createElement("p");
+                            if (match.events[i][1] == "subs") {
+                                indiv.style.paddingTop = "13px"
+                                img.style.paddingTop = "4px";
+                                inp.style.fontSize = "17px"
+                                lop.textContent = playersjson[match.events[i][3]].name;
+                                lop.style.fontSize = "14px";
+                                lop.style.color = "#909090";
+                                lop.style.marginTop = "20px";
+                                lop.style.gridArea = "b"
+                                if (match.events[i][2] == match.homeTeam) {
+                                    lop.style.textAlign = 'right';
+                                } else {
+                                    lop.style.textAlign = 'left';
+                                }
+                                indiv.appendChild(img);
+                                indiv.appendChild(inp);
+                                indiv.appendChild(lop);
+                            } else {
+                                indiv.appendChild(img);
+                                indiv.appendChild(inp);
+                            }
+
+                            li.appendChild(indiv);
+
+                            let pmin = document.createElement("div");
+                            let pminText = document.createElement("strong")
+                            pminText.textContent = match.events[i][0] + "'";
+                            pmin.appendChild(pminText);
+                            pmin.style.gridArea = "b";
+                            pmin.style.placeSelf = "center";
+                            li.appendChild(pmin);
+                            li.appendChild(indiv);
+                            li.style.padding = "3px";
+                            ul.appendChild(li);
+                        }
+
+                        for (let i = 0; i < Math.max(match.lineups[0].length, match.lineups[1].length); i++) {
+                            let row = document.createElement("tr");
+                            let t1 = document.createElement("td");
+                            if (match.lineups[0].length > i) {
+                                t1.textContent = playersjson[match.lineups[0][i]].name;
+                            } else {
+                                t1.textContent = ""
+                            }
+                            if (i > 4) {
+                                t1.style.backgroundColor = "#efefef";
+                            }
+                            row.appendChild(t1);
+
+                            let t2 = document.createElement("td");
+                            if (match.lineups[1].length > i) {
+                                t2.textContent = playersjson[match.lineups[1][i]].name;
+                            } else {
+                                t2.textContent = ""
+                            }
+                            if (i > 4) {
+                                t2.style.backgroundColor = "#efefef";
+                            }
+                            row.appendChild(t2);
+                            playersTable.appendChild(row);
+                        }
+                    })
+                }
+            })
+        })
+
+
+    </script>
+</body>
+
+</html>

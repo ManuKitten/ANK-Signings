@@ -1,0 +1,116 @@
+<html lang="en">
+
+<head>
+    <title>Modify Team</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" class="sendbutton" style="margin-top: 10px;">Cancel</button>
+    <div class="bodydiv">
+        <p id="mainLabel">Edit Team</p>
+        <form id="form" action="/upload" method="POST" enctype="multipart/form-data">
+            <input name="teamName" id="teamName" type="hidden">
+            <label for="image">Club Logo:</label>
+            <input name="image" id="image" type="file" accept="image/*">
+            <p id="errorp" style="color:red;font-size: 15; display: none;">Image dimensions must be 300x300</p>
+            <br>
+            <label for="about">Club Name:</label>
+            <input name="about" id="about" type="text">
+            <br>
+            <button id="send" class="sendbutton" style="margin-top: 10px;">Done</button>
+        </form>
+    </div>
+
+    <script>
+        async function changeClubName(payload) {
+            const response = await fetch('/api/change-club-name', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const teamValue = urlParams.get("team");
+
+        let teamName = document.getElementById("teamName");
+        teamName.value = teamValue;
+
+        fetch("api/teams").then(response => response.json()).then(data => {
+            let teamsjson = data;
+
+            if (teamsjson[teamValue].owner != localStorage.getItem("name")) {
+                window.location.href = ".."
+            }
+
+            let mainLabel = document.getElementById("mainLabel");
+            mainLabel.textContent = "Edit " + teamsjson[teamValue].name;
+        })
+        let validImage = false;
+
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = "../?team=" + teamValue
+        })
+
+        let form = document.getElementById("form")
+
+        form.addEventListener('submit', function (event) {
+            if (!validImage) {
+                event.preventDefault(); // STOP the upload
+                alert("Please select a valid 300x300 image first!");
+            }
+        });
+        let button = document.getElementById("send");
+        button.addEventListener('click', function () {
+            const load = {
+                clubId: teamValue,
+                newName: document.getElementById("about").value
+            }
+            changeClubName(load);
+            window.location.href = "../?team=" + teamValue
+        })
+
+        document.getElementById("image").addEventListener('change', function () {
+            const file = this.files[0];
+            //console.log(file)
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result
+                img.onload = function () {
+                    let errorp = document.getElementById("errorp");
+                    if (img.width !== 300 || img.height !== 300) {
+                        errorp.style.display = "block";
+                        validImage = false;
+                    } else {
+                        errorp.style.display = "none";
+                        validImage = true;
+                    }
+                }
+            }
+            reader.readAsDataURL(file)
+        })
+    </script>
+</body>
+
+</html>

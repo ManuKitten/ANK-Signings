@@ -1,0 +1,228 @@
+<html lang="en">
+
+<head>
+    <title id="title">Matches</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="../..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" style="margin:5px;display:none;" class="sendbutton">Back</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">Tournaments</h1>
+        </div>
+    </div>
+
+    <div id="optionsdiv">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;" id="newstab">News</li>
+            <li class="listelem" style="padding: 15px;" id="matctab">Matches</li>
+            <li class="listelem" style="padding: 15px;" id="tabltab">Table</li>
+            <li class="listelem" style="padding: 15px;" id="stattab">Statistics</li>
+        </ul>
+    </div>
+    <div class="bodydiv">
+        <div id="matchesdiv"></div>
+    </div>
+
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const tourValue = urlParams.get("tour");
+        document.getElementById("backbutton").addEventListener('click', function () {
+            window.location.href = "../?tour=" + tourValue;
+        })
+
+        let teamsjson;
+        fetch("api/teams").then(response => response.json()).then(data => {
+            teamsjson = data;
+            fetch("api/tournaments").then(response => response.json()).then(data => {
+                let toursjson = data;
+
+                if (tourValue == null || !Object.keys(toursjson).includes(tourValue)) {
+                    window.location.href = "..";
+                }
+                let title = document.getElementById("title");
+                title.textContent = toursjson[tourValue].name + " Matches"
+                let imgdiv = document.getElementById("imgDiv");
+                imgdiv.style.backgroundImage = "url('../../images/teamBackground.png')";
+                imgdiv.style.height = 372;
+                let clubLogo = document.getElementById("clubLogo");
+                clubLogo.src = "../../images/" + tourValue + ".png"
+                let size = 120;
+                clubLogo.width = size;
+                clubLogo.height = size;
+                clubLogo.style.marginRight = "30px"
+                clubLogo.style.marginTop = "15px"
+                let header1 = document.getElementById("header1");
+                header1.style.color = "#ffffff";
+                header1.style.textAlign = "left";
+                header1.textContent = toursjson[tourValue].name;
+                let headerDiv = document.getElementById("headerDiv");
+                headerDiv.style.display = "flex";
+                headerDiv.style.marginTop = "0px"
+                headerDiv.style.padding = "110px";
+                headerDiv.style.fontFamily = "Sansation";
+                headerDiv.style.fontWeight = 700;
+
+                //let h1 = document.getElementById("h1");
+                //h1.textContent = toursjson[tourValue].name + " Matches";
+
+                let ul = document.getElementById("optionslist");
+
+                let news = document.getElementById("newstab");
+                news.addEventListener('click', function () {
+                    window.location.href = "../?tour=" + tourValue;
+                });
+
+                let tab = document.getElementById("tabltab");
+                tab.addEventListener('click', function () {
+                    window.location.href = "../table/?tour=" + tourValue;
+                });
+
+                let sta = document.getElementById("stattab");
+                sta.addEventListener('click', function () {
+                    window.location.href = "../stats/?tour=" + tourValue;
+                });
+
+                matchesdiv = document.getElementById("matchesdiv");
+                fetch("api/matches").then(response => response.json()).then(data => {
+                    let matchesjson = data;
+                    for (let i = 0; i < toursjson[tourValue].matchdays.length; i++) {
+                        let day = toursjson[tourValue].matchdays[i];
+                        let mdiv = document.createElement("div");
+                        mdiv.id = "matchday" + i;
+                        let pmatch = document.createElement("p");
+                        let md = i + 1;
+                        pmatch.textContent = "Matchday " + md;
+                        mdiv.appendChild(pmatch);
+                        let matchesDivGrid = document.createElement("div")
+                        matchesDivGrid.style.display = "grid";
+                        matchesDivGrid.style.gridTemplateColumns = "repeat(3, 1fr)"
+                        matchesDivGrid.style.gap = "20px"
+                        day.forEach(mt => {
+                            let match = matchesjson[mt];
+                            let ddiv = document.createElement("div");
+                            ddiv.id = match.homeTeam + "-" + match.awayTeam;
+                            ddiv.style.display = "grid";
+                            ddiv.style.gridTemplate = '"a b" auto'
+                            ddiv.style.gridTemplateColumns = "230px 100px"
+                            let inddiv = document.createElement("div");
+                            inddiv.style.gridArea = "a"
+
+                            let div1 = document.createElement("div");
+                            div1.style.display = "flex";
+
+                            let littleClubImg1 = document.createElement("img");
+                            littleClubImg1.src = "../../images/" + match.homeTeam + ".png";
+                            littleClubImg1.width = 18;
+                            littleClubImg1.height = 18;
+                            littleClubImg1.style.marginTop = "6px";
+                            div1.appendChild(littleClubImg1)
+
+                            let p1 = document.createElement("p");
+                            p1.textContent = teamsjson[match.homeTeam].name;
+                            p1.style.margin = "3px";
+                            div1.appendChild(p1)
+                            let p1score = document.createElement("p");
+                            if (match.min > -1) {
+                                p1score.textContent = match.score[0];
+                                p1score.style.margin = "3px";
+                                p1score.style.marginLeft = "auto";
+                                div1.appendChild(p1score);
+                            }
+                            inddiv.appendChild(div1);
+
+                            let div2 = document.createElement("div");
+                            div2.style.display = "flex";
+
+                            let littleClubImg2 = document.createElement("img");
+                            littleClubImg2.src = "../../images/" + match.awayTeam + ".png";
+                            littleClubImg2.width = 18;
+                            littleClubImg2.height = 18;
+                            littleClubImg2.style.marginTop = "6px";
+                            div2.appendChild(littleClubImg2)
+
+                            let p2 = document.createElement("p");
+                            p2.textContent = teamsjson[match.awayTeam].name;
+                            p2.style.margin = "3px";
+                            div2.appendChild(p2);
+                            let p2score = document.createElement("p");
+                            if (match.min > -1) {
+                                p2score.textContent = match.score[1];
+                                p2score.style.margin = "3px";
+                                p2score.style.marginLeft = "auto";
+                                div2.appendChild(p2score);
+                            }
+                            inddiv.appendChild(div2);
+                            ddiv.appendChild(inddiv);
+
+                            let pData = document.createElement("p");
+                            pData.textContent = "Full Time";
+                            let Now = new Date()
+                            if (!match.end) {
+                                if (match.start.year == Now.getFullYear() && match.start.month - 1 == Now.getMonth() && match.start.day == Now.getDate()) {
+                                    if (match.min == -1) {
+                                        let minute = String(match.start.minute);
+                                        if (minute.length == 1) {
+                                            minute = "0" + minute;
+                                        }
+                                        pData.textContent = match.start.hour + ":" + minute;
+                                    } else {
+                                        pData.style.color = "#FF009C";
+                                        if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 45) {
+                                            if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute < 60) {
+                                                pData.textContent = "Half Time"
+                                            } else {
+                                                pData.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute - 15 + "'";
+                                            }
+                                        } else {
+                                            pData.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute + "'"
+                                        }
+                                    }
+                                } else {
+                                    pData.textContent = match.start.day + "/" + match.start.month + "/" + String(match.start.year).slice(2, 4);
+                                }
+                            }
+                            pData.style.fontSize = "17px";
+                            pData.style.gridArea = "b";
+                            pData.style.margin = "0px";
+                            pData.style.placeSelf = "center";
+                            ddiv.appendChild(pData);
+
+                            ddiv.className = "matchdiv";
+                            ddiv.style.marginBottom = "5px";
+                            ddiv.addEventListener('click', function () {
+                                window.location.href = "../../match/?match=" + mt;
+                            })
+                            //let p = document.createElement("p");
+                            //p.appendChild(ddiv);
+                            //p.href = "../../match/?match=" + mt;
+                            //p.width = 400;
+                            matchesDivGrid.appendChild(ddiv);
+                            mdiv.appendChild(matchesDivGrid);
+                        })
+                        matchesdiv.appendChild(mdiv);
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>

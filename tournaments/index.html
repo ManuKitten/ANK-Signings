@@ -1,0 +1,174 @@
+<html lang="en">
+
+<head>
+    <title id="title">Tounaments</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <span class="strong"><a href="..">
+                <p>ANK SIGNINGS</p>
+            </a></span>
+        <div class="signindiv">
+            <button id="signinbutton" class="sendbutton"><strong>Sign In</strong></button>
+            <p id="username"></p>
+        </div>
+    </header>
+    <button id="backbutton" style="display: none;">Back</button>
+    <div id="imgDiv">
+        <div id="headerDiv">
+            <img id="clubLogo">
+            <h1 id="header1" class="h1-title">Tournaments</h1>
+        </div>
+    </div>
+
+    <div id="optionsdiv" style="display: none;">
+        <ul id="optionslist" style="display: flex; padding-left: 90px;">
+            <li class="listelem" style="padding: 15px;" id="newstab">News</li>
+            <li class="listelem" style="padding: 15px;" id="matctab">Matches</li>
+            <li class="listelem" style="padding: 15px;" id="tabltab">Table</li>
+            <li class="listelem" style="padding: 15px;" id="stattab">Statistics</li>
+        </ul>
+    </div>
+    <div class="bodydiv">
+        <ul id="tourslist"></ul>
+        <div id="buttondiv"></div>
+        <div id="newsDiv"></div>
+    </div>
+
+
+    <script>
+        if (localStorage.getItem("name") != null) {
+            document.getElementById("signinbutton").style.display = "none";
+            document.getElementById("username").textContent = localStorage.getItem("username");
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const tourValue = urlParams.get("tour");
+
+        let teamsjson;
+        fetch("api/teams").then(response => response.json()).then(data => {
+            teamsjson = data;
+        })
+
+        fetch("api/tournaments").then(response => response.json()).then(data => {
+            let toursjson = data;
+            let validTours = Object.keys(toursjson);
+
+            if (tourValue == null || !validTours.includes(tourValue)) {
+                document.getElementById("backbutton").addEventListener('click', function () {
+                    window.location.href = "..";
+                })
+                let ul = document.getElementById("tourslist");
+                Object.keys(toursjson).forEach(key => {
+                    let li = document.createElement("li");
+                    let a = document.createElement("a");
+                    a.href = "?tour=" + key;
+                    a.style.display = "flex";
+
+                    let img = document.createElement("img");
+                    img.src = "../images/" + key + ".png";
+                    img.style.width = "30px";
+                    img.style.height = "30px";
+                    img.style.padding = "2px";
+                    a.appendChild(img);
+
+                    let p = document.createElement("p")
+                    p.textContent = toursjson[key].name;
+                    p.style.margin = "7px";
+                    a.appendChild(p);
+
+                    li.appendChild(a);
+                    li.className = "listelem"
+                    li.addEventListener('click', function () {
+                        window.location.href = "?tour=" + key;
+                    })
+                    ul.appendChild(li)
+                })
+            } else {
+                let imgdiv = document.getElementById("imgDiv");
+                imgdiv.style.backgroundImage = "url('../images/teamBackground.png')";
+                imgdiv.style.height = 372;
+                let clubLogo = document.getElementById("clubLogo");
+                clubLogo.src = "../images/" + tourValue + ".png"
+                let size = 120;
+                clubLogo.width = size;
+                clubLogo.height = size;
+                clubLogo.style.marginRight = "30px"
+                clubLogo.style.marginTop = "15px"
+                let header1 = document.getElementById("header1");
+                header1.style.color = "#ffffff";
+                header1.style.textAlign = "left";
+                header1.textContent = toursjson[tourValue].name;
+                let headerDiv = document.getElementById("headerDiv");
+                headerDiv.style.display = "flex";
+                headerDiv.style.marginTop = "0px"
+                headerDiv.style.padding = "110px";
+                headerDiv.style.fontFamily = "Sansation";
+                headerDiv.style.fontWeight = 700;
+
+                document.getElementById("backbutton").addEventListener('click', function () {
+                    window.location.href = "../tournaments";
+                })
+                let title = document.getElementById("title");
+                title.textContent = toursjson[tourValue].name;
+
+                let optionsdiv = document.getElementById("optionsdiv");
+                optionsdiv.style.display = "block";
+                let ul = document.getElementById("optionslist");
+
+                let mat = document.getElementById("matctab");
+                mat.addEventListener('click', function () {
+                    window.location.href = "matches/?tour=" + tourValue;
+                });
+
+                let tab = document.getElementById("tabltab");
+                tab.addEventListener('click', function () {
+                    window.location.href = "table/?tour=" + tourValue;
+                });
+
+                let sta = document.getElementById("stattab");
+                sta.addEventListener('click', function () {
+                    window.location.href = "stats/?tour=" + tourValue;
+                });
+            }
+        })
+
+        let newsDiv = document.getElementById("newsDiv");
+        fetch("api/news").then(response => response.json()).then(newsjson => {
+            let concerningNews = [];
+            let flippedNews = Object.keys(newsjson);
+            flippedNews.reverse();
+            for (let i = 0; i < Object.keys(newsjson).length; i++) {
+                let newInfo = newsjson[flippedNews[i]];
+                let newConcern = newInfo.concern
+                let adding = false;
+                for (let j = 0; j < newConcern.tournaments.length; j++) {
+                    if (newConcern.tournaments[j] == tourValue) {
+                        adding = true;
+                    }
+                }
+                if (adding) {
+                    concerningNews.push(flippedNews[i])
+                }
+            }
+            concerningNews.forEach(newInfo => {
+                let reportDiv = document.createElement("div");
+                reportDiv.id = newInfo;
+                reportDiv.className = "reportDiv"
+                let title = document.createElement("h3");
+                title.textContent = newsjson[newInfo].name;
+                title.style.marginTop = "0px"
+                reportDiv.appendChild(title);
+                let p = document.createElement("p");
+                p.innerHTML = newsjson[newInfo].desc;
+                p.style.marginBottom = "0px"
+                reportDiv.appendChild(p);
+                newsDiv.appendChild(reportDiv);
+            })
+        })
+    </script>
+</body>
+
+</html>
