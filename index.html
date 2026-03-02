@@ -84,13 +84,13 @@
             }
         }
 
-        fetch("api/teams").then(response => response.json()).then(data => {
+        fetch("/api/teams").then(response => response.json()).then(data => {
             let teamsjson = data;
             for (let i = 0; i < Object.keys(teamsjson).length; i++) {
                 let team = teamsjson[Object.keys(teamsjson)[i]];
                 let currentTeamId = Object.keys(teamsjson)[i];
                 if (team.owner == localStorage.getItem("name")) {
-                    fetch("api/debt").then(response => response.json()).then(data => {
+                    fetch("/api/debt").then(response => response.json()).then(data => {
                         let debt = data;
                         if (debt[Object.keys(teamsjson)[i]] >= 0) {
                             let unpay = {
@@ -156,7 +156,7 @@
             }
         }
 
-        fetch("api/correspondence").then(response => response.json()).then(data => {
+        fetch("/api/correspondence").then(response => response.json()).then(data => {
             const mails = data;
             const personalMails = mails[localStorage.getItem("name")];
             async function redoMail(i) {
@@ -207,9 +207,9 @@
         })
 
         let newsDiv = document.getElementById("newsDiv");
-        fetch("api/news").then(response => response.json()).then(newsjson => {
-            fetch("api/teams").then(response => response.json()).then(teamsjson => {
-                fetch("api/tournaments").then(response => response.json()).then(toursjson => {
+        fetch("/api/news").then(response => response.json()).then(newsjson => {
+            fetch("/api/teams").then(response => response.json()).then(teamsjson => {
+                fetch("/api/tournaments").then(response => response.json()).then(toursjson => {
                     let concerningNews = [];
                     let flippedNews = Object.keys(newsjson);
                     flippedNews.reverse();

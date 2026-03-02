@@ -49,9 +49,9 @@
         })
 
         let teamsjson;
-        fetch("api/teams").then(response => response.json()).then(data => {
+        fetch("/api/teams").then(response => response.json()).then(data => {
             teamsjson = data;
-            fetch("api/tournaments").then(response => response.json()).then(data => {
+            fetch("/api/tournaments").then(response => response.json()).then(data => {
                 let toursjson = data;
 
                 if (tourValue == null || !Object.keys(toursjson).includes(tourValue)) {
@@ -101,7 +101,7 @@
                 });
 
                 matchesdiv = document.getElementById("matchesdiv");
-                fetch("api/matches").then(response => response.json()).then(data => {
+                fetch("/api/matches").then(response => response.json()).then(data => {
                     let matchesjson = data;
                     for (let i = 0; i < toursjson[tourValue].matchdays.length; i++) {
                         let day = toursjson[tourValue].matchdays[i];

@@ -113,7 +113,7 @@
         })
 
         document.getElementById("createButton").addEventListener('click', function () {
-            fetch("api/accounts").then(response => response.json()).then(data => {
+            fetch("/api/accounts").then(response => response.json()).then(data => {
                 sha256(document.getElementById("name").value).then(hash => {
                     let hashname = hash;
                     let error = document.getElementById("error");

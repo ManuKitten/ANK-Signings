@@ -53,7 +53,7 @@
         const urlParams = new URLSearchParams(queryString);
         const playerValue = urlParams.get("player");
 
-        fetch("api/players")
+        fetch("/api/players")
             .then(response => response.json())
             .then(data => {
                 let playersjson = data;
@@ -76,7 +76,7 @@
                         row.className = "selectableTr";
 
                         let cell3 = document.createElement("td");
-                        fetch("api/teams").then(response => response.json()).then(data => {
+                        fetch("/api/teams").then(response => response.json()).then(data => {
                             let teamsjson = data;
                             let cell3div = document.createElement("div");
                             cell3div.style.display = "flex";
@@ -171,7 +171,7 @@
                         teamDiv.appendChild(img)
 
                         let team = document.createElement("a");
-                        fetch("api/teams").then(response => response.json()).then(data => {
+                        fetch("/api/teams").then(response => response.json()).then(data => {
                             let teams = data;
                             team.textContent = teams[player.team].name;
                         })
@@ -185,7 +185,7 @@
 
                         let select = document.createElement("select");
                         select.id = "selectTournament";
-                        fetch("api/tournaments").then(response => response.json()).then(toursjson => {
+                        fetch("/api/tournaments").then(response => response.json()).then(toursjson => {
                             for (let i = 0; i < Object.keys(toursjson).length; i++) {
                                 if (toursjson[Object.keys(toursjson)[i]].teams.includes(player.team) && !toursjson[Object.keys(toursjson)[i]].obsolete) {
                                     let option = document.createElement("option");
@@ -286,7 +286,7 @@
 
                     if (localStorage.getItem("name") != null) {
                         let permission = false;
-                        fetch("api/teams").then(response => response.json()).then(data => {
+                        fetch("/api/teams").then(response => response.json()).then(data => {
                             let teams = data;
                             for (let i = 0; i < Object.keys(teams).length; i++) {
                                 if (teams[Object.keys(teams)[i]].owner == localStorage.getItem("name")) {

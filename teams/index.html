@@ -44,7 +44,7 @@
         const urlParams = new URLSearchParams(queryString);
         const teamValue = urlParams.get("team");
         try {
-            fetch("api/teams")
+            fetch("/api/teams")
                 .then(response => response.json())
                 .then(data => {
                     let teamsjson = data;
@@ -156,7 +156,7 @@
         } catch (error) { console.error("Error query") }
 
         let newsDiv = document.getElementById("newsDiv");
-        fetch("api/news").then(response => response.json()).then(newsjson => {
+        fetch("/api/news").then(response => response.json()).then(newsjson => {
             let concerningNews = [];
             let flippedNews = Object.keys(newsjson);
             flippedNews.reverse();

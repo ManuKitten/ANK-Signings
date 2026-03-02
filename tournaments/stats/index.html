@@ -71,9 +71,9 @@
         const tourValue = urlParams.get("tour");
 
         let teamsjson;
-        fetch("api/teams").then(response => response.json()).then(data => {
+        fetch("/api/teams").then(response => response.json()).then(data => {
             teamsjson = data;
-            fetch("api/tournaments").then(response => response.json()).then(data => {
+            fetch("/api/tournaments").then(response => response.json()).then(data => {
                 let toursjson = data;
 
                 if (tourValue == null || !Object.keys(toursjson).includes(tourValue)) {
@@ -124,7 +124,7 @@
                 let goalsTable = document.getElementById("goalsTable");
                 let yellowCardsTable = document.getElementById("yellowCardsTable");
                 let redCardsTable = document.getElementById("redCardsTable");
-                fetch("api/players").then(response => response.json()).then(data => {
+                fetch("/api/players").then(response => response.json()).then(data => {
                     let playersjson = data;
 
                     let orderArray1 = Object.keys(tournament.stats.goals);

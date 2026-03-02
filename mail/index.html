@@ -124,7 +124,7 @@
 
         function transferPlayer(player, team, caller, pay) {
             if (caller != undefined) {
-                fetch("api/teams").then(response => response.json()).then(data => {
+                fetch("/api/teams").then(response => response.json()).then(data => {
                     let teamsjson = data;
                     for (let i = 0; i < Object.keys(teamsjson).length; i++) {
                         if (teamsjson[Object.keys(teamsjson)[i]].players.includes(player)) {
@@ -172,7 +172,7 @@
                                     };
                                     await playerTeam(newPlayer);
 
-                                    fetch("api/players").then(response => response.json()).then(playersjson => {
+                                    fetch("/api/players").then(response => response.json()).then(playersjson => {
                                         async function main() {
                                             const random = "0123456789abcdef";
                                             let newValue = "nx";
@@ -231,7 +231,7 @@
         const urlParams = new URLSearchParams(queryString);
         const mailValue = urlParams.get("mail");
 
-        fetch("api/correspondence").then(response => response.json()).then(data => {
+        fetch("/api/correspondence").then(response => response.json()).then(data => {
             let mails = data;
             let personalmail = mails[localStorage.getItem("name")];
             if (mailValue == null || !Object.keys(mails[localStorage.getItem("name")]).includes(mailValue)) {

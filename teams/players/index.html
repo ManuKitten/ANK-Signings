@@ -60,7 +60,7 @@
                 window.location.href = "../tournaments/?team=" + teamValue;
             })
 
-            fetch("api/teams")
+            fetch("/api/teams")
                 .then(response => response.json())
                 .then(data => {
                     let imgdiv = document.getElementById("imgDiv");
@@ -98,7 +98,7 @@
                     let title = document.getElementById("title");
                     title.textContent = teamsjson[teamValue].name + " Players"
 
-                    fetch("api/players")
+                    fetch("/api/players")
                         .then(response => response.json())
                         .then(data => {
                             let playersjson = data;

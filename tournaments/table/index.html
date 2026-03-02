@@ -61,7 +61,7 @@
         })
 
 
-        fetch("api/tournaments").then(response => response.json()).then(data => {
+        fetch("/api/tournaments").then(response => response.json()).then(data => {
             let toursjson = data;
             let tour = toursjson[tourValue];
             table = document.getElementById("table");
@@ -122,7 +122,7 @@
                 c0div.appendChild(c0img);
                 let c0p = document.createElement("p");
                 c0p.style.margin = "5px";
-                fetch("api/teams").then(response => response.json()).then(data => {
+                fetch("/api/teams").then(response => response.json()).then(data => {
                     let teamsjson = data;
                     c0p.textContent = teamsjson[orderedTable[i][0]].name;
                 })

@@ -56,7 +56,7 @@
         let teamName = document.getElementById("teamName");
         teamName.value = teamValue;
 
-        fetch("api/teams").then(response => response.json()).then(data => {
+        fetch("/api/teams").then(response => response.json()).then(data => {
             let teamsjson = data;
 
             if (teamsjson[teamValue].owner != localStorage.getItem("name")) {

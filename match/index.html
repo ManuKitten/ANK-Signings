@@ -185,11 +185,11 @@
         const urlParams = new URLSearchParams(queryString);
         const matchValue = urlParams.get("match");
 
-        fetch("api/matches").then(response => response.json()).then(data => {
+        fetch("/api/matches").then(response => response.json()).then(data => {
             let matchesjson = data;
             let match = matchesjson[matchValue]
 
-            fetch("api/tournaments").then(response => response.json()).then(data => {
+            fetch("/api/tournaments").then(response => response.json()).then(data => {
                 let toursjson = data;
                 for (let i = 0; i < Object.keys(toursjson).length; i++) {
                     if (Object.keys(toursjson)[i] == match.tournament) {
@@ -207,7 +207,7 @@
                 }
             });
             let teamsjson;
-            fetch("api/teams").then(response => response.json()).then(data => {
+            fetch("/api/teams").then(response => response.json()).then(data => {
                 teamsjson = data;
 
                 async function getRandomEvent(min) {
@@ -232,7 +232,7 @@
                         let eventTrue = true;
                         let returnList = [min];
                         try {
-                            const resp = await fetch("api/players");
+                            const resp = await fetch("/api/players");
                             const playersjson = await resp.json();
                             let player = Math.floor(Math.random() * 5);
                             if (event < 0.05) {
@@ -571,7 +571,7 @@
                     team1.textContent = teamsjson[match.homeTeam].name
                     let team2 = document.getElementById("team2probP")
                     team2.textContent = teamsjson[match.awayTeam].name
-                    fetch("api/players").then(response => response.json()).then(data => {
+                    fetch("/api/players").then(response => response.json()).then(data => {
                         let playersjson = data;
                         let coef1p = 0
                         for (let i = 0; i < 5; i++) {
@@ -621,7 +621,7 @@
                                             let matchEnded = false;
                                             while (eventMinute < currentRealMinute) {
                                                 eventMinute += 1;
-                                                fetch("api/matches").then(response => response.json()).then(data => {
+                                                fetch("/api/matches").then(response => response.json()).then(data => {
                                                     match = data[matchValue]
                                                 })
                                                 let evArray = await getRandomEvent(eventMinute - 15);
@@ -641,7 +641,7 @@
                                                         matchEnded = true;
                                                         // update server and local state before reloading so the block won't run again
                                                         try {
-                                                            const resp = await fetch("api/matches");
+                                                            const resp = await fetch("/api/matches");
                                                             const data = await resp.json();
                                                             let lastMatch = data[matchValue];
                                                             if (!lastMatch.end) {
@@ -682,7 +682,7 @@
 
                                         while (eventMinute < currentRealMinute) {
                                             eventMinute += 1;
-                                            fetch("api/matches").then(response => response.json()).then(data => {
+                                            fetch("/api/matches").then(response => response.json()).then(data => {
                                                 match = data[matchValue]
                                             })
                                             let evArray = await getRandomEvent(eventMinute);
@@ -826,7 +826,7 @@
                         document.getElementById("sendawaylineup").style.display = "none";
                     }
                     if (teamsjson[match.homeTeam].owner == localStorage.getItem("name") || teamsjson[match.awayTeam].owner == localStorage.getItem("name")) {
-                        fetch("api/players").then(response => response.json()).then(data => {
+                        fetch("/api/players").then(response => response.json()).then(data => {
                             let playersjson = data;
 
                             for (let i = 0; i < Math.min(Math.max(teamsjson[match.homeTeam].players.length, teamsjson[match.awayTeam].players.length), 8); i++) {
@@ -911,7 +911,7 @@
 
                     h1.textContent = match.score[0] + " : " + match.score[1];
                     let ul = document.getElementById("eventslist");
-                    fetch("api/players").then(response => response.json()).then(data => {
+                    fetch("/api/players").then(response => response.json()).then(data => {
                         let playersjson = data;
                         for (let i = 0; i < match.events.length; i++) {
                             let li = document.createElement("li");
