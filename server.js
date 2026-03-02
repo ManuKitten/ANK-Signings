@@ -6,6 +6,8 @@ const multer = require('multer')
 const fs = require('fs');      // Missing this!
 const path = require('path');  // Missing this!
 const app = express();
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const Account = require('./models/Account');
 const Correspondence = require('./models/Correspondence');
@@ -472,8 +474,6 @@ app.post('/api/add-new', async (req, res) => {
 });
 
 // 2.1 Configure where and how to store the file
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Configure Cloudinary with your credentials (put these in your .env file!)
 cloudinary.config({
