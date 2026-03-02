@@ -7,7 +7,10 @@ const fs = require('fs');      // Missing this!
 const path = require('path');  // Missing this!
 const app = express();
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary').CloudinaryStorage;
+const multerStorageCloudinary = require('multer-storage-cloudinary');
+
+// Use the library's internal property directly
+const CloudinaryStorage = multerStorageCloudinary.CloudinaryStorage || multerStorageCloudinary;
 
 const Account = require('./models/Account');
 const Correspondence = require('./models/Correspondence');
