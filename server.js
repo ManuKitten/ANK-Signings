@@ -43,6 +43,7 @@ app.get('/api/accounts', async (req, res) => {
         accounts.forEach(a => accountMap[a.accountId] = a);
         res.json(accountMap);
     } catch (err) {
+        console.error("CRITICAL DATABASE ERROR:", err);
         res.status(500).json({ error: "Failed to fetch accounts" });
     }
 });
