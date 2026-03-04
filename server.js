@@ -507,17 +507,31 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('image'), async (req, res) => {
-    if (!req.file) return res.status(400).send('No file uploaded.');
+    try {
+        if (!req.file) return res.status(400).send('No file uploaded.');
 
-    // req.file.path is the URL provided by Cloudinary!
-    const imageUrl = req.file.path;
+        // 1. Get the URL provided by Cloudinary
+        const imageUrl = req.file.path;
 
-    await Team.findOneAndUpdate(
-        { teamId: req.body.teamId },
-        { logoUrl: imageUrl } // Store this URL in your Team model
-    );
+        // 2. Use 'teamName' from the form to find the team 
+        // and update 'logoUrl' (matching your server logic)
+        const updatedTeam = await Team.findOneAndUpdate(
+            { teamId: req.body.teamName }, // Fix: use teamName from the form
+            { logoUrl: imageUrl },         // Update the URL
+            { new: true }
+        );
 
-    res.redirect('../?team=' + req.body.teamName);
+        if (!updatedTeam) {
+            console.error("Team not found for ID:", req.body.teamName);
+            return res.status(404).send("Team not found in database.");
+        }
+
+        // 3. Redirect back to the team page
+        res.redirect('../?team=' + req.body.teamName);
+    } catch (err) {
+        console.error("Upload Route Error:", err);
+        res.status(500).send("Internal Server Error during upload.");
+    }
 });
 
 app.post('/duplicate-default-team-photo', async (req, res) => {
