@@ -62,7 +62,7 @@
                             a.href = "?team=" + Object.keys(teamsjson)[i];
                             a.style.display = "flex";
                             let img = document.createElement("img");
-                            img.src = "../images/" + Object.keys(teamsjson)[i] + ".png";
+                            img.src = teamsjson[Object.keys(teamsjson)[i]].logoUrl || "../images/defaultTeamLogo.png";
                             img.width = 30;
                             img.height = 30;
                             img.style.padding = "6px";
@@ -98,7 +98,7 @@
                         imgdiv.style.backgroundImage = "url('../images/teamBackground.png')";
                         imgdiv.style.height = 372;
                         let clubLogo = document.getElementById("clubLogo");
-                        clubLogo.src = "../images/" + teamValue + ".png"
+                        clubLogo.src = teamsjson[Object.keys(teamsjson)[i]].logoUrl || "../images/defaultTeamPhoto.png";
                         let size = 120;
                         clubLogo.width = size;
                         clubLogo.height = size;
