@@ -2,7 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_URI);
 // Add this right after mongoose.connect(process.env.MONGO_URI);
-mongoose.connection.once('open', async () => {
+/*mongoose.connection.once('open', async () => {
     try {
         // This force-removes the ghost rule that is causing the 500 error
         await mongoose.connection.db.collection('accounts').dropIndex('accoundId_1');
@@ -10,7 +10,7 @@ mongoose.connection.once('open', async () => {
     } catch (err) {
         console.log("Index 'accoundId_1' was already removed or doesn't exist.");
     }
-});
+});*/
 const express = require('express');
 const multer = require('multer')
 const fs = require('fs');      // Missing this!
@@ -520,20 +520,12 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     res.redirect('../?team=' + req.body.teamName);
 });
 
-app.post('/duplicate-default-team-photo', async (req, res) => {
-    const { teamId } = req.body;
-
-    // Instead of copying a file, we update the team in MongoDB 
-    // to use the default image URL from Cloudinary.
-    const defaultUrl = "https://res.cloudinary.com/your-cloud/image/upload/defaultTeamPhoto.png";
-
-    try {
-        await Team.findOneAndUpdate({ teamId }, { logoUrl: defaultUrl });
-        res.send("Default photo assigned successfully");
-    } catch (err) {
-        res.status(500).send("Error updating team photo");
-    }
-});
+fetch('/duplicate-default-team-photo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    // Change 'filename' to 'teamId' to match the server-side req.body.teamId
+    body: JSON.stringify({ teamId: teamValue }) 
+})
 
 // 3. Serve Static Files THIRD
 // This allows your index.html files to be found

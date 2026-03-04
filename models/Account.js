@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const AccountSchema = new mongoose.Schema({
-    accountId: { type: String, unique: true },
+    accountId: { type: String },
     passwordId: { type: String }
 }, { strict: false }); // 'strict: false' allows you to save your existing JSON structure easily
 
