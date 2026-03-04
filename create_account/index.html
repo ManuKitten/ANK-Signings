@@ -146,7 +146,8 @@
                                 fetch('/duplicate-default-team-photo', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ filename: teamValue + ".png" })
+                                    // Change 'filename' to 'teamId' to match the server-side req.body.teamId
+                                    body: JSON.stringify({ teamId: teamValue }) 
                                 })
                                     .then(response => response.text())
                                     .then(data => alert(data))
