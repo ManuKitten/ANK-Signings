@@ -40,7 +40,7 @@ app.get('/api/accounts', async (req, res) => {
     try {
         const accounts = await Account.find();
         const accountMap = {};
-        accounts.forEach(a => accountMap[a.playerId] = a);
+        accounts.forEach(a => accountMap[a.accountId] = a);
         res.json(accountMap);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch accounts" });
