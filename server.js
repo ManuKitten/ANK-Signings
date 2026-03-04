@@ -1,6 +1,16 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_URI);
+// Add this right after mongoose.connect(process.env.MONGO_URI);
+mongoose.connection.once('open', async () => {
+    try {
+        // This force-removes the ghost rule that is causing the 500 error
+        await mongoose.connection.db.collection('accounts').dropIndex('name_1');
+        console.log("Successfully removed the ghost index 'name_1'");
+    } catch (err) {
+        console.log("Index 'name_1' was already removed or doesn't exist.");
+    }
+});
 const express = require('express');
 const multer = require('multer')
 const fs = require('fs');      // Missing this!
