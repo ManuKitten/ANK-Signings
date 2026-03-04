@@ -498,9 +498,12 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'team_photos',
-        public_id: (req, file) => req.body.teamName || 'default_team',
+    params: async (req, file) => {
+        return {
+            folder: 'team_photos',
+            public_id: req.body.teamName || 'default_team',
+            format: 'png', // or keep original
+        };
     },
 });
 
