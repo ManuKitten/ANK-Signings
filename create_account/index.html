@@ -146,12 +146,16 @@
                                 fetch('/duplicate-default-team-photo', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    // Change 'filename' to 'teamId' to match the server-side req.body.teamId
-                                    body: JSON.stringify({ teamId: teamValue }) 
+                                    body: JSON.stringify({ teamId: teamValue }) // Send teamId, not filename
                                 })
-                                    .then(response => response.text())
-                                    .then(data => alert(data))
-                                    .catch(err => alert('Error ' + err))
+                                .then(response => response.json())
+                                .then(data => {
+                                    if(data.success) {
+                                        // Find the image for this team and update its source
+                                        const teamImg = document.querySelector(`img[data-team-id="${teamValue}"]`);
+                                        if (teamImg) teamImg.src = data.url;
+                                    }
+                                });
                                 const teamBankData = {
                                     teamId: teamValue,
                                     amount: 0

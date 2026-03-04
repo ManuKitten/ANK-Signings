@@ -522,19 +522,30 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 app.post('/duplicate-default-team-photo', async (req, res) => {
     const { teamId } = req.body;
-
-    // Instead of copying a file, we update the team in MongoDB 
-    // to use the default image URL from Cloudinary.
-    const defaultUrl = "https://res.cloudinary.com/your-cloud/image/upload/defaultTeamPhoto.png";
+    
+    // 1. The source is your existing default photo URL
+    const defaultPhotoUrl = "https://res.cloudinary.com/dccssnncr/image/upload/v1772572434/defaultTeamPhoto_dnwclq.png";
 
     try {
-        await Team.findOneAndUpdate({ teamId }, { logoUrl: defaultUrl });
-        res.send("Default photo assigned successfully");
+        // 2. Upload the default photo TO Cloudinary AGAIN, but with the teamId as the name
+        const result = await cloudinary.uploader.upload(defaultPhotoUrl, {
+            public_id: teamId,      // This sets the "filename" in Cloudinary
+            folder: 'team_photos',  // Keeps it organized in your folder
+            overwrite: true         // Ensures it updates if you retry
+        });
+
+        // 3. Update MongoDB with the specific URL of this NEW copy
+        await Team.findOneAndUpdate(
+            { teamId: teamId }, 
+            { logoUrl: result.secure_url } 
+        );
+
+        res.json({ success: true, url: result.secure_url });
     } catch (err) {
-        res.status(500).send("Error updating team photo");
+        console.error("Cloudinary duplication error:", err);
+        res.status(500).send("Failed to duplicate default photo");
     }
 });
-
 // 3. Serve Static Files THIRD
 // This allows your index.html files to be found
 app.use(express.static(__dirname));
