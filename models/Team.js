@@ -5,7 +5,7 @@ const TeamSchema = new mongoose.Schema({
     name: String,
     players: [String],
     wealth: String, // Since you use Vigenere encryption on this string
-    logoURL: String
+    logoUrl: String
 }, { strict: false }); // 'strict: false' allows you to save your existing JSON structure easily
 
 module.exports = mongoose.model('Team', TeamSchema);

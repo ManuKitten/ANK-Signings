@@ -80,7 +80,7 @@
                 alert("Please select a valid 300x300 image first!");
             }
         });
-        let button = document.getElementById("send");
+        /*let button = document.getElementById("send");
         button.addEventListener('click', function () {
             const load = {
                 clubId: teamValue,
@@ -88,7 +88,36 @@
             }
             changeClubName(load);
             window.location.href = "../?team=" + teamValue
-        })
+        })*/
+        // Remove the separate button.addEventListener('click', ...) block entirely
+
+        form.addEventListener('submit', async function (event) {
+            if (!validImage) {
+                event.preventDefault(); 
+                alert("Please select a valid 300x300 image first!");
+                return;
+            }
+
+            // 1. Prevent the form from sending immediately so we can change the name first
+            event.preventDefault();
+
+            const load = {
+                clubId: teamValue,
+                newName: document.getElementById("about").value
+            };
+
+            try {
+                // 2. Wait for the name change to finish
+                await changeClubName(load);
+                
+                // 3. NOW manually trigger the form upload
+                form.submit(); 
+            } catch (err) {
+                console.error("Name change failed:", err);
+                alert("Could not update name, but attempting image upload...");
+                form.submit();
+            }
+        });
 
         document.getElementById("image").addEventListener('change', function () {
             const file = this.files[0];
