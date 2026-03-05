@@ -538,29 +538,33 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 app.post('/duplicate-default-team-photo', async (req, res) => {
-    const { teamId } = req.body; // Matches the new key from index.html
-    
-    // Ensure this URL is correct for your default image
+    const { teamId } = req.body;
     const defaultPhotoUrl = "https://res.cloudinary.com/dccssnncr/image/upload/v1772572434/defaultTeamPhoto_dnwclq.png";
 
     try {
-        // This creates a NEW copy in Cloudinary named after the teamId
+        console.log("Attempting to duplicate for teamId:", teamId); // Log to see if teamId is reaching the server
+
         const result = await cloudinary.uploader.upload(defaultPhotoUrl, {
-            public_id: teamId,      
-            folder: 'team_photos',  
-            overwrite: true         
+            public_id: teamId,
+            folder: 'team_photos',
+            overwrite: true
         });
 
-        // Update MongoDB to point to this NEW unique URL
-        await Team.findOneAndUpdate(
+        const updatedTeam = await Team.findOneAndUpdate(
             { teamId: teamId }, 
-            { logoUrl: result.secure_url } 
+            { logoUrl: result.secure_url },
+            { new: true }
         );
+
+        if (!updatedTeam) {
+            console.log("Team not found in DB yet for ID:", teamId);
+            return res.status(404).send("Team not found");
+        }
 
         res.json({ success: true, url: result.secure_url });
     } catch (err) {
-        console.error("Cloudinary duplication error:", err);
-        res.status(500).send("Failed to duplicate default photo");
+        console.error("DETAILED CLOUDINARY ERROR:", err.message); // This will tell you exactly why it's a 500 error
+        res.status(500).send("Cloudinary Error: " + err.message);
     }
 });
 // 3. Serve Static Files THIRD
