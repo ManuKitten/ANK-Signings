@@ -538,20 +538,20 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 app.post('/duplicate-default-team-photo', async (req, res) => {
-    const { teamId } = req.body;
+    const { teamId } = req.body; // Matches the new key from index.html
     
-    // 1. The source is your existing default photo URL
+    // Ensure this URL is correct for your default image
     const defaultPhotoUrl = "https://res.cloudinary.com/dccssnncr/image/upload/v1772572434/defaultTeamPhoto_dnwclq.png";
 
     try {
-        // 2. Upload the default photo TO Cloudinary AGAIN, but with the teamId as the name
+        // This creates a NEW copy in Cloudinary named after the teamId
         const result = await cloudinary.uploader.upload(defaultPhotoUrl, {
-            public_id: teamId,      // This sets the "filename" in Cloudinary
-            folder: 'team_photos',  // Keeps it organized in your folder
-            overwrite: true         // Ensures it updates if you retry
+            public_id: teamId,      
+            folder: 'team_photos',  
+            overwrite: true         
         });
 
-        // 3. Update MongoDB with the specific URL of this NEW copy
+        // Update MongoDB to point to this NEW unique URL
         await Team.findOneAndUpdate(
             { teamId: teamId }, 
             { logoUrl: result.secure_url } 
