@@ -92,7 +92,7 @@
                 return;
             }
 
-            // 1. Prevent the form from sending immediately so we can change the name first
+            // 1. Prevent the standard submit
             event.preventDefault();
 
             const load = {
@@ -101,15 +101,15 @@
             };
 
             try {
-                // 2. Wait for the name change to finish
+                // 2. Wait for the name change API call to finish
                 await changeClubName(load);
                 
-                // 3. NOW manually trigger the form upload
-                form.submit(); 
+                // 3. FIX: Use the HTMLFormElement.prototype.submit to bypass this listener
+                // This sends the actual file to /upload without looping
+                Object.getPrototypeOf(form).submit.call(form); 
             } catch (err) {
                 console.error("Name change failed:", err);
-                alert("Could not update name, but attempting image upload...");
-                form.submit();
+                Object.getPrototypeOf(form).submit.call(form);
             }
         });
 
