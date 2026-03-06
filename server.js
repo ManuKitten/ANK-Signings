@@ -514,15 +514,19 @@ app.post('/upload', upload.single('image'), async (req, res) => {
         if (!req.file) return res.status(400).send('No file uploaded.');
 
         // 1. Get the URL provided by Cloudinary
+        console.log("Fetching file path");
         const imageUrl = req.file.path;
+        console.log("File Path Fetched")
 
         // 2. Use 'teamName' from the form to find the team 
         // and update 'logoUrl' (matching your server logic)
+        console.log("Fetching updated team");
         const updatedTeam = await Team.findOneAndUpdate(
             { teamId: req.body.teamName }, // Fix: use teamName from the form
             { logoUrl: imageUrl },         // Update the URL
             { new: true }
         );
+        console.log("Updated team fetched");
 
         if (!updatedTeam) {
             console.error("Team not found for ID:", req.body.teamName);
@@ -530,7 +534,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
         }
 
         // 3. Redirect back to the team page
-        res.redirect('../?team=' + req.body.teamName);
+        console.log("Go back to standard team");
+        res.redirect('../?team=' + "tx2e13a7");//req.body.teamName);
     } catch (err) {
         console.error("Upload Route Error:", err);
         res.status(500).send("Internal Server Error during upload.");
