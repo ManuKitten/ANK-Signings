@@ -501,8 +501,11 @@ const storage = new CloudinaryStorage({
     params: async (req, file) => {
         return {
             folder: 'team_photos',
-            public_id: req.body.teamName || 'default_team',
-            format: 'png', // or keep original
+            // Use the teamName (which holds the ID) from the form to overwrite
+            public_id: req.body.teamName, 
+            format: 'png',
+            overwrite: true, // This ensures the old image is replaced
+            invalidate: true // This clears the CDN cache so the new image shows immediately
         };
     },
 });
@@ -513,32 +516,18 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).send('No file uploaded.');
 
-        // 1. Get the URL provided by Cloudinary
-        console.log("Fetching file path");
-        const imageUrl = req.file.path;
-        console.log("File Path Fetched")
+        const imagePath = `team_photos/${teamName}.png`;
 
-        // 2. Use 'teamName' from the form to find the team 
-        // and update 'logoUrl' (matching your server logic)
-        console.log("Fetching updated team");
-        const updatedTeam = await Team.findOneAndUpdate(
-            { teamId: req.body.teamName }, // Fix: use teamName from the form
-            { logoUrl: imageUrl },         // Update the URL
-            { new: true }
-        );
-        console.log("Updated team fetched");
+        const result = await cloudinary.uploader.upload(filePath, {
+            imagePath, // Specify the same public_id to overwrite
+            invalidate: true, // Invalidate cached versions in CDN
+        });
 
-        if (!updatedTeam) {
-            console.error("Team not found for ID:", req.body.teamName);
-            return res.status(404).send("Team not found in database.");
-        }
-
-        // 3. Redirect back to the team page
-        console.log("Go back to standard team");
-        res.redirect('../?team=' + "tx2e13a7");//req.body.teamName);
+        // Redirect back to the team view page
+        res.redirect('../?team=' + req.body.teamName);
     } catch (err) {
         console.error("Upload Route Error:", err);
-        res.status(500).send("Internal Server Error during upload.");
+        res.status(500).send("Internal Server Error.");
     }
 });
 
