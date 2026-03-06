@@ -86,14 +86,13 @@
         // Remove the separate button.addEventListener('click', ...) block entirely
 
         form.addEventListener('submit', async function (event) {
+            // 1. Stop the initial submission so we can do our async work
+            event.preventDefault(); 
+
             if (!validImage) {
-                event.preventDefault(); 
                 alert("Please select a valid 300x300 image first!");
                 return;
             }
-
-            // 1. Prevent the standard submit
-            event.preventDefault();
 
             const load = {
                 clubId: teamValue,
@@ -104,12 +103,13 @@
                 // 2. Wait for the name change API call to finish
                 await changeClubName(load);
                 
-                // 3. FIX: Use the HTMLFormElement.prototype.submit to bypass this listener
-                // This sends the actual file to /upload without looping
-                Object.getPrototypeOf(form).submit.call(form); 
+                // 3. Now that the name is changed, submit the form normally 
+                // to handle the file upload to /upload
+                form.submit(); 
             } catch (err) {
                 console.error("Name change failed:", err);
-                Object.getPrototypeOf(form).submit.call(form);
+                // Even if name change fails, you might still want to upload the image
+                form.submit();
             }
         });
 
