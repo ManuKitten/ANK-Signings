@@ -514,16 +514,14 @@ const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('image'), async (req, res) => {
     try {
+        // 1. Check if a file was actually uploaded
         if (!req.file) return res.status(400).send('No file uploaded.');
 
-        const imagePath = `team_photos/${teamName}.png`;
+        // 2. The 'multer-storage-cloudinary' has ALREADY uploaded the file 
+        // to Cloudinary using the public_id: req.body.teamName logic 
+        // defined in your 'const storage' configuration.
 
-        const result = await cloudinary.uploader.upload(filePath, {
-            imagePath, // Specify the same public_id to overwrite
-            invalidate: true, // Invalidate cached versions in CDN
-        });
-
-        // Redirect back to the team view page
+        // 3. Just redirect the user back to the team page
         res.redirect('../?team=' + req.body.teamName);
     } catch (err) {
         console.error("Upload Route Error:", err);
