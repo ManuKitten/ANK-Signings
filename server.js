@@ -514,28 +514,16 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/upload', async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-        console.log("Upload request received. req.body:", req.body);
-        console.log("Uploaded file:", req.file);
+        console.log("Upload request received. name:", name);
 
-        if (!req.file) {
+        if (file) {
             return res.status(400).send('No file uploaded.');
         }
-
-        // Create an update object
-        const updateData = { logoUrl: req.file.path };
-
-        // IF the user also changed the name in the text box, add it to the update
-        if (req.body.about) {
-            updateData.name = req.body.about;
-        }
-
-        // Perform ONE database operation instead of two
+        
         await Team.findOneAndUpdate(
-            { teamId: req.body.teamName },
-            { $set: updateData },
-            { new: true }
+            { name: req.body.about },
         );
 
         res.redirect('../?team=' + req.body.teamName);
