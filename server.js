@@ -513,19 +513,30 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('image'), async (req, res) => {
+    console.log("--- Upload Route Triggered ---");
+    console.log("Body:", req.body); // Check if teamName exists
+    console.log("File:", req.file); // Check if Multer/Cloudinary succeeded
+
     try {
-        // 1. Check if a file was actually uploaded
-        if (!req.file) return res.status(400).send('No file uploaded.');
+        if (!req.file) {
+            console.log("No file found in request");
+            return res.status(400).send('No file uploaded.');
+        }
 
-        // 2. The 'multer-storage-cloudinary' has ALREADY uploaded the file 
-        // to Cloudinary using the public_id: req.body.teamName logic 
-        // defined in your 'const storage' configuration.
+        console.log("Database update starting for team:", req.body.teamName);
+        
+        // Potential hang point: If MongoDB connection is unstable or query is wrong
+        await Team.findOneAndUpdate(
+            { teamId: req.body.teamName }, 
+            { $set: { logoUrl: req.file.path } } 
+        );
 
-        // 3. Just redirect the user back to the team page
+        console.log("Database update successful, redirecting...");
         res.redirect('../?team=' + req.body.teamName);
+
     } catch (err) {
-        console.error("Upload Route Error:", err);
-        res.status(500).send("Internal Server Error.");
+        console.error("DETAILED ERROR:", err);
+        res.status(500).send("Internal Server Error: " + err.message);
     }
 });
 
