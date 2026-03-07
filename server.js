@@ -500,13 +500,18 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'team_photos',
-        format: 'png',
-        overwrite: true,
-        invalidate: true
-        // Remove public_id: req.body.teamName here temporarily to test 
-        // if the naming logic is what's causing the hang.
+    params: async (req, file) => {
+        // Log this to see if it's hitting the server
+        console.log("Processing upload for team:", req.body.teamName); 
+        
+        return {
+            folder: 'team_photos',
+            // If teamName is missing, use a timestamp to prevent crash
+            public_id: req.body.teamName || `temp_${Date.now()}`,
+            format: 'png',
+            overwrite: true,
+            invalidate: true
+        };
     },
 });
 
@@ -514,22 +519,24 @@ const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-        console.log("Upload request received. name:", name);
-
-        if (file) {
-            return res.status(400).send('No file uploaded.');
+        // Use req.file (Multer's object), not 'file'
+        if (!req.file) {
+            return res.status(400).send('No file selected.');
         }
-        
+
+        const teamId = req.body.teamName;
+        const imageUrl = req.file.path; // This is the Cloudinary URL
+
+        // Update the Database
         await Team.findOneAndUpdate(
-            { name: req.body.about },
+            { teamId: teamId },
+            { logoUrl: imageUrl }
         );
 
-        res.redirect('../?team=' + req.body.teamName);
+        res.redirect('../?team=' + teamId);
     } catch (err) {
-        console.error("UPLOAD ERROR:", err.message);
-        if (!res.headersSent) {
-            res.status(500).send("Upload failed: " + err.message);
-        }
+        console.error("DETAILED UPLOAD ERROR:", err);
+        res.status(500).send("Upload failed: " + err.message);
     }
 });
 
