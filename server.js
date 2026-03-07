@@ -45,6 +45,7 @@ function vigenere(text, key, encrypt = true) {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('.'));
 
 // Fetch all Accounts
 app.get('/api/accounts', async (req, res) => {
