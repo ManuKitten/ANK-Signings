@@ -512,16 +512,18 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post('/upload', async (req, res) => {
     try {
         console.log("Upload request received. req.body:", req.body);
         console.log("Uploaded file:", req.file);
 
+        alert("Got here1");
         const result = await cloudinary.uploader.upload(req.body.image, {
             public_id: teamId,
             folder: 'team_photos',
             overwrite: true
         });
+        alert("Got here2");
 
         if (!req.file) {
             return res.status(400).send('No file uploaded.');
@@ -530,7 +532,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
         // Create an update object
         const updateData = { logoUrl: req.file.path };
 
-        alert("Got here");
+        alert("Got here3");
 
         // IF the user also changed the name in the text box, add it to the update
         if (req.body.about) {
