@@ -100,15 +100,11 @@
             };
 
             try {
-                // 2. Wait for the name change API call to finish
                 await changeClubName(load);
-                
-                // 3. Now that the name is changed, submit the form normally 
-                // to handle the file upload to /upload
+                console.log("Name Changed succesfully!")
                 form.submit(); 
             } catch (err) {
                 console.error("Name change failed:", err);
-                // Even if name change fails, you might still want to upload the image
                 form.submit();
             }
         });
