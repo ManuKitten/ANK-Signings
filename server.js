@@ -44,6 +44,7 @@ function vigenere(text, key, encrypt = true) {
 }
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Fetch all Accounts
 app.get('/api/accounts', async (req, res) => {
@@ -502,7 +503,7 @@ const storage = new CloudinaryStorage({
         return {
             folder: 'team_photos',
             // Use the teamName (which holds the ID) from the form to overwrite
-            public_id: req.body.teamName, 
+            public_id: req.body.teamName,
             format: 'png',
             overwrite: true, // This ensures the old image is replaced
             invalidate: true // This clears the CDN cache so the new image shows immediately
@@ -517,22 +518,12 @@ app.post('/upload', async (req, res) => {
         console.log("Upload request received. req.body:", req.body);
         console.log("Uploaded file:", req.file);
 
-        alert("Got here1");
-        const result = await cloudinary.uploader.upload(req.body.image, {
-            public_id: teamId,
-            folder: 'team_photos',
-            overwrite: true
-        });
-        alert("Got here2");
-
         if (!req.file) {
             return res.status(400).send('No file uploaded.');
         }
 
         // Create an update object
         const updateData = { logoUrl: req.file.path };
-
-        alert("Got here3");
 
         // IF the user also changed the name in the text box, add it to the update
         if (req.body.about) {
@@ -541,7 +532,7 @@ app.post('/upload', async (req, res) => {
 
         // Perform ONE database operation instead of two
         await Team.findOneAndUpdate(
-            { teamId: req.body.teamName }, 
+            { teamId: req.body.teamName },
             { $set: updateData },
             { new: true }
         );
@@ -569,7 +560,7 @@ app.post('/duplicate-default-team-photo', async (req, res) => {
         });
 
         const updatedTeam = await Team.findOneAndUpdate(
-            { teamId: teamId }, 
+            { teamId: teamId },
             { logoUrl: result.secure_url },
             { new: true }
         );
