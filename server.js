@@ -517,26 +517,32 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
+// Add this route to server.js
 app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-        // Use req.file (Multer's object), not 'file'
-        if (!req.file) {
-            return res.status(400).send('No file selected.');
-        }
-
-        const teamId = req.body.teamName;
-        const imageUrl = req.file.path; // This is the Cloudinary URL
-
-        // Update the Database
-        await Team.findOneAndUpdate(
-            { teamId: teamId },
-            { logoUrl: imageUrl }
+        const { teamName, about } = req.body;
+        
+        // 1. Update the 'name' in MongoDB
+        // 2. Ensure logoUrl is set (Cloudinary overwrites the image if public_id is the same)
+        const updatedTeam = await Team.findOneAndUpdate(
+            { teamId: teamName }, 
+            { 
+                name: about,
+                // req.file.path contains the secure URL from Cloudinary
+                logoUrl: req.file ? req.file.path : undefined 
+            },
+            { new: true }
         );
 
-        res.redirect('../?team=' + teamId);
+        if (!updatedTeam) {
+            return res.status(404).send("Team not found");
+        }
+
+        // Redirect back to the team page after success
+        res.redirect(`../../?team=${teamName}`);
     } catch (err) {
-        console.error("DETAILED UPLOAD ERROR:", err);
-        res.status(500).send("Upload failed: " + err.message);
+        console.error("Upload Error:", err);
+        res.status(500).send("Error updating team: " + err.message);
     }
 });
 

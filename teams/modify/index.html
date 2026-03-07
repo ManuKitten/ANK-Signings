@@ -56,48 +56,36 @@
         let teamName = document.getElementById("teamName");
         teamName.value = teamValue;
 
+        // Inside your fetch("/api/teams") callback:
         fetch("/api/teams").then(response => response.json()).then(data => {
             let teamsjson = data;
+            const currentTeam = teamsjson[teamValue];
 
-            if (teamsjson[teamValue].owner != localStorage.getItem("name")) {
-                window.location.href = ".."
+            if (currentTeam.owner != localStorage.getItem("name")) {
+                window.location.href = "..";
             }
 
             let mainLabel = document.getElementById("mainLabel");
-            mainLabel.textContent = "Edit " + teamsjson[teamValue].name;
-        })
-        let validImage = false;
+            mainLabel.textContent = "Edit " + currentTeam.name;
+            
+            // Pre-fill the "About" input with the current name
+            document.getElementById("about").value = currentTeam.name;
+        });
+
+        // Prevent form submission if the image isn't 300x300
+        document.getElementById("form").addEventListener('submit', function (e) {
+            const imageInput = document.getElementById("image");
+            
+            // Only validate if a new file was actually selected
+            if (imageInput.files.length > 0 && !validImage) {
+                e.preventDefault();
+                alert("Please select a valid 300x300 image.");
+            }
+        });
 
         document.getElementById("backbutton").addEventListener('click', function () {
             window.location.href = "../?team=" + teamValue
         })
-
-        let form = document.getElementById("form")
-
-        /*let button = document.getElementById("send");
-        button.addEventListener('click', function () {
-            const load = {
-                clubId: teamValue,
-                newName: document.getElementById("about").value
-            }
-            changeClubName(load);
-            window.location.href = "../?team=" + teamValue
-        })*/
-        // Remove the separate button.addEventListener('click', ...) block entirely
-
-        form.addEventListener('submit', function (event) {
-            // We don't need preventDefault() anymore because we WANT 
-            // the browser to do a standard multi-part form submission.
-            
-            if (!validImage) {
-                event.preventDefault();
-                alert("Please select a valid 300x300 image first!");
-                return;
-            }
-            
-            // The form will now send both the 'image' and the 'about' (newName) 
-            // to the /upload route in one go.
-        });
 
         document.getElementById("image").addEventListener('change', function () {
             const file = this.files[0];
