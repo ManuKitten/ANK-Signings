@@ -512,9 +512,10 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/upload', async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-        console.log("Upload request received. Team:", req.body.teamName);
+        console.log("Upload request received. req.body:", req.body);
+        console.log("Uploaded file:", req.file);
 
         const result = await cloudinary.uploader.upload(req.body.image, {
             public_id: teamId,
