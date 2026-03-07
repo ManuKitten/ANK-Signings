@@ -500,15 +500,13 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: async (req, file) => {
-        return {
-            folder: 'team_photos',
-            // Use the teamName (which holds the ID) from the form to overwrite
-            public_id: req.body.teamName,
-            format: 'png',
-            overwrite: true, // This ensures the old image is replaced
-            invalidate: true // This clears the CDN cache so the new image shows immediately
-        };
+    params: {
+        folder: 'team_photos',
+        format: 'png',
+        overwrite: true,
+        invalidate: true
+        // Remove public_id: req.body.teamName here temporarily to test 
+        // if the naming logic is what's causing the hang.
     },
 });
 
