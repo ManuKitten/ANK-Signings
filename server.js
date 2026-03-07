@@ -514,33 +514,33 @@ const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-        console.log("Upload request received for team:", req.body.teamName);
+        console.log("Upload request received. Team:", req.body.teamName);
 
         if (!req.file) {
-            console.log("No file was uploaded by Multer.");
             return res.status(400).send('No file uploaded.');
         }
 
-        // The file is ALREADY on Cloudinary thanks to the 'upload' middleware.
-        // Now, we update the database with the new URL provided by Cloudinary.
-        const updatedTeam = await Team.findOneAndUpdate(
+        // Create an update object
+        const updateData = { logoUrl: req.file.path };
+
+        // IF the user also changed the name in the text box, add it to the update
+        if (req.body.about) {
+            updateData.name = req.body.about;
+        }
+
+        // Perform ONE database operation instead of two
+        await Team.findOneAndUpdate(
             { teamId: req.body.teamName }, 
-            { $set: { logoUrl: req.file.path } }, // req.file.path is the new Cloudinary URL
+            { $set: updateData },
             { new: true }
         );
 
-        if (!updatedTeam) {
-            console.log("Team ID not found in database:", req.body.teamName);
-            // We still redirect so the user isn't stuck loading
-        }
-
-        console.log("Upload successful. Redirecting...");
         res.redirect('../?team=' + req.body.teamName);
-
     } catch (err) {
-        console.error("CRITICAL UPLOAD ERROR:", err.message);
-        // Sending a response ensures the 'Pending' state ends
-        res.status(500).send("Server Error during upload: " + err.message);
+        console.error("UPLOAD ERROR:", err.message);
+        if (!res.headersSent) {
+            res.status(500).send("Upload failed: " + err.message);
+        }
     }
 });
 

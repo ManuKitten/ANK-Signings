@@ -85,27 +85,18 @@
         })*/
         // Remove the separate button.addEventListener('click', ...) block entirely
 
-        form.addEventListener('submit', async function (event) {
-            // 1. Stop the initial submission so we can do our async work
-            event.preventDefault(); 
-
+        form.addEventListener('submit', function (event) {
+            // We don't need preventDefault() anymore because we WANT 
+            // the browser to do a standard multi-part form submission.
+            
             if (!validImage) {
+                event.preventDefault(); 
                 alert("Please select a valid 300x300 image first!");
                 return;
             }
-
-            const load = {
-                clubId: teamValue,
-                newName: document.getElementById("about").value
-            };
-
-            try {
-                await changeClubName(load);
-                form.submit(); 
-            } catch (err) {
-                console.error("Name change failed:", err);
-                form.submit();
-            }
+            
+            // The form will now send both the 'image' and the 'about' (newName) 
+            // to the /upload route in one go.
         });
 
         document.getElementById("image").addEventListener('change', function () {
