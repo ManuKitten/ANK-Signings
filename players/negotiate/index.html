@@ -124,11 +124,10 @@
         const playerValue = urlParams.get("player");
 
         let teamsjson;
-        let teamSelector;
+        let teamSelector = document.getElementById("teamSelector");
 
         fetch("/api/teams").then(response => response.json()).then(data => {
             teamsjson = data;
-            teamSelector = document.getElementById("teamSelector");
             for (let i = 0; i < Object.keys(teamsjson).length; i++) {
                 let team = teamsjson[Object.keys(teamsjson)[i]];
                 if (team.owner == localStorage.getItem("name")) {
