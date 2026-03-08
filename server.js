@@ -62,10 +62,10 @@ app.get('/api/accounts', async (req, res) => {
 // Fetch all Correspondence
 app.get('/api/correspondence', async (req, res) => {
     try {
-        const correspondence = await Correspondence.find();
-        const correspondenceMap = {};
-        correspondence.forEach(c => correspondenceMap[c.mailId] = c);
-        res.json(correspondenceMap);
+        const mail = await Correspondence.find();
+        const mailMap = {};
+        mail.forEach(c => mailMap[c.mailId] = c);
+        res.json(mailMap);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch correspondence" });
     }
@@ -518,10 +518,18 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // Add this route to server.js
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post('/upload', async (req, res) => {
     try {
         const { teamName, about } = req.body;
         
+        const result = await cloudinary.uploader.upload(uploadFile.tempFilePath, {
+            public_id: uploadFile.name,
+            resource_type: "auto",
+            folder: "uploaded",
+            use_filename: true,
+            unique_filename: false,
+        });
+
         // 1. Update the 'name' in MongoDB
         // 2. Ensure logoUrl is set (Cloudinary overwrites the image if public_id is the same)
         const updatedTeam = await Team.findOneAndUpdate(

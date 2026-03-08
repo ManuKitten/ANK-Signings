@@ -149,6 +149,7 @@
             })
         })
 
+        let valid = true;
         fetch("/api/players").then(response => response.json()).then(data => {
             let playersjson = data;
             let player = playersjson[playerValue];
@@ -168,9 +169,11 @@
                 if (vigenere(teamsjson[teamSelector.value].wealth, localStorage.getItem("password"), false) >= 1000000 * payamount.value) {
                     document.getElementById("submit").style.display = "block";
                     document.getElementById("permit").style.display = "none";
+                    valid = true;
                 } else {
                     document.getElementById("submit").style.display = "none";
                     document.getElementById("permit").style.display = "block";
+                    valid = false;
                 }
                 // CHECK IF PLAYER ALREADY HAS TEAM  
                 if (playersjson[playerValue].team != "") {
@@ -187,13 +190,18 @@
                         if (vigenere(teamsjson[teamSelector.value].wealth, localStorage.getItem("password"), false) >= 1000000 * payamount.value) {
                             document.getElementById("submit").style.display = "block";
                             document.getElementById("permit").style.display = "none";
+                            valid = true;
                         } else {
                             document.getElementById("submit").style.display = "none";
                             document.getElementById("permit").style.display = "block";
+                            valid = false;
                         }
                     })
 
                     document.getElementById("submit").addEventListener('click', function () {
+                        if (!valid) {
+                            return;
+                        }
                         maindiv = document.getElementById("maindiv");
                         maindiv.style.display = "none";
                         sentdiv = document.getElementById("sentdiv");
