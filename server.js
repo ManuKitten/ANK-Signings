@@ -149,12 +149,20 @@ app.post('/api/add-message', async (req, res) => {
         const { serverId, messageId, messageData } = req.body;
 
         // We include userId (the old serverId) so we know who the mail belongs to
-        await Correspondence.findOneAndUpdate(
+        /*await Correspondence.findOneAndUpdate(
             { mailId: messageId },
             {
                 ...messageData,
                 userId: serverId,
                 mailId: messageId
+            },
+            { upsert: true, new: true }
+        );*/
+        await Correspondence.findOneAndUpdate(
+            { userId: serverId },
+            { mailId: messageId },
+            {
+                ...messageData,
             },
             { upsert: true, new: true }
         );
