@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CorrespondenceSchema = new mongoose.Schema({
-    userId: { type: String, unique: true },
+    userId: { type: String },
     mailId: {
         about: String,
         from: String,
