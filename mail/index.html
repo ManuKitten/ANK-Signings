@@ -233,6 +233,7 @@
 
         fetch("/api/correspondence").then(response => response.json()).then(data => {
             let mails = data;
+            console.log(mails);
             let personalmail = mails[localStorage.getItem("name")];
             if (mailValue == null || !Object.keys(mails[localStorage.getItem("name")]).includes(mailValue)) {
                 document.getElementById("backbutton").addEventListener('click', function () {
