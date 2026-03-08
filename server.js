@@ -62,10 +62,10 @@ app.get('/api/accounts', async (req, res) => {
 // Fetch all Correspondence
 app.get('/api/correspondence', async (req, res) => {
     try {
-        const mail = await Correspondence.find();
-        const mailMap = {};
-        mail.forEach(c => mailMap[c.mailId] = c);
-        res.json(mailMap);
+        const user = await Correspondence.find();
+        const userMap = {};
+        user.forEach(c => userMap[c.userId] = c);
+        res.json(userMap);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch correspondence" });
     }
