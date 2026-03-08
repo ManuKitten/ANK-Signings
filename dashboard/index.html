@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 
-<body>
+<body style="display: none;">
     <header>
         <span class="strong"><a href="..">
                 <p>ANK SIGNINGS</p>
@@ -47,20 +47,24 @@
 
         let div = document.getElementById("buttondiv");
         fetch("/api/teams")
-            .then(response => response.json())
-            .then(data => {
-                let teamsjson = data;
-                console.log(teamsjson);
-                for (let i = 0; i < Object.keys(teamsjson).length; i++) {
-                    if (teamsjson[Object.keys(teamsjson)[i]].owner == localStorage.getItem("name")) {
-                        let button = document.createElement("button"); button.textContent = teamsjson[Object.keys(teamsjson)[i]].name;
-                        button.className = "linkbutton"; button.addEventListener('click', function () {
-                            window.location.href = "../teams/?team=" + Object.keys(teamsjson)[i]
-                        });
-                        div.appendChild(button);
-                    }
+        .then(response => response.json())
+        .then(data => {
+            let teamsjson = data;
+            console.log(teamsjson);
+            for (let i = 0; i < Object.keys(teamsjson).length; i++) {
+                if (teamsjson[Object.keys(teamsjson)[i]].owner == localStorage.getItem("name")) {
+                    let button = document.createElement("button"); button.textContent = teamsjson[Object.keys(teamsjson)[i]].name;
+                    button.className = "linkbutton"; button.addEventListener('click', function () {
+                        window.location.href = "../teams/?team=" + Object.keys(teamsjson)[i]
+                    });
+                    div.appendChild(button);
                 }
-            }) </script>
+            }
+        })
+
+        document.getElementsByTagName("body")[0].style.display = "block";
+            
+    </script>
 </body>
 
 </html>
