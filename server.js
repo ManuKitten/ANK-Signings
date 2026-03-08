@@ -160,7 +160,7 @@ app.post('/api/add-message', async (req, res) => {
         );*/
         await Correspondence.findOneAndUpdate(
             { userId: serverId },
-            { $set: { messageId : messageData} },
+            { $set: { [messageId]: messageData } },
             { upsert: true, new: true }
         );
 
