@@ -74,7 +74,7 @@
             imgdiv.style.backgroundImage = "url('../../images/teamBackground.png')";
             imgdiv.style.height = 372;
             let clubLogo = document.getElementById("clubLogo");
-            clubLogo.src = "https://res.cloudinary.com/dccssnncr/image/upload/team_photos/" + tourValue + ".png"
+            clubLogo.src = "../../images/" + tourValue + ".png"
             let size = 120;
             clubLogo.width = size;
             clubLogo.height = size;
@@ -115,7 +115,7 @@
                 let c0div = document.createElement("div");
                 c0div.style.display = "flex";
                 let c0img = document.createElement("img");
-                c0img.src = "../../images/" + orderedTable[i][0] + ".png";
+                c0img.src = "https://res.cloudinary.com/dccssnncr/image/upload/team_photos/" + orderedTable[i][0] + ".png";
                 c0img.style.padding = "3px";
                 c0img.width = 24;
                 c0img.height = 24;
