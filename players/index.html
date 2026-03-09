@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 
-<body>
+<body style="display: none;">
     <header>
         <span class="strong"><a href="..">
                 <p>ANK SIGNINGS</p>
@@ -81,7 +81,7 @@
                             let cell3div = document.createElement("div");
                             cell3div.style.display = "flex";
                             let cell3img = document.createElement("img");
-                            cell3img.src = "../images/" + playersjson[orderedPlayers[i]].team + ".png";
+                            cell3img.src = "https://res.cloudinary.com/dccssnncr/image/upload/team_photos/" + playersjson[orderedPlayers[i]].team + ".png";
                             cell3img.width = 22;
                             cell3img.height = 22;
                             cell3div.appendChild(cell3img);
@@ -92,6 +92,7 @@
                             cell3p.textContent = teamsjson[playersjson[orderedPlayers[i]].team].name;
                             cell3div.appendChild(cell3p);
                             cell3.appendChild(cell3div);
+                            document.getElementsByTagName("body")[0].style.display = "block";
                         })
 
                         let cell1 = document.createElement("td");
@@ -165,7 +166,7 @@
                         teamDiv.style.display = "flex";
 
                         let img = document.createElement("img");
-                        img.src = "../images/" + player.team + ".png";
+                        img.src = "https://res.cloudinary.com/dccssnncr/image/upload/team_photos/" + player.team + ".png";
                         img.width = 24;
                         img.style.marginRight = "10px";
                         teamDiv.appendChild(img)
@@ -303,6 +304,7 @@
                                 })
                                 marketdiv.appendChild(tradebutton);
                             }
+                            document.getElementsByTagName("body")[0].style.display = "block";
                         })
                     }
                 }
