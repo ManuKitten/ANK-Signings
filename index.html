@@ -89,6 +89,7 @@
             for (let i = 0; i < Object.keys(teamsjson).length; i++) {
                 let team = teamsjson[Object.keys(teamsjson)[i]];
                 let currentTeamId = Object.keys(teamsjson)[i];
+                console.log(currentTeamId);
                 if (team.owner == localStorage.getItem("name")) {
                     fetch("/api/debt").then(response => response.json()).then(data => {
                         let debt = data;
@@ -99,6 +100,10 @@
                                 password: localStorage.getItem("password")
                             }
                             unpayDebt(unpay);
+                            console.log("TeamId: ");
+                            console.log(currentTeamId);
+                            console.log("Debt paid: ");
+                            console.log(-1 * debt[Object.keys(teamsjson)[i]]);
                             let tem = {
                                 teamId: currentTeamId,
                                 amount: -1 * debt[Object.keys(teamsjson)[i]],
@@ -122,7 +127,7 @@
                     char = alphabet[index]; result += char; keyIndex = (keyIndex + 1) % key.length;
             } return result;
         }
-        //console.log(vigenere("350000000", localStorage.getItem("password")))
+        console.log(vigenere("4000000", "gabo1234"))
         async function sendMessage(payload) {
             const response = await fetch('/api/add-message', {
                 method: 'POST',
