@@ -102,8 +102,8 @@
                             unpayDebt(unpay);
                             console.log(debt);
                             console.log(Object.keys(teamsjson)[i]);
-                            console.log(debt[Object.keys(teamsjson)[i]]);
-                            console.log(-1 * debt[Object.keys(teamsjson)[i]]);
+                            console.log(debt[Object.keys(teamsjson)[i]]["amount"]);
+                            console.log(-1 * debt[Object.keys(teamsjson)[i]]["amount"]);
                             let tem = {
                                 teamId: currentTeamId,
                                 amount: -1 * debt[Object.keys(teamsjson)[i]],
