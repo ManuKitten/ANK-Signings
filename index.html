@@ -93,10 +93,10 @@
                 if (team.owner == localStorage.getItem("name")) {
                     fetch("/api/debt").then(response => response.json()).then(data => {
                         let debt = data;
-                        if (debt[Object.keys(teamsjson)[i]] != 0) {
+                        if (debt[Object.keys(teamsjson)[i]]["amount"] != 0) {
                             let unpay = {
                                 teamId: currentTeamId,
-                                amount: -1 * debt[Object.keys(teamsjson)[i]],
+                                amount: -1 * debt[Object.keys(teamsjson)[i]]["amount"],
                                 password: localStorage.getItem("password")
                             }
                             unpayDebt(unpay);
