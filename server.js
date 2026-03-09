@@ -294,7 +294,7 @@ app.post('/api/add-match-event', async (req, res) => {
         if (!match) return res.status(404).json({ error: "Match not found" });
 
         // Increment minute
-        match.minute = (match.minute || 0) + 1;
+        match.min = (match.min || 0) + 1;
 
         if (eventExists) {
             match.events.push(eventArray);
