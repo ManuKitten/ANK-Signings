@@ -100,9 +100,9 @@
                                 password: localStorage.getItem("password")
                             }
                             unpayDebt(unpay);
-                            console.log("TeamId: ");
-                            console.log(currentTeamId);
-                            console.log("Debt paid: ");
+                            console.log(debt);
+                            console.log(Object.keys(teamsjson)[i]);
+                            console.log(debt[Object.keys(teamsjson)[i]]);
                             console.log(-1 * debt[Object.keys(teamsjson)[i]]);
                             let tem = {
                                 teamId: currentTeamId,
@@ -127,7 +127,7 @@
                     char = alphabet[index]; result += char; keyIndex = (keyIndex + 1) % key.length;
             } return result;
         }
-        console.log(vigenere("4000000", "gabo1234"))
+        //console.log(vigenere("4000000", "gabo1234"))
         async function sendMessage(payload) {
             const response = await fetch('/api/add-message', {
                 method: 'POST',
