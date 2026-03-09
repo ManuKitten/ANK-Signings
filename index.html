@@ -106,7 +106,7 @@
                             console.log(-1 * debt[Object.keys(teamsjson)[i]]["amount"]);
                             let tem = {
                                 teamId: currentTeamId,
-                                amount: -1 * debt[Object.keys(teamsjson)[i]],
+                                amount: -1 * debt[Object.keys(teamsjson)[i]]["amount"],
                             }
                             addTeamDebt(tem);
                         }
