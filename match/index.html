@@ -623,52 +623,52 @@
                                                 eventMinute += 1;
                                                 fetch("/api/matches").then(response => response.json()).then(data => {
                                                     match = data[matchValue]
-                                                })
-                                                let evArray = await getRandomEvent(eventMinute - 15);
-                                                const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
-                                                const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
-                                                const matchEvents = {
-                                                    matchId: matchValue,
-                                                    eventExists: eventExists,
-                                                    eventArray: eventArray
-                                                }
-                                                if (match.min <= 100) {
-                                                    await addMatchEvent(matchEvents);
-                                                }
 
-                                                if (!matchEnded && 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 105) {
-                                                    if (Math.random() < 0.25 || 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 115) {
-                                                        matchEnded = true;
-                                                        // update server and local state before reloading so the block won't run again
-                                                        try {
-                                                            const resp = await fetch("/api/matches");
-                                                            const data = await resp.json();
-                                                            let lastMatch = data[matchValue];
-                                                            if (!lastMatch.end) {
-                                                                const matchEnd = { matchId: matchValue };
-                                                                await endMatch(matchEnd);
+                                                    let evArray = getRandomEvent(eventMinute - 15);
+                                                    const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
+                                                    const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
+                                                    const matchEvents = {
+                                                        matchId: matchValue,
+                                                        eventExists: eventExists,
+                                                        eventArray: eventArray
+                                                    }
+                                                    if (match.min <= 100) {
+                                                        addMatchEvent(matchEvents);
+                                                    }
 
-                                                                const tourUpdateData = {
-                                                                    tourId: match.tournament,
-                                                                    homeTeam: match.homeTeam,
-                                                                    awayTeam: match.awayTeam,
-                                                                    score: lastMatch.score,
-                                                                    events: lastMatch.events
-                                                                };
-                                                                await updateTourAfterMatch(tourUpdateData);
+                                                    if (!matchEnded && 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 105) {
+                                                        if (Math.random() < 0.25 || 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 115) {
+                                                            matchEnded = true;
+                                                            // update server and local state before reloading so the block won't run again
+                                                            try {
+                                                                fetch("/api/matches").then(response => response.json()).then(data => {
+                                                                    let lastMatch = data[matchValue];
+                                                                    if (!lastMatch.end) {
+                                                                        const matchEnd = { matchId: matchValue };
+                                                                        endMatch(matchEnd);
 
-                                                                const eventsFull = { events: lastMatch.events };
-                                                                await updatePlayersValue(eventsFull);
+                                                                        const tourUpdateData = {
+                                                                            tourId: match.tournament,
+                                                                            homeTeam: match.homeTeam,
+                                                                            awayTeam: match.awayTeam,
+                                                                            score: lastMatch.score,
+                                                                            events: lastMatch.events
+                                                                        };
+                                                                        updateTourAfterMatch(tourUpdateData);
 
-                                                                // mark it locally so outer `!match.end` guard skips on reload
-                                                                match.end = true;
+                                                                        const eventsFull = { events: lastMatch.events };
+                                                                        updatePlayersValue(eventsFull);
+
+                                                                        // mark it locally so outer `!match.end` guard skips on reload
+                                                                        match.end = true;
+                                                                    }
+                                                                })
+                                                            } catch (e) {
+                                                                console.error("ending match failed", e);
                                                             }
-                                                        } catch (e) {
-                                                            console.error("ending match failed", e);
                                                         }
                                                     }
-                                                }
-                                            }
+                                            })}
                                             location.reload();
                                         })();
                                     }
@@ -684,16 +684,17 @@
                                             eventMinute += 1;
                                             fetch("/api/matches").then(response => response.json()).then(data => {
                                                 match = data[matchValue]
+                                                let evArray = getRandomEvent(eventMinute);
+                                                const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
+                                                const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
+                                                const matchEvents = {
+                                                    matchId: matchValue,
+                                                    eventExists: eventExists,
+                                                    eventArray: eventArray
+                                                };
+                                                addMatchEvent(matchEvents);
                                             })
-                                            let evArray = await getRandomEvent(eventMinute);
-                                            const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
-                                            const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
-                                            const matchEvents = {
-                                                matchId: matchValue,
-                                                eventExists: eventExists,
-                                                eventArray: eventArray
-                                            };
-                                            await addMatchEvent(matchEvents);
+
                                         }
                                         location.reload();
                                     })();
