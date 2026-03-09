@@ -70,58 +70,63 @@
                     }
 
                     let table = document.getElementById("playertable");
-                    for (let i = 0; i < orderedPlayers.length; i++) {
-                        let row = document.createElement("tr");
-                        row.id = orderedPlayers[i];
-                        row.className = "selectableTr";
+                    fetch("/api/teams").then(response => response.json()).then(data => {
+                        for (let i = 0; i < orderedPlayers.length; i++) {
+                            let row = document.createElement("tr");
+                            row.id = orderedPlayers[i];
+                            row.className = "selectableTr";
 
-                        let cell3 = document.createElement("td");
-                        fetch("/api/teams").then(response => response.json()).then(data => {
+                            let cell3 = document.createElement("td");
+                            
                             let teamsjson = data;
                             let cell3div = document.createElement("div");
-                            cell3div.style.display = "flex";
-                            let cell3img = document.createElement("img");
-                            cell3img.src = "https://res.cloudinary.com/dccssnncr/image/upload/team_photos/" + playersjson[orderedPlayers[i]].team + ".png";
-                            cell3img.width = 22;
-                            cell3img.height = 22;
-                            cell3div.appendChild(cell3img);
+                            if (playersjson[orderedPlayers[i]].team) {
+                                cell3div.style.display = "flex";
+                                let cell3img = document.createElement("img");
+                                cell3img.src = "https://res.cloudinary.com/dccssnncr/image/upload/team_photos/" + playersjson[orderedPlayers[i]].team + ".png";
+                                cell3img.width = 22;
+                                cell3img.height = 22;
+                                cell3div.appendChild(cell3img);
 
-                            let cell3p = document.createElement("p");
-                            cell3p.style.margin = "2px";
-                            cell3p.style.marginLeft = "10px";
-                            cell3p.textContent = teamsjson[playersjson[orderedPlayers[i]].team].name;
-                            cell3div.appendChild(cell3p);
-                            cell3.appendChild(cell3div);
-                            document.getElementsByTagName("body")[0].style.display = "block";
-                        })
+                                let cell3p = document.createElement("p");
+                                cell3p.style.margin = "2px";
+                                cell3p.style.marginLeft = "10px";
+                                cell3p.textContent = teamsjson[playersjson[orderedPlayers[i]].team].name;
+                                cell3div.appendChild(cell3p);
+                                cell3.appendChild(cell3div);
+                            } else {
+                                cell3div.innerHTML = "";
+                            }                          
 
-                        let cell1 = document.createElement("td");
-                        cell1.textContent = playersjson[orderedPlayers[i]].name;
-                        row.appendChild(cell1);
+                            let cell1 = document.createElement("td");
+                            cell1.textContent = playersjson[orderedPlayers[i]].name;
+                            row.appendChild(cell1);
 
-                        let cell2 = document.createElement("td");
-                        cell2.textContent = playersjson[orderedPlayers[i]].position;
-                        row.appendChild(cell2);
+                            let cell2 = document.createElement("td");
+                            cell2.textContent = playersjson[orderedPlayers[i]].position;
+                            row.appendChild(cell2);
 
-                        row.appendChild(cell3);
+                            row.appendChild(cell3);
 
-                        let cell4 = document.createElement("td");
-                        cell4.textContent = playersjson[orderedPlayers[i]].birthdate;
-                        row.appendChild(cell4);
+                            let cell4 = document.createElement("td");
+                            cell4.textContent = playersjson[orderedPlayers[i]].birthdate;
+                            row.appendChild(cell4);
 
-                        let cell5 = document.createElement("td");
-                        cell5.textContent = playersjson[orderedPlayers[i]].country;
-                        row.appendChild(cell5);
+                            let cell5 = document.createElement("td");
+                            cell5.textContent = playersjson[orderedPlayers[i]].country;
+                            row.appendChild(cell5);
 
-                        let cell6 = document.createElement("td");
-                        cell6.innerHTML = "&euro;" + Math.trunc(playersjson[orderedPlayers[i]].marketvalue * 100) / 100 + "M";
-                        row.appendChild(cell6);
+                            let cell6 = document.createElement("td");
+                            cell6.innerHTML = "&euro;" + Math.trunc(playersjson[orderedPlayers[i]].marketvalue * 100) / 100 + "M";
+                            row.appendChild(cell6);
 
-                        table.appendChild(row);
-                        row.addEventListener('click', function () {
-                            window.location.href = "?player=" + row.id;
-                        })
-                    }
+                            table.appendChild(row);
+                            row.addEventListener('click', function () {
+                                window.location.href = "?player=" + row.id;
+                            })
+                        }
+                        document.getElementsByTagName("body")[0].style.display = "block";
+                    })
                 } else {
                     document.getElementById("backbutton").addEventListener('click', function () {
                         window.location.href = "../players"
