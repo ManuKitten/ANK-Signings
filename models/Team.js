@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const TeamSchema = new mongoose.Schema({
     teamId: { type: String, unique: true },
     name: String,
+    owner: String,
     players: [String],
     wealth: String, // Since you use Vigenere encryption on this string
     logoUrl: String
