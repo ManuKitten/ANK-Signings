@@ -76,7 +76,7 @@ app.get('/api/debt', async (req, res) => {
     try {
         const debt = await Debt.find();
         const debtMap = {};
-        debt.forEach(p => debtMap[p.debtId] = p);
+        debt.forEach(p => debtMap[p.teamId] = p);
         res.json(debtMap);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch debt" });
