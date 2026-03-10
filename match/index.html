@@ -684,10 +684,9 @@
                                             await Promise.all(promises);
                                             location.reload();
                                         })();
-                                    } else {
-                                        document.getElementById("loadingDiv").style.display = "none";
-                                        document.getElementById("bodydiv").style.display = "block";
                                     }
+                                    document.getElementById("loadingDiv").style.display = "none";
+                                    document.getElementById("bodydiv").style.display = "block";
                                 }
                             } else {
                                 minuteText.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute + "'"
