@@ -612,6 +612,8 @@
                                 startMatch(matchStarter);
                                 location.reload();
                             };
+                            document.getElementById("loadingDiv").style.display = "none";
+                            document.getElementById("bodydiv").style.display = "block";
                         } else {
                             minuteText.style.color = "#FF009C";
                             if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 45) {
@@ -685,8 +687,6 @@
                                             location.reload();
                                         })();
                                     }
-                                    document.getElementById("loadingDiv").style.display = "none";
-                                    document.getElementById("bodydiv").style.display = "block";
                                 }
                             } else {
                                 minuteText.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute + "'"
