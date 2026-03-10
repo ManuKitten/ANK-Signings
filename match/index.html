@@ -636,7 +636,7 @@
                                                         let data = await response.json();
                                                         match = data[matchValue];
 
-                                                        let evArray = getRandomEvent(eventMinute - 15);
+                                                        let evArray = await getRandomEvent(eventMinute - 15);
                                                         const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
                                                         const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
                                                         const matchEvents = {
@@ -703,7 +703,7 @@
                                                     let response = await fetch("/api/matches");
                                                     let data = await response.json();
                                                     match = data[matchValue];
-                                                    let evArray = getRandomEvent(eventMinute);
+                                                    let evArray = await getRandomEvent(eventMinute);
                                                     const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
                                                     const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
                                                     const matchEvents = {
