@@ -668,7 +668,8 @@
                                                             }
                                                         }
                                                     }
-                                            })}
+                                                })
+                                            }
                                             location.reload();
                                         })();
                                     }
@@ -680,22 +681,27 @@
                                         let currentRealMinute = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute;
                                         let eventMinute = match.min;
 
+                                        let promises = [];
                                         while (eventMinute < currentRealMinute) {
                                             eventMinute += 1;
-                                            fetch("/api/matches").then(response => response.json()).then(data => {
-                                                match = data[matchValue]
-                                                let evArray = getRandomEvent(eventMinute);
-                                                const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
-                                                const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
-                                                const matchEvents = {
-                                                    matchId: matchValue,
-                                                    eventExists: eventExists,
-                                                    eventArray: eventArray
-                                                };
-                                                addMatchEvent(matchEvents);
-                                            })
-
+                                            promises.push(
+                                                (async () => {
+                                                    let response = await fetch("/api/matches");
+                                                    let data = await response.json();
+                                                    match = data[matchValue];
+                                                    let evArray = getRandomEvent(eventMinute);
+                                                    const eventExists = Array.isArray(evArray) && evArray.length >= 2 ? evArray[0] : false;
+                                                    const eventArray = Array.isArray(evArray) && evArray.length >= 2 ? evArray[1] : [];
+                                                    const matchEvents = {
+                                                        matchId: matchValue,
+                                                        eventExists: eventExists,
+                                                        eventArray: eventArray
+                                                    };
+                                                    await addMatchEvent(matchEvents);
+                                                })()
+                                            );
                                         }
+                                        await Promise.all(promises);
                                         location.reload();
                                     })();
                                 }
