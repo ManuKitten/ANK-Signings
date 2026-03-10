@@ -572,7 +572,7 @@
                 let drawprobN = document.getElementById("drawprobN");
                 drawprobN.textContent = String(Math.trunc((1 - probabilityScGoals(100, 0.05, 1)) * 1000) / 1000) + "%";*/
 
-                if (match.lineups[0] && match.lineups[1]) {
+                if (match.lineups[0] != [] && match.lineups[1] != []) {
                     let team1 = document.getElementById("team1probP")
                     team1.textContent = teamsjson[match.homeTeam].name
                     let team2 = document.getElementById("team2probP")
