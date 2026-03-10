@@ -34,7 +34,13 @@
         </div>
     </div>
 
-    <div class="bodydiv">
+    <div id="loadingDiv" style="display: grid;background-color: #fcfefc;">
+        <div style="place-self: center;margin-top: 100px;">
+            <img src="../images/loading.gif" width=200>
+            <p style="text-align:center;">Loading...</p>
+        </div>
+    </div>
+    <div id="bodydiv" class="bodydiv" style="display: none;">
         <ul id="eventslist" style="display: flex; flex-direction: column;"></ul>
         <br><br>
         <div id="winninfDiv" class="winningDiv">
@@ -678,6 +684,9 @@
                                             await Promise.all(promises);
                                             location.reload();
                                         })();
+                                    } else {
+                                        document.getElementById("loadingDiv").style.display = "none";
+                                        document.getElementById("mainDiv").style.display = "block";
                                     }
                                 }
                             } else {
@@ -710,6 +719,9 @@
                                         await Promise.all(promises);
                                         location.reload();
                                     })();
+                                } else {
+                                    document.getElementById("loadingDiv").style.display = "none";
+                                    document.getElementById("mainDiv").style.display = "block";
                                 }
                             }
                         }
