@@ -319,7 +319,7 @@ app.post('/api/start-match', async (req, res) => {
     try {
         await Match.findOneAndUpdate(
             { matchId: req.body.matchId },
-            { $set: { minute: 0 } }
+            { $set: { min: 0 } }
         );
         res.json({ success: true });
     } catch (err) {
