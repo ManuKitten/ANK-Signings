@@ -380,8 +380,14 @@ app.post('/api/update-tour-after-match', async (req, res) => {
             const mapName = type === "goal" ? "goals" : type === "redc" ? "redCards" : "yellowCards";
             const increment = type === "yere" ? 2 : 1;
 
-            const current = tour.stats[mapName][pId] || 0;
-            tour.stats[mapName][pId] = current + increment;
+            function translate(event) {
+                if (event == "goal") {return "goals"}
+                else if (event == "yell" || event == "yere") {return "yellowCards"}
+                else if (event == "redc") {return "redCards"}
+            }
+
+            const current = tour.stats[translate(mapName)][pId] || 0;
+            tour.stats[translate(mapName)][pId] = current + increment;
         });
 
         tour.markModified('table');
