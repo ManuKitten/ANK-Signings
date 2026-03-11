@@ -619,6 +619,8 @@
                             if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > 45) {
                                 if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute < 60) {
                                     minuteText.textContent = "Half Time"
+                                    document.getElementById("loadingDiv").style.display = "none";
+                                    document.getElementById("bodydiv").style.display = "block";
                                 } else {
                                     minuteText.textContent = 60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute - 15 + "'";
                                     if (60 * (Now.getHours() - match.start.hour) + Now.getMinutes() - match.start.minute > match.min + 15) {
