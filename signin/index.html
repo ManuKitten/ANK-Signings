@@ -67,7 +67,7 @@
                     let hashpass = hash;
                     fetch("/api/accounts").then(response => response.json()).then(data => {
                         let accounts = data;
-                        if (accounts[hashname] == hashpass) {
+                        if (accounts[hashname].passwordId == hashpass) {
                             localStorage.setItem("username", document.getElementById("name").value);
                             localStorage.setItem("name", hashname);
                             localStorage.setItem("password", document.getElementById("password").value);
