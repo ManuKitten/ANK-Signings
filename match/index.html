@@ -632,7 +632,7 @@
                                             let promises = [];
                                             while (eventMinute < currentRealMinute) {
                                                 eventMinute += 1;
-                                                promises.push(
+                                                await promises.push(
                                                     (async () => {
                                                         let response = await fetch("/api/matches");
                                                         let data = await response.json();
@@ -703,7 +703,7 @@
                                         let promises = [];
                                         while (eventMinute < currentRealMinute) {
                                             eventMinute += 1;
-                                            promises.push(
+                                            await promises.push(
                                                 (async () => {
                                                     let response = await fetch("/api/matches");
                                                     let data = await response.json();
