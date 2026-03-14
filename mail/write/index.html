@@ -90,44 +90,85 @@
             window.location.href = "..";
         })
 
-        document.getElementById("send").addEventListener('click', function () {
-            const random = "0123456789abcdef";
-            let mailValue = "ex";
-            for (let i = 0; i < 6; i++) { mailValue += random[Math.floor(Math.random() * (16))]; }
-            let dest;
-            sha256(document.getElementById("destiny").value).then(hash => {
-                dest = hash;
-                if (document.getElementById("destiny").value != localStorage.getItem("username")) {
-                    payload = {
-                        serverId: dest,
-                        messageId: mailValue,
-                        messageData: {
-                            step: 0,
-                            about: vigenere(document.getElementById("about").value, localStorage.getItem("password")),
-                            from: localStorage.getItem("name"),
-                            sender: vigenere(localStorage.getItem("username"), localStorage.getItem("password")),
-                            content: vigenere(document.getElementById("content").value, localStorage.getItem("password"))
-                        }
-                    };
-                } else {
-                    payload = {
-                        serverId: dest,
-                        messageId: mailValue,
-                        messageData: {
-                            about: vigenere(document.getElementById("about").value, localStorage.getItem("password")),
-                            from: localStorage.getItem("name"),
-                            sender: vigenere(localStorage.getItem("username"), localStorage.getItem("password")),
-                            content: vigenere(document.getElementById("content").value, localStorage.getItem("password"))
-                        }
-                    };
+        // Helper to convert Base64URL to ArrayBuffer
+        function base64UrlToBuffer(base64url) {
+            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+            const binary = window.atob(base64);
+            return Uint8Array.from(binary, c => c.charCodeAt(0));
+        }
+
+        async function encryptWithRSA(plaintext, publicKeyArray) {
+            // Import the [n, e] components as an RSA Public Key
+            const importedKey = await window.crypto.subtle.importKey(
+                "jwk",
+                {
+                    kty: "RSA",
+                    n: publicKeyArray[0],
+                    e: publicKeyArray[1],
+                    alg: "RSA-OAEP-256",
+                    ext: true,
+                },
+                { name: "RSA-OAEP", hash: "SHA-256" },
+                false,
+                ["encrypt"]
+            );
+
+            const encoder = new TextEncoder();
+            const data = encoder.encode(plaintext);
+            const encrypted = await window.crypto.subtle.encrypt(
+                { name: "RSA-OAEP" },
+                importedKey,
+                data
+            );
+
+            // Return as Base64 string to store in MongoDB
+            return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
+        }
+
+        fetch("api/keys").then(response => response.json()).then(keysjson => {
+            document.getElementById("send").addEventListener('click', async function () {
+                const random = "0123456789abcdef";
+                let mailValue = "ex";
+                for (let i = 0; i < 6; i++) { mailValue += random[Math.floor(Math.random() * (16))]; }
+                
+                const destName = document.getElementById("destiny").value;
+                const destHash = await sha256(destName);
+                
+                const recipientKeyData = keysjson[destHash];
+                if (!recipientKeyData) {
+                    alert("Recipient does not have registered encryption keys!");
+                    return;
                 }
 
-                sendMessage(payload);
-                window.location.href = "..";
-            })
+                try {
+                    // Encrypt using the recipient's public key [n, e]
+                    const encryptedAbout = await encryptWithRSA(document.getElementById("about").value, recipientKeyData.publicKey);
+                    const encryptedContent = await encryptWithRSA(document.getElementById("content").value, recipientKeyData.publicKey);
+                    const encryptedSender = await encryptWithRSA(localStorage.getItem("username"), recipientKeyData.publicKey);
+
+                    const payload = {
+                        serverId: destHash,
+                        messageId: mailValue,
+                        messageData: {
+                            about: encryptedAbout,
+                            from: localStorage.getItem("name"),
+                            // Sender name can stay Vigenere if it's just for the sender's own UI, 
+                            // but usually, this is also encrypted for the recipient.
+                            sender: encryptedSender, 
+                            content: encryptedContent,
+                            newRsa: true,
+                            isRSA: true // Flag to tell the UI to use RSA decryption
+                        }
+                    };
+
+                    // Await the message sending so line 112 doesn't kill the request
+                    await sendMessage(payload);
+                    window.location.href = ".."; 
+                } catch (err) {
+                    console.error("Encryption/Send failed:", err);
+                }
+            });
         })
-
-
     </script>
 </body>
 

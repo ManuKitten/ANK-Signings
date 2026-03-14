@@ -8,7 +8,7 @@ const CorrespondenceSchema = new mongoose.Schema({
     sender: String,
     content: String,
     clicked: Boolean,
-    oldvigenere: Boolean
+    newRsa: Boolean
 }, { strict: false }); // 'strict: false' allows you to save your existing JSON structure easily
 
 module.exports = mongoose.model('Correspondence', CorrespondenceSchema);
