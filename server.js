@@ -147,12 +147,12 @@ app.get('/api/players', async (req, res) => {
 // Fetch all Keys
 app.get('/api/keys', async (req, res) => {
     try {
-        const keys = await Player.find();
+        const keys = await Key.find();
         const keyMap = {};
         keys.forEach(p => keyMap[p.userId] = p);
-        res.json(playerMap);
+        res.json(keyMap);
     } catch (err) {
-        res.status(500).json({ error: "Failed to fetch players" });
+        res.status(500).json({ error: "Failed to fetch keys" });
     }
 });
 
