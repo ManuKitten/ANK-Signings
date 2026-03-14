@@ -125,7 +125,7 @@
             return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
         }
 
-        fetch("api/keys").then(response => response.json()).then(keysjson => {
+        fetch("/api/keys").then(response => response.json()).then(keysjson => {
             document.getElementById("send").addEventListener('click', async function () {
                 const random = "0123456789abcdef";
                 let mailValue = "ex";
