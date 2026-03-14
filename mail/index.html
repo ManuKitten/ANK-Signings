@@ -273,9 +273,7 @@
                         let li = document.createElement("li");
                         li.className = "listelem";
                         li.id = revmails[i];
-                        if (personalmail[revmails[i]].newRsa != true) {
-                            li.textContent = vigenere(personalmail[revmails[i]].about, localStorage.getItem("password"), false);
-                        } else {
+                        if (personalmail[revmails[i]].newRsa) {
                             // Inside your mail-loading logic:
                             const userKeyData = keysjson[localStorage.getItem("name")]; 
 
@@ -296,6 +294,8 @@
                                 li.textContent = await decryptWithRSA(mail.about, privateKeyJWK);  
                             })
                             //decrypt personalmail[revmails[i]].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                        } else {
+                            li.textContent = vigenere(personalmail[revmails[i]].about, localStorage.getItem("password"), false);
                         }
                         li.style.border = "1px solid #dedede";
                         li.addEventListener('click', function () {
