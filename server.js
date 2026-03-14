@@ -25,6 +25,7 @@ const CloudinaryStorage = multerStorageCloudinary.CloudinaryStorage || multerSto
 const Account = require('./models/Account');
 const Correspondence = require('./models/Correspondence');
 const Debt = require('./models/Debt');
+const Key = require('./models/Key');
 const Match = require('./models/Match');
 const New = require('./models/New');
 const Player = require('./models/Player');
@@ -467,6 +468,22 @@ app.post('/api/add-account', async (req, res) => {
     } catch (err) {
         console.error("CRITICAL DATABASE ERROR:", err);
         res.status(500).json({ error: "Failed to save account" });
+    }
+});
+app.post('/api/add-keys', async (req, res) => {
+    try {
+        const { userId, publicKey, privateKey } = req.body;
+
+        await Key.findOneAndUpdate(
+            { userId: userId },
+            { publicKey: publicKey, privateKey: privateKey },
+            { upsert: true }
+        );
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error("CRITICAL DATABASE ERROR:", err);
+        res.status(500).json({ error: "Failed to save keys" });
     }
 });
 app.post('/api/add-team', async (req, res) => {
