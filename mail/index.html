@@ -290,7 +290,7 @@
                             };
 
                             // Now replace lines 251 and 278 with:
-                            (async () => {
+                            await (async () => {
                                 li.textContent = await decryptWithRSA(personalmail[revmails[i]].about, privateKeyJWK);  
                             })
                             //decrypt personalmail[revmails[i]].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
