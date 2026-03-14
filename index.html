@@ -126,7 +126,6 @@
                     char = alphabet[index]; result += char; keyIndex = (keyIndex + 1) % key.length;
             } return result;
         }
-        //console.log(vigenere("4000000", "gabo1234"))
         async function sendMessage(payload) {
             const response = await fetch('/api/add-message', {
                 method: 'POST',
@@ -209,6 +208,56 @@
                 redoMail(i);
             }
         })
+
+        //Help adding keys
+        async function addKeys(payload) {
+            const response = await fetch('/api/add-keys', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // Check if the server actually returned JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Server returned HTML instead of JSON. Check your routes!", text);
+            }
+        }
+        fetch("/api/keys").then(response => response.json()).then(async (keysjson) => {
+            if (!keysjson[localStorage.getItem("name")]) {
+                // 1. Generate the RSA-OAEP key pair
+                const keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "RSA-OAEP",
+                        modulusLength: 2048,
+                        publicExponent: new Uint8Array([1, 0, 1]), // 65537
+                        hash: "SHA-256",
+                    },
+                    true, 
+                    ["encrypt", "decrypt"]
+                );
+
+                // 2. Export to JWK format to get raw components (n, e, d)
+                const pubExport = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+                const privExport = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+                // 3. Encrypt the private key 'd' using your Vigenere (or better, AES)
+                // Note: d is a sensitive string! 
+                const encryptedD = vigenere(privExport.d, localStorage.getItem("password"));
+
+                const keyObject = {
+                    userId: localStorage.getItem("name"),
+                    publicKey: [pubExport.n, pubExport.e], // Line 230-231: n and e
+                    privateKey: encryptedD                // Line 232: encrypted d
+                };
+
+                await addKeys(keyObject);
+                console.log("Keys generated and saved for", localStorage.getItem("name"));
+            }
+        });
 
         let newsDiv = document.getElementById("newsDiv");
         fetch("/api/news").then(response => response.json()).then(newsjson => {

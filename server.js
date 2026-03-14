@@ -144,6 +144,24 @@ app.get('/api/players', async (req, res) => {
     }
 });
 
+// Fetch all Keys
+app.get('/api/keys', async (req, res) => {
+    try {
+        const keys = await Player.find();
+        const keyMap = {};
+        keys.forEach(p => keyMap[p.userId] = p);
+        res.json(playerMap);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch players" });
+    }
+});
+
+
+
+
+
+
+
 // 1. Define API Routes FIRST
 app.post('/api/add-message', async (req, res) => {
     try {
