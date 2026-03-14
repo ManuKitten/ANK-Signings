@@ -260,7 +260,7 @@
 
         fetch("/api/correspondence").then(response => response.json()).then(data => {
             let mails = data;
-            fetch("/api/keys").then(response => response.json()).then(keysjson => {
+            fetch("/api/keys").then(response => response.json()).then(async keysjson => {
                 let personalmail = mails[localStorage.getItem("name")];
                 if (mailValue == null || !Object.keys(mails[localStorage.getItem("name")]).includes(mailValue)) {
                     document.getElementById("backbutton").addEventListener('click', function () {
@@ -289,11 +289,8 @@
                                 ext: true
                             };
 
-                            // Now replace lines 251 and 278 with:
-                            await (async () => {
-                                li.textContent = await decryptWithRSA(personalmail[revmails[i]].about, privateKeyJWK);  
-                            })
-                            //decrypt personalmail[revmails[i]].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                            // Decrypt the message text before continuing the loop
+                            li.textContent = await decryptWithRSA(personalmail[revmails[i]].about, privateKeyJWK);
                         } else {
                             console.log(personalmail[revmails[i]]);
                             console.log(personalmail[revmails[i]].newRsa);
