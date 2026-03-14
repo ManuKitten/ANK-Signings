@@ -295,6 +295,8 @@
                             })
                             //decrypt personalmail[revmails[i]].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
                         } else {
+                            console.log(personalmail[revmails[i]]);
+                            console.log(personalmail[revmails[i]].newRsa);
                             li.textContent = vigenere(personalmail[revmails[i]].about, localStorage.getItem("password"), false);
                         }
                         li.style.border = "1px solid #dedede";
