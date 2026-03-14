@@ -231,64 +231,144 @@
         const urlParams = new URLSearchParams(queryString);
         const mailValue = urlParams.get("mail");
 
+        async function decryptWithRSA(ciphertextB64, privateKeyJWK) {
+            // 1. Convert Base64 ciphertext back to an ArrayBuffer
+            const binaryString = window.atob(ciphertextB64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+
+            // 2. Import the private key (using n, e, and the decrypted d)
+            const importedPrivateKey = await window.crypto.subtle.importKey(
+                "jwk",
+                privateKeyJWK,
+                { name: "RSA-OAEP", hash: "SHA-256" },
+                false,
+                ["decrypt"]
+            );
+
+            // 3. Decrypt the data
+            const decryptedBuffer = await window.crypto.subtle.decrypt(
+                { name: "RSA-OAEP" },
+                importedPrivateKey,
+                bytes
+            );
+
+            return new TextDecoder().decode(decryptedBuffer);
+        }
+
         fetch("/api/correspondence").then(response => response.json()).then(data => {
             let mails = data;
-            console.log(mails);
-            let personalmail = mails[localStorage.getItem("name")];
-            if (mailValue == null || !Object.keys(mails[localStorage.getItem("name")]).includes(mailValue)) {
-                document.getElementById("backbutton").addEventListener('click', function () {
-                    window.location.href = "../dashboard";
-                })
-
-                let ul = document.getElementById("maillist");
-                let revmails = Object.keys(personalmail).reverse()
-                for (let i = 0; i < revmails.length; i++) {
-                    let li = document.createElement("li");
-                    li.className = "listelem";
-                    li.id = revmails[i];
-                    li.textContent = vigenere(personalmail[revmails[i]].about, localStorage.getItem("password"), false);
-                    li.style.border = "1px solid #dedede";
-                    li.addEventListener('click', function () {
-                        window.location.href = "?mail=" + revmails[i];
+            fetch("/api/keys").then(response => response.json()).then(keysjson => {
+                let personalmail = mails[localStorage.getItem("name")];
+                if (mailValue == null || !Object.keys(mails[localStorage.getItem("name")]).includes(mailValue)) {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../dashboard";
                     })
-                    if (personalmail[revmails[i]].step == undefined) {
-                        ul.appendChild(li);
-                    }
-                }
-            } else {
-                document.getElementById("backbutton").addEventListener('click', function () {
-                    window.location.href = "../mail";
-                })
-                document.getElementById("write").style.display = "none";
-                document.getElementById("h1").textContent = vigenere(personalmail[mailValue].about, localStorage.getItem("password"), false);
-                let bodydiv = document.getElementById("bodydiv");
-                bodydiv.style.marginLeft = "240px";
-                bodydiv.style.marginRight = "240px";
-                let author = document.createElement("p");
-                let str = document.createElement("strong");
-                str.textContent = vigenere(personalmail[mailValue].sender, localStorage.getItem("password"), false);
-                author.appendChild(str);
-                bodydiv.appendChild(author)
-                let pcontent = document.createElement("p");
-                pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
-                for (let i = 0; i < 20; i++) {
-                    pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
-                    pcontent.textContent = pcontent.textContent.replace("(quote)", '"');
-                    pcontent.textContent = pcontent.textContent.replace("(euro)", '&euro;');
-                }
-                pcontent.innerHTML = pcontent.textContent;
-                if (pcontent.getElementsByTagName("button").length != 0) {
-                    if (pcontent.getElementsByTagName("button")[0].outerHTML.includes("transferPlayer")) {
-                        let stringFunc = pcontent.getElementsByTagName("button")[0].onclick.toString().slice(26, 74);
-                        let mailId = stringFunc.slice(39, 47);
-                        if (personalmail[mailId].clicked) {
-                            let button = pcontent.getElementsByTagName("button")[0];
-                            button.remove();
+
+                    let ul = document.getElementById("maillist");
+                    let revmails = Object.keys(personalmail).reverse()
+                    for (let i = 0; i < revmails.length; i++) {
+                        let li = document.createElement("li");
+                        li.className = "listelem";
+                        li.id = revmails[i];
+                        if (personalmail[revmails[i]].newRsa != true) {
+                            li.textContent = vigenere(personalmail[revmails[i]].about, localStorage.getItem("password"), false);
+                        } else {
+                            // Inside your mail-loading logic:
+                            const userKeyData = keysjson[localStorage.getItem("name")]; 
+
+                            // Decrypt the private key 'd' using the user's password
+                            const decryptedD = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
+
+                            const privateKeyJWK = {
+                                kty: "RSA",
+                                n: userKeyData.publicKey[0], // Modulus
+                                e: userKeyData.publicKey[1], // Public Exponent
+                                d: decryptedD,               // Decrypted Private Exponent
+                                alg: "RSA-OAEP-256",
+                                ext: true
+                            };
+
+                            // Now replace lines 251 and 278 with:
+                            (async () => {
+                                li.textContent = await decryptWithRSA(mail.about, privateKeyJWK);  
+                            })
+                            //decrypt personalmail[revmails[i]].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                        }
+                        li.style.border = "1px solid #dedede";
+                        li.addEventListener('click', function () {
+                            window.location.href = "?mail=" + revmails[i];
+                        })
+                        if (personalmail[revmails[i]].step == undefined) {
+                            ul.appendChild(li);
                         }
                     }
+                } else {
+                    document.getElementById("backbutton").addEventListener('click', function () {
+                        window.location.href = "../mail";
+                    })
+                    document.getElementById("write").style.display = "none";
+                    let bodydiv = document.getElementById("bodydiv");
+                    bodydiv.style.marginLeft = "240px";
+                    bodydiv.style.marginRight = "240px";
+                    let author = document.createElement("p");
+                    let str = document.createElement("strong");
+                    let pcontent = document.createElement("p");
+
+                    if (personalmail[revmails[i]].newRsa != true) {
+                        document.getElementById("h1").textContent = vigenere(personalmail[mailValue].about, localStorage.getItem("password"), false);
+                        str.textContent = vigenere(personalmail[mailValue].sender, localStorage.getItem("password"), false);
+                        pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
+                    } else {
+                        // Inside your mail-loading logic:
+                        const userKeyData = keysjson[localStorage.getItem("name")]; 
+
+                        // Decrypt the private key 'd' using the user's password
+                        const decryptedD = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
+
+                        const privateKeyJWK = {
+                            kty: "RSA",
+                            n: userKeyData.publicKey[0], // Modulus
+                            e: userKeyData.publicKey[1], // Public Exponent
+                            d: decryptedD,               // Decrypted Private Exponent
+                            alg: "RSA-OAEP-256",
+                            ext: true
+                        };
+
+                        // Now replace lines 251 and 278 with:
+                        (async () => {
+                            document.getElementById("h1").textContent = await decryptWithRSA(mail.about, privateKeyJWK);
+                            str.textContent = await decryptWithRSA(mail.sender, privateKeyJWK);
+                            pcontent.textContent = await decryptWithRSA(mail.content, privateKeyJWK);    
+                        })
+                        //set document.getElementById("h1").textContent to rsa decrypted personalmail[mailValue].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                        //set str.textContent to rsa decrypted personalmail[mailValue].sender with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                        //set pcontent.textContent to rsa decrypted personalmail[mailValue].content with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                    }
+                    author.appendChild(str);
+                    bodydiv.appendChild(author)
+
+                    for (let i = 0; i < 20; i++) {
+                        pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
+                        pcontent.textContent = pcontent.textContent.replace("(quote)", '"');
+                        pcontent.textContent = pcontent.textContent.replace("(euro)", '&euro;');
+                    }
+                    pcontent.innerHTML = pcontent.textContent;
+                    if (pcontent.getElementsByTagName("button").length != 0) {
+                        if (pcontent.getElementsByTagName("button")[0].outerHTML.includes("transferPlayer")) {
+                            let stringFunc = pcontent.getElementsByTagName("button")[0].onclick.toString().slice(26, 74);
+                            let mailId = stringFunc.slice(39, 47);
+                            if (personalmail[mailId].clicked) {
+                                let button = pcontent.getElementsByTagName("button")[0];
+                                button.remove();
+                            }
+                        }
+                    }
+                    bodydiv.appendChild(pcontent);
                 }
-                bodydiv.appendChild(pcontent);
-            }
+            })
         })
     </script>
 </body>
