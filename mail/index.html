@@ -322,6 +322,15 @@
                         document.getElementById("h1").textContent = vigenere(personalmail[mailValue].about, localStorage.getItem("password"), false);
                         str.textContent = vigenere(personalmail[mailValue].sender, localStorage.getItem("password"), false);
                         pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
+
+                        author.appendChild(str);
+                        bodydiv.appendChild(author)
+
+                        for (let i = 0; i < 20; i++) {
+                            pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
+                            pcontent.textContent = pcontent.textContent.replace("(quote)", '"');
+                            pcontent.textContent = pcontent.textContent.replace("(euro)", '&euro;');
+                        }
                     } else {
                         const userKeyData = keysjson[localStorage.getItem("name")];
                         const decryptedJWKString = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
@@ -337,17 +346,19 @@
                             pcontent.textContent = content.replace("(enter)", "<br>");
 
                             // Re-run the formatting loop for the decrypted content
-                            formatContent(pcontent);
+                            //formatContent(pcontent);
+
+                            author.appendChild(str);
+                            bodydiv.appendChild(author)
+
+                            for (let i = 0; i < 20; i++) {
+                                pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
+                                pcontent.textContent = pcontent.textContent.replace("(quote)", '"');
+                                pcontent.textContent = pcontent.textContent.replace("(euro)", '&euro;');
+                    }
                         })();
                     }
-                    author.appendChild(str);
-                    bodydiv.appendChild(author)
-
-                    for (let i = 0; i < 20; i++) {
-                        pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
-                        pcontent.textContent = pcontent.textContent.replace("(quote)", '"');
-                        pcontent.textContent = pcontent.textContent.replace("(euro)", '&euro;');
-                    }
+                    
                     pcontent.innerHTML = pcontent.textContent;
                     if (pcontent.getElementsByTagName("button").length != 0) {
                         if (pcontent.getElementsByTagName("button")[0].outerHTML.includes("transferPlayer")) {
