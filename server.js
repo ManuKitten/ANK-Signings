@@ -33,7 +33,7 @@ const Team = require('./models/Team');
 const Tournament = require('./models/Tournament');
 
 function vigenere(text, key, encrypt = true) {
-    let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+    let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü\"";
     let result = '';
     let keyIndex = 0;
     for (let i = 0; i < text.length; i++) {
@@ -400,9 +400,9 @@ app.post('/api/update-tour-after-match', async (req, res) => {
             const increment = type === "yere" ? 2 : 1;
 
             function translate(event) {
-                if (event == "goal") {return "goals"}
-                else if (event == "yell" || event == "yere") {return "yellowCards"}
-                else if (event == "redc") {return "redCards"}
+                if (event == "goal") { return "goals" }
+                else if (event == "yell" || event == "yere") { return "yellowCards" }
+                else if (event == "redc") { return "redCards" }
             }
 
             const current = tour.stats[translate(mapName)][pId] || 0;
@@ -548,8 +548,8 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: async (req, file) => {
         // Log this to see if it's hitting the server
-        console.log("Processing upload for team:", req.body.teamName); 
-        
+        console.log("Processing upload for team:", req.body.teamName);
+
         return {
             folder: 'team_photos',
             // If teamName is missing, use a timestamp to prevent crash
@@ -567,7 +567,7 @@ const upload = multer({ storage: storage });
 app.post('/upload', async (req, res) => {
     try {
         const { teamName, about } = req.body;
-        
+
         const result = await cloudinary.uploader.upload(uploadFile.tempFilePath, {
             public_id: uploadFile.name,
             resource_type: "auto",
@@ -579,11 +579,11 @@ app.post('/upload', async (req, res) => {
         // 1. Update the 'name' in MongoDB
         // 2. Ensure logoUrl is set (Cloudinary overwrites the image if public_id is the same)
         const updatedTeam = await Team.findOneAndUpdate(
-            { teamId: teamName }, 
-            { 
+            { teamId: teamName },
+            {
                 name: about,
                 // req.file.path contains the secure URL from Cloudinary
-                logoUrl: req.file ? req.file.path : undefined 
+                logoUrl: req.file ? req.file.path : undefined
             },
             { new: true }
         );
