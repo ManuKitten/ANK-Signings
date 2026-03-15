@@ -55,7 +55,7 @@
             document.getElementById("username").textContent = localStorage.getItem("username");
         }
         function vigenere(text, key, encrypt = true) {
-            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü\"";
             let result = '';
             let keyIndex = 0;
             for (let i = 0; i < text.length; i++) {
@@ -130,10 +130,10 @@
                 const random = "0123456789abcdef";
                 let mailValue = "ex";
                 for (let i = 0; i < 6; i++) { mailValue += random[Math.floor(Math.random() * (16))]; }
-                
+
                 const destName = document.getElementById("destiny").value;
                 const destHash = await sha256(destName);
-                
+
                 const recipientKeyData = keysjson[destHash];
                 if (!recipientKeyData) {
                     alert("Recipient does not have registered encryption keys!");
@@ -154,7 +154,7 @@
                             from: localStorage.getItem("name"),
                             // Sender name can stay Vigenere if it's just for the sender's own UI, 
                             // but usually, this is also encrypted for the recipient.
-                            sender: encryptedSender, 
+                            sender: encryptedSender,
                             content: encryptedContent,
                             newRsa: true,
                             isRSA: true // Flag to tell the UI to use RSA decryption
@@ -163,7 +163,7 @@
 
                     // Await the message sending so line 112 doesn't kill the request
                     await sendMessage(payload);
-                    window.location.href = ".."; 
+                    window.location.href = "..";
                 } catch (err) {
                     console.error("Encryption/Send failed:", err);
                 }

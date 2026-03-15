@@ -97,7 +97,7 @@
         }
 
         function vigenere(text, key, encrypt = true) {
-            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü\"";
             let result = '';
             let keyIndex = 0;
             for (let i = 0; i < text.length; i++) {
@@ -148,14 +148,14 @@
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ teamId: teamValue }) // Send teamId, not filename
                                 })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if(data.success) {
-                                        // Find the image for this team and update its source
-                                        const teamImg = document.querySelector(`img[data-team-id="${teamValue}"]`);
-                                        if (teamImg) teamImg.src = data.url;
-                                    }
-                                });
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Find the image for this team and update its source
+                                            const teamImg = document.querySelector(`img[data-team-id="${teamValue}"]`);
+                                            if (teamImg) teamImg.src = data.url;
+                                        }
+                                    });
                                 const teamBankData = {
                                     teamId: teamValue,
                                     amount: 0

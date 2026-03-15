@@ -116,7 +116,7 @@
 
         //Help Translating Mail
         function vigenere(text, key, encrypt = true) {
-            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü\"";
             let result = '';
             let keyIndex = 0;
             for (let i = 0; i < text.length; i++) {
@@ -227,38 +227,38 @@
                 console.error("Server returned HTML instead of JSON. Check your routes!", text);
             }
         }
-    fetch("/api/keys").then(response => response.json()).then(async (keysjson) => {
-        if (!keysjson[localStorage.getItem("name")]) {
-            // 1. Generate the RSA-OAEP key pair
-            const keyPair = await window.crypto.subtle.generateKey(
-                {
-                    name: "RSA-OAEP",
-                    modulusLength: 2048,
-                    publicExponent: new Uint8Array([1, 0, 1]),
-                    hash: "SHA-256",
-                },
-                true, 
-                ["encrypt", "decrypt"]
-            );
+        fetch("/api/keys").then(response => response.json()).then(async (keysjson) => {
+            if (!keysjson[localStorage.getItem("name")]) {
+                // 1. Generate the RSA-OAEP key pair
+                const keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "RSA-OAEP",
+                        modulusLength: 2048,
+                        publicExponent: new Uint8Array([1, 0, 1]),
+                        hash: "SHA-256",
+                    },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
 
-            // 2. Export to JWK format
-            const pubExport = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
-            const privExport = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+                // 2. Export to JWK format
+                const pubExport = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+                const privExport = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
 
-            // 3. Encrypt the FULL JWK string (contains n, e, d, p, q, dp, dq, qi)
-            // We stringify the object so Vigenere can process it as a single string
-            const encryptedFullPrivKey = vigenere(JSON.stringify(privExport), localStorage.getItem("password"));
+                // 3. Encrypt the FULL JWK string (contains n, e, d, p, q, dp, dq, qi)
+                // We stringify the object so Vigenere can process it as a single string
+                const encryptedFullPrivKey = vigenere(JSON.stringify(privExport), localStorage.getItem("password"));
 
-            const keyObject = {
-                userId: localStorage.getItem("name"),
-                publicKey: [pubExport.n, pubExport.e], // Still [n, e] for others to encrypt to you
-                privateKey: encryptedFullPrivKey       // Now a full encrypted JWK string
-            };
+                const keyObject = {
+                    userId: localStorage.getItem("name"),
+                    publicKey: [pubExport.n, pubExport.e], // Still [n, e] for others to encrypt to you
+                    privateKey: encryptedFullPrivKey       // Now a full encrypted JWK string
+                };
 
-            await addKeys(keyObject);
-            console.log("Full RSA keys generated and saved for", localStorage.getItem("name"));
-        }
-    });
+                await addKeys(keyObject);
+                console.log("Full RSA keys generated and saved for", localStorage.getItem("name"));
+            }
+        });
 
         let newsDiv = document.getElementById("newsDiv");
         fetch("/api/news").then(response => response.json()).then(newsjson => {

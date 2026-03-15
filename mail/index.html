@@ -217,7 +217,7 @@
         })
 
         function vigenere(text, key, encrypt = true) {
-            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü";
+            let alphabet = " !#$'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~ñáéíóúäëïöü\"";
             let result = '';
             let keyIndex = 0;
             for (let i = 0; i < text.length; i++) {
@@ -275,7 +275,7 @@
                         li.id = revmails[i];
                         if (personalmail[revmails[i]].newRsa) {
                             // Inside your mail-loading logic:
-                            const userKeyData = keysjson[localStorage.getItem("name")]; 
+                            const userKeyData = keysjson[localStorage.getItem("name")];
 
                             // Decrypt the private key 'd' using the user's password
                             // Decrypt the private key string
@@ -323,7 +323,7 @@
                         str.textContent = vigenere(personalmail[mailValue].sender, localStorage.getItem("password"), false);
                         pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
                     } else {
-                        const userKeyData = keysjson[localStorage.getItem("name")]; 
+                        const userKeyData = keysjson[localStorage.getItem("name")];
                         const decryptedJWKString = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
                         const privateKeyJWK = JSON.parse(decryptedJWKString);
 
@@ -332,13 +332,13 @@
                             // Use 'personalmail[mailValue]' instead of 'mail'
                             document.getElementById("h1").textContent = await decryptWithRSA(personalmail[mailValue].about, privateKeyJWK);
                             str.textContent = await decryptWithRSA(personalmail[mailValue].sender, privateKeyJWK);
-                            
+
                             let content = await decryptWithRSA(personalmail[mailValue].content, privateKeyJWK);
                             pcontent.textContent = content.replace("(enter)", "<br>");
-                            
+
                             // Re-run the formatting loop for the decrypted content
-                            formatContent(pcontent); 
-                        })(); 
+                            formatContent(pcontent);
+                        })();
                     }
                     author.appendChild(str);
                     bodydiv.appendChild(author)
