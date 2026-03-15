@@ -308,27 +308,27 @@
                     let str = document.createElement("strong");
                     let pcontent = document.createElement("p");
 
-                    if (personalmail[revmails[i]].newRsa != true) {
+                    if (personalmail[mailValue].newRsa != true) {
                         document.getElementById("h1").textContent = vigenere(personalmail[mailValue].about, localStorage.getItem("password"), false);
                         str.textContent = vigenere(personalmail[mailValue].sender, localStorage.getItem("password"), false);
                         pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
                     } else {
-                        // Inside your mail-loading logic:
                         const userKeyData = keysjson[localStorage.getItem("name")]; 
-
-                        // Decrypt the private key 'd' using the user's password
                         const decryptedJWKString = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
                         const privateKeyJWK = JSON.parse(decryptedJWKString);
 
-                        // Now replace lines 251 and 278 with:
+                        // This needs to be an Immediately Invoked Function Expression (IIFE)
                         (async () => {
-                            document.getElementById("h1").textContent = await decryptWithRSA(mail.about, privateKeyJWK);
-                            str.textContent = await decryptWithRSA(mail.sender, privateKeyJWK);
-                            pcontent.textContent = await decryptWithRSA(mail.content, privateKeyJWK);    
-                        })
-                        //set document.getElementById("h1").textContent to rsa decrypted personalmail[mailValue].about with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
-                        //set str.textContent to rsa decrypted personalmail[mailValue].sender with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
-                        //set pcontent.textContent to rsa decrypted personalmail[mailValue].content with vigenere(keysjson[localStorage.getItem("name")], localStorage.getItem("password"), false)
+                            // Use 'personalmail[mailValue]' instead of 'mail'
+                            document.getElementById("h1").textContent = await decryptWithRSA(personalmail[mailValue].about, privateKeyJWK);
+                            str.textContent = await decryptWithRSA(personalmail[mailValue].sender, privateKeyJWK);
+                            
+                            let content = await decryptWithRSA(personalmail[mailValue].content, privateKeyJWK);
+                            pcontent.textContent = content.replace("(enter)", "<br>");
+                            
+                            // Re-run the formatting loop for the decrypted content
+                            formatContent(pcontent); 
+                        })(); 
                     }
                     author.appendChild(str);
                     bodydiv.appendChild(author)
