@@ -278,7 +278,17 @@
                             const userKeyData = keysjson[localStorage.getItem("name")]; 
 
                             // Decrypt the private key 'd' using the user's password
+                            // Decrypt the private key string
                             const decryptedJWKString = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
+
+                            console.log("Debug - Decrypted String:", decryptedJWKString); // ADD THIS LINE
+
+                            try {
+                                const privateKeyJWK = JSON.parse(decryptedJWKString);
+                                // ... rest of your decryption code
+                            } catch (e) {
+                                console.error("JSON Parsing failed. The decrypted string is likely corrupted by Vigenere.");
+                            }
                             const privateKeyJWK = JSON.parse(decryptedJWKString);
 
                             // Decrypt the message text before continuing the loop
