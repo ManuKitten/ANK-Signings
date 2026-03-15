@@ -278,16 +278,8 @@
                             const userKeyData = keysjson[localStorage.getItem("name")]; 
 
                             // Decrypt the private key 'd' using the user's password
-                            const decryptedD = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
-
-                            const privateKeyJWK = {
-                                kty: "RSA",
-                                n: userKeyData.publicKey[0], // Modulus
-                                e: userKeyData.publicKey[1], // Public Exponent
-                                d: decryptedD,               // Decrypted Private Exponent
-                                alg: "RSA-OAEP-256",
-                                ext: true
-                            };
+                            const decryptedJWKString = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
+                            const privateKeyJWK = JSON.parse(decryptedJWKString);
 
                             // Decrypt the message text before continuing the loop
                             li.textContent = await decryptWithRSA(personalmail[revmails[i]].about, privateKeyJWK);
@@ -325,16 +317,8 @@
                         const userKeyData = keysjson[localStorage.getItem("name")]; 
 
                         // Decrypt the private key 'd' using the user's password
-                        const decryptedD = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
-
-                        const privateKeyJWK = {
-                            kty: "RSA",
-                            n: userKeyData.publicKey[0], // Modulus
-                            e: userKeyData.publicKey[1], // Public Exponent
-                            d: decryptedD,               // Decrypted Private Exponent
-                            alg: "RSA-OAEP-256",
-                            ext: true
-                        };
+                        const decryptedJWKString = vigenere(userKeyData.privateKey, localStorage.getItem("password"), false);
+                        const privateKeyJWK = JSON.parse(decryptedJWKString);
 
                         // Now replace lines 251 and 278 with:
                         (async () => {
