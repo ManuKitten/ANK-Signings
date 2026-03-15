@@ -324,7 +324,6 @@
                         pcontent.textContent = vigenere(personalmail[mailValue].content, localStorage.getItem("password"), false).replace("(enter)", "<br>");
 
                         author.appendChild(str);
-                        bodydiv.appendChild(author)
 
                         for (let i = 0; i < 20; i++) {
                             pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
@@ -350,7 +349,6 @@
                             //formatContent(pcontent);
 
                             author.appendChild(str);
-                            bodydiv.appendChild(author)
 
                             for (let i = 0; i < 20; i++) {
                                 pcontent.textContent = pcontent.textContent.replace("(enter)", "<br>");
@@ -371,6 +369,7 @@
                             }
                         }
                     }
+                    bodydiv.appendChild(author);
                     bodydiv.appendChild(pcontent);
                 }
             })
